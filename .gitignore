@@ -4,6 +4,15 @@
 ### C++ ###
 # Prerequisites
 *.d
+###########################################
+# 에셋 파일 무시
+Content/**/*.uasset
+Content/**/*.umap
+
+# QMaps 폴더 내 .umap 파일 허용
+!Content/Art/Maps/QMaps/
+!Content/Art/Maps/QMaps/**/*.umap
+###########################################
 
 # Compiled Object files
 *.slo
