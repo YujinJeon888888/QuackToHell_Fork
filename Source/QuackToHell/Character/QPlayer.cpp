@@ -26,8 +26,8 @@ AQPlayer::AQPlayer()
 	SpringArmComponent->bInheritRoll = false;
 	this->GetCharacterMovement()->bOrientRotationToMovement=true;
 	/*위치값 세팅*/
-	this->GetMesh()->SetRelativeLocation(FVector(0, 0, -18));
-	this->GetMesh()->SetRelativeRotation(FRotator(0, 0, -90));
+	this->GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -18.f));
+	this->GetMesh()->SetRelativeRotation(FRotator(0.f, 0.f, -90.f));
 	/*캡슐 콜라이더 세팅*/
 	this->GetCapsuleComponent()->InitCapsuleSize(21.0f, 21.0f);
 }
