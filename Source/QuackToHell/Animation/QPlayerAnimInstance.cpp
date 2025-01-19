@@ -37,5 +37,5 @@ void UQPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	GroundSpeed = Velocity.Size2D();
 	bShouldMove = (GroundSpeed > 3.f && MovementComponent->GetCurrentAcceleration() != FVector::ZeroVector);
 	bIsFalling = MovementComponent->IsFalling();
-	bIsLanding = !(MovementComponent->IsFalling())&& MovementComponent->IsMovingOnGround();
+	bIsLanding = !(MovementComponent->IsFalling()) && MovementComponent->IsMovingOnGround();
 }
