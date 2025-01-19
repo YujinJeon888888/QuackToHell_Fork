@@ -6,6 +6,22 @@
 #include "BehaviorTree/BlackboardComponent.h"         // Blackboard 컴포넌트
 #include "BehaviorTree/BehaviorTreeComponent.h"       // Behavior Tree 컴포넌트
 #include "QLogCategories.h"
+void AQNPCController::StartDialog()
+{
+    /**
+     * @todo 구현해야함
+     *
+     */
+    UE_LOG(LogLogic, Log, TEXT("구현 미완입니다."));
+}
+void AQNPCController::EndDialog()
+{
+    /**
+     * @todo 구현해야함
+     * 
+     */
+    UE_LOG(LogLogic, Log, TEXT("구현 미완입니다."));
+}
 void AQNPCController::BeginPlay()
 {
 	Super::BeginPlay();

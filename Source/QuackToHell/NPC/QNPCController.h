@@ -14,6 +14,17 @@ UCLASS()
 class QUACKTOHELL_API AQNPCController : public AAIController
 {
 	GENERATED_BODY()
+public:
+    /**
+     * @brief NPC와의 대화시작 요청을 처리하는 함수입니다. npc-npc, player-npc 대화시스템에 활용됩니다.
+     * 
+     */
+    void StartDialog();
+    /**
+    * @brief NPC와의 대화중단 요청을 처리하는 함수입니다. npc-npc, player-npc 대화시스템에 활용됩니다.
+    *
+    */
+    void EndDialog();
 protected:
     virtual void BeginPlay() override;
 
