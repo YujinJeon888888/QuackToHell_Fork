@@ -35,12 +35,6 @@ protected:
 	TObjectPtr<class UInputAction> EnableTurnAction;
 private:
 	/**
-	 * @brief 상호작용 입력 처리 함수입니다..
-	 *
-	 * \param InputValue 입력 값
-	 */
-	void InputInteracton(const FInputActionValue& InputValue);
-	/**
 	 * @brief 이동 입력 처리 함수입니다..
 	 *
 	 * \param InputValue 입력 값
@@ -59,7 +53,25 @@ private:
 	 */
 	void InputEnableTurn(const FInputActionValue& InputValue);
 	/**
+	 * @brief 상호작용 입력 처리 함수입니다..
+	 *
+	 * \param InputValue 입력 값
+	 */
+	void InputInteraction(const FInputActionValue& InputValue);
+
+	/**
+	 * @brief 상호작용 활성화 처리 함수입니다.
+	 *
+	 * \param InputValue 입력 값
+	 */
+	void InputEnableInteracton(const FInputActionValue& InputValue);
+
+	/**
 	 * @brief 회전 활성화 처리 함수함수에서 true가 들어올 시, 이 변수도 true됩니다.
 	 */
 	bool bEnableTurn = false;
+	/**
+	 * @brief 상호작용 활성화 처리 함수함수에서 true가 들어올 시, 이 변수도 true됩니다.
+	 */
+	bool bEnableInteraction = false;
 };

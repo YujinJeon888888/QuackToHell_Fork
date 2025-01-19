@@ -9,6 +9,7 @@
 
 
 AQPlayer::AQPlayer()
+	:Super()
 {
 	/*캡슐 콜라이더 산하 컴포넌트*/
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));

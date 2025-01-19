@@ -29,21 +29,36 @@ void AQPlayerController::SetupInputComponent()
 	//InputComponent는 Actor의 멤버변수이다. 멤버변수를 EnhancedInput으로 캐스팅한다.
 	auto* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent);
 	if (EnhancedInputComponent) {
-		//액션에 대해, 트리거 되면 콜백되는 함수를 바인딩한다.
+		/*액션에 대해, 트리거 되면 콜백되는 함수를 바인딩한다.*/
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::InputMove);
 		EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ThisClass::InputTurn);
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Triggered, this, &ThisClass::InputInteraction);
 		EnhancedInputComponent->BindAction(EnableTurnAction, ETriggerEvent::Started, this, &ThisClass::InputEnableTurn);
 		EnhancedInputComponent->BindAction(EnableTurnAction, ETriggerEvent::Completed, this, &ThisClass::InputEnableTurn);
-		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &ThisClass::InputInteracton);
-		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Completed, this, &ThisClass::InputInteracton);
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &ThisClass::InputEnableInteracton);
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Completed, this, &ThisClass::InputEnableInteracton);
 
 	
 	}
 }
 
-void AQPlayerController::InputInteracton(const FInputActionValue& InputValue)
+void AQPlayerController::InputEnableInteracton(const FInputActionValue& InputValue)
 {
+	bEnableInteraction = InputValue.Get<bool>() ? true : false;
 	UE_LOG(LogLogic, Log, TEXT("%s"), InputValue.Get<bool>() ? TEXT("True") : TEXT("False"));
+}
+
+void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
+{
+	bEnableTurn = InputValue.Get<bool>() ? true : false;
+	UE_LOG(LogLogic, Log, TEXT("%s"), InputValue.Get<bool>() ? TEXT("True") : TEXT("False"));
+}
+
+void AQPlayerController::InputInteraction(const FInputActionValue& InputValue)
+{
+	//bEnableInteraction이 true일때만 상호작용이 가능하다.
+	if (bEnableInteraction) {
+	}
 }
 
 void AQPlayerController::InputTurn(const FInputActionValue& InputValue)
@@ -59,11 +74,7 @@ void AQPlayerController::InputTurn(const FInputActionValue& InputValue)
 	}
 }
 
-void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
-{
-	bEnableTurn = InputValue.Get<bool>() ? true : false;
-	UE_LOG(LogLogic, Log, TEXT("%s"), InputValue.Get<bool>() ? TEXT("True") : TEXT("False"));
-}
+
 
 void AQPlayerController::InputMove(const FInputActionValue& InputValue)
 {

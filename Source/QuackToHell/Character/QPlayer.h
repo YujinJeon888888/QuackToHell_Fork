@@ -17,9 +17,6 @@ class QUACKTOHELL_API AQPlayer : public AQCharacter
 	GENERATED_BODY()
 
 public:
-	/**
-	 * @brief 생성자입니다.
-	 */
 	AQPlayer();
 protected:
 	/**
