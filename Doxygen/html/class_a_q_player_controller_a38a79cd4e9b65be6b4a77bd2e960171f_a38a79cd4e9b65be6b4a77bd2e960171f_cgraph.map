@@ -1,0 +1,5 @@
+<map id="StartDialog" name="StartDialog">
+<area shape="rect" id="Node000001" title="대화를 시작합니다." alt="" coords="5,5,92,32"/>
+<area shape="rect" id="Node000002" href="$class_q_gameplay_tags_a734f3aed5faac5429e4a1883d87348bd.html#a734f3aed5faac5429e4a1883d87348bd" title="열거형 이름에 맞는 태그를 리턴합니다." alt="" coords="140,5,308,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,16,124,16,124,21,92,21"/>
+</map>

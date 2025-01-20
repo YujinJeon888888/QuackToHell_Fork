@@ -125,19 +125,26 @@ $(function(){initNavTree('class_a_q_player_controller_a4b591a51a5b9f4036c6ac0f82
 </table>
 </div><div class="memdoc">
 
-<p class="definition"><a class="el" href="_q_player_controller_8cpp_source.html">QPlayerController.cpp</a> 파일의 <a class="el" href="_q_player_controller_8cpp_source.html#l00012">12</a> 번째 라인에서 정의되었습니다.</p>
-<div class="fragment"><div class="line"><span class="lineno">   13</span>{</div>
-<div class="line"><span class="lineno">   14</span>    Super::BeginPlay();</div>
-<div class="line"><span class="lineno">   15</span> </div>
-<div class="line"><span class="lineno">   16</span>    <span class="comment">//Player로부터 EnhancedInput subsystem을 가져온다. </span></div>
-<div class="line"><span class="lineno">   17</span>    <span class="keyword">auto</span>* SubSystem = ULocalPlayer::GetSubsystem&lt;UEnhancedInputLocalPlayerSubsystem&gt;(GetLocalPlayer());</div>
-<div class="line"><span class="lineno">   18</span> </div>
-<div class="line"><span class="lineno">   19</span>    <span class="keywordflow">if</span> (SubSystem) {</div>
-<div class="line"><span class="lineno">   20</span>        <span class="comment">//mapping context를 추가해주는데, priority는 0</span></div>
-<div class="line"><span class="lineno">   21</span>        SubSystem-&gt;AddMappingContext(<a class="code hl_variable" href="class_a_q_player_controller_a4e1956959b4f8cdf1908458186c613c3.html#a4e1956959b4f8cdf1908458186c613c3">InputMappingContext</a>, 0);</div>
-<div class="line"><span class="lineno">   22</span>    }</div>
-<div class="line"><span class="lineno">   23</span>}</div>
+<p class="definition"><a class="el" href="_q_player_controller_8cpp_source.html">QPlayerController.cpp</a> 파일의 <a class="el" href="_q_player_controller_8cpp_source.html#l00017">17</a> 번째 라인에서 정의되었습니다.</p>
+<div class="fragment"><div class="line"><span class="lineno">   18</span>{</div>
+<div class="line"><span class="lineno">   19</span>    Super::BeginPlay();</div>
+<div class="line"><span class="lineno">   20</span> </div>
+<div class="line"><span class="lineno">   21</span>    <span class="comment">//Player로부터 EnhancedInput subsystem을 가져온다. </span></div>
+<div class="line"><span class="lineno">   22</span>    <span class="keyword">auto</span>* SubSystem = ULocalPlayer::GetSubsystem&lt;UEnhancedInputLocalPlayerSubsystem&gt;(GetLocalPlayer());</div>
+<div class="line"><span class="lineno">   23</span> </div>
+<div class="line"><span class="lineno">   24</span>    <span class="keywordflow">if</span> (SubSystem) {</div>
+<div class="line"><span class="lineno">   25</span>        <span class="comment">//mapping context를 추가해주는데, priority는 0</span></div>
+<div class="line"><span class="lineno">   26</span>        SubSystem-&gt;AddMappingContext(<a class="code hl_variable" href="class_a_q_player_controller_a4e1956959b4f8cdf1908458186c613c3.html#a4e1956959b4f8cdf1908458186c613c3">InputMappingContext</a>, 0);</div>
+<div class="line"><span class="lineno">   27</span>    }</div>
+<div class="line"><span class="lineno">   28</span> </div>
+<div class="line"><span class="lineno">   29</span>    <span class="comment">//Player State를 가져온다.</span></div>
+<div class="line"><span class="lineno">   30</span>    <a class="code hl_variable" href="class_a_q_player_controller_a8adcc53252ca187a3a744a7786ff130b.html#a8adcc53252ca187a3a744a7786ff130b">PlayerState</a> = this-&gt;GetPlayerState&lt;AQPlayerState&gt;();</div>
+<div class="line"><span class="lineno">   31</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_a_q_player_controller_a8adcc53252ca187a3a744a7786ff130b.html#a8adcc53252ca187a3a744a7786ff130b">PlayerState</a> == <span class="keyword">nullptr</span>) {</div>
+<div class="line"><span class="lineno">   32</span>        UE_LOG(LogLogic, Error, TEXT(<span class="stringliteral">&quot;플레이어 스테이트를 지정하세요!!&quot;</span>));</div>
+<div class="line"><span class="lineno">   33</span>    }</div>
+<div class="line"><span class="lineno">   34</span>}</div>
 <div class="ttc" id="aclass_a_q_player_controller_a4e1956959b4f8cdf1908458186c613c3_html_a4e1956959b4f8cdf1908458186c613c3"><div class="ttname"><a href="class_a_q_player_controller_a4e1956959b4f8cdf1908458186c613c3.html#a4e1956959b4f8cdf1908458186c613c3">AQPlayerController::InputMappingContext</a></div><div class="ttdeci">TObjectPtr&lt; class UInputMappingContext &gt; InputMappingContext</div><div class="ttdoc">IMC입니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_player_controller_8h_source.html#l00023">QPlayerController.h:23</a></div></div>
+<div class="ttc" id="aclass_a_q_player_controller_a8adcc53252ca187a3a744a7786ff130b_html_a8adcc53252ca187a3a744a7786ff130b"><div class="ttname"><a href="class_a_q_player_controller_a8adcc53252ca187a3a744a7786ff130b.html#a8adcc53252ca187a3a744a7786ff130b">AQPlayerController::PlayerState</a></div><div class="ttdeci">TObjectPtr&lt; class AQPlayerState &gt; PlayerState</div><div class="ttdoc">플레이어 상태를 들고 있습니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_player_controller_8h_source.html#l00109">QPlayerController.h:109</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>

@@ -1,0 +1,8 @@
+<map id="InputConversingQuit" name="InputConversingQuit">
+<area shape="rect" id="Node000001" title="대화중단 입력 처리 함수입니다." alt="" coords="5,31,146,57"/>
+<area shape="rect" id="Node000002" href="$class_a_q_player_controller_afd156935d4f1dc9acab4e7095922240d.html#afd156935d4f1dc9acab4e7095922240d" title="대화를 중단합니다." alt="" coords="194,5,275,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,30,178,25,179,30,147,35"/>
+<area shape="rect" id="Node000003" href="$class_q_gameplay_tags_a734f3aed5faac5429e4a1883d87348bd.html#a734f3aed5faac5429e4a1883d87348bd" title="열거형 이름에 맞는 태그를 리턴합니다." alt="" coords="323,31,491,57"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="146,41,308,41,308,47,146,47"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="276,22,308,27,307,32,275,27"/>
+</map>

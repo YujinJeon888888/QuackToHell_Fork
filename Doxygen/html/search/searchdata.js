@@ -1,11 +1,13 @@
 var indexSectionsWithContent =
 {
-  0: "abcdegimnpqstuv목할",
+  0: "abcdeghimnopqrstuv~목할",
   1: "aqu",
   2: "cq",
-  3: "abdeinqstu",
-  4: "bcegimpstv",
-  5: "목할"
+  3: "abdeghinoqrstu~",
+  4: "bcegimopstv",
+  5: "e",
+  6: "cn",
+  7: "목할"
 };
 
 var indexSectionNames =
@@ -15,7 +17,9 @@ var indexSectionNames =
   2: "files",
   3: "functions",
   4: "variables",
-  5: "pages"
+  5: "enums",
+  6: "enumvalues",
+  7: "pages"
 };
 
 var indexSectionLabels =
@@ -25,6 +29,8 @@ var indexSectionLabels =
   2: "파일들",
   3: "함수",
   4: "변수",
-  5: "페이지들"
+  5: "열거형 타입",
+  6: "열거형 멤버",
+  7: "페이지들"
 };
 

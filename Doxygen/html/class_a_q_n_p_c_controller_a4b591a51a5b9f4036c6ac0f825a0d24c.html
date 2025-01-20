@@ -125,21 +125,21 @@ $(function(){initNavTree('class_a_q_n_p_c_controller_a4b591a51a5b9f4036c6ac0f825
 </table>
 </div><div class="memdoc">
 
-<p class="definition"><a class="el" href="_q_n_p_c_controller_8cpp_source.html">QNPCController.cpp</a> 파일의 <a class="el" href="_q_n_p_c_controller_8cpp_source.html#l00025">25</a> 번째 라인에서 정의되었습니다.</p>
-<div class="fragment"><div class="line"><span class="lineno">   26</span>{</div>
-<div class="line"><span class="lineno">   27</span>    Super::BeginPlay();</div>
-<div class="line"><span class="lineno">   28</span>  </div>
-<div class="line"><span class="lineno">   29</span>    <span class="comment">// Behavior Tree와 Blackboard 컴포넌트가 유효한지 확인</span></div>
-<div class="line"><span class="lineno">   30</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_a_q_n_p_c_controller_a0920ee7121b600027bc33e4afc53cdea.html#a0920ee7121b600027bc33e4afc53cdea">BehaviorTree</a> &amp;&amp; <a class="code hl_variable" href="class_a_q_n_p_c_controller_a0920ee7121b600027bc33e4afc53cdea.html#a0920ee7121b600027bc33e4afc53cdea">BehaviorTree</a>-&gt;BlackboardAsset)</div>
-<div class="line"><span class="lineno">   31</span>    {</div>
-<div class="line"><span class="lineno">   32</span>        UE_LOG(LogLogic, Log, TEXT(<span class="stringliteral">&quot;run behavior&quot;</span>));</div>
-<div class="line"><span class="lineno">   33</span>        <span class="comment">// Blackboard 초기화</span></div>
-<div class="line"><span class="lineno">   34</span>        UseBlackboard(<a class="code hl_variable" href="class_a_q_n_p_c_controller_a0920ee7121b600027bc33e4afc53cdea.html#a0920ee7121b600027bc33e4afc53cdea">BehaviorTree</a>-&gt;BlackboardAsset, <a class="code hl_variable" href="class_a_q_n_p_c_controller_a7f6e9139a53a6f69539e3fd06dca095e.html#a7f6e9139a53a6f69539e3fd06dca095e">BlackboardComp</a>);</div>
-<div class="line"><span class="lineno">   35</span> </div>
-<div class="line"><span class="lineno">   36</span>        <span class="comment">// Behavior Tree 실행</span></div>
-<div class="line"><span class="lineno">   37</span>        RunBehaviorTree(<a class="code hl_variable" href="class_a_q_n_p_c_controller_a0920ee7121b600027bc33e4afc53cdea.html#a0920ee7121b600027bc33e4afc53cdea">BehaviorTree</a>);</div>
-<div class="line"><span class="lineno">   38</span>    }</div>
-<div class="line"><span class="lineno">   39</span>}</div>
+<p class="definition"><a class="el" href="_q_n_p_c_controller_8cpp_source.html">QNPCController.cpp</a> 파일의 <a class="el" href="_q_n_p_c_controller_8cpp_source.html#l00027">27</a> 번째 라인에서 정의되었습니다.</p>
+<div class="fragment"><div class="line"><span class="lineno">   28</span>{</div>
+<div class="line"><span class="lineno">   29</span>    Super::BeginPlay();</div>
+<div class="line"><span class="lineno">   30</span>  </div>
+<div class="line"><span class="lineno">   31</span>    <span class="comment">// Behavior Tree와 Blackboard 컴포넌트가 유효한지 확인</span></div>
+<div class="line"><span class="lineno">   32</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_a_q_n_p_c_controller_a0920ee7121b600027bc33e4afc53cdea.html#a0920ee7121b600027bc33e4afc53cdea">BehaviorTree</a> &amp;&amp; <a class="code hl_variable" href="class_a_q_n_p_c_controller_a0920ee7121b600027bc33e4afc53cdea.html#a0920ee7121b600027bc33e4afc53cdea">BehaviorTree</a>-&gt;BlackboardAsset)</div>
+<div class="line"><span class="lineno">   33</span>    {</div>
+<div class="line"><span class="lineno">   34</span>        UE_LOG(LogLogic, Log, TEXT(<span class="stringliteral">&quot;run behavior&quot;</span>));</div>
+<div class="line"><span class="lineno">   35</span>        <span class="comment">// Blackboard 초기화</span></div>
+<div class="line"><span class="lineno">   36</span>        UseBlackboard(<a class="code hl_variable" href="class_a_q_n_p_c_controller_a0920ee7121b600027bc33e4afc53cdea.html#a0920ee7121b600027bc33e4afc53cdea">BehaviorTree</a>-&gt;BlackboardAsset, <a class="code hl_variable" href="class_a_q_n_p_c_controller_a7f6e9139a53a6f69539e3fd06dca095e.html#a7f6e9139a53a6f69539e3fd06dca095e">BlackboardComp</a>);</div>
+<div class="line"><span class="lineno">   37</span> </div>
+<div class="line"><span class="lineno">   38</span>        <span class="comment">// Behavior Tree 실행</span></div>
+<div class="line"><span class="lineno">   39</span>        RunBehaviorTree(<a class="code hl_variable" href="class_a_q_n_p_c_controller_a0920ee7121b600027bc33e4afc53cdea.html#a0920ee7121b600027bc33e4afc53cdea">BehaviorTree</a>);</div>
+<div class="line"><span class="lineno">   40</span>    }</div>
+<div class="line"><span class="lineno">   41</span>}</div>
 <div class="ttc" id="aclass_a_q_n_p_c_controller_a0920ee7121b600027bc33e4afc53cdea_html_a0920ee7121b600027bc33e4afc53cdea"><div class="ttname"><a href="class_a_q_n_p_c_controller_a0920ee7121b600027bc33e4afc53cdea.html#a0920ee7121b600027bc33e4afc53cdea">AQNPCController::BehaviorTree</a></div><div class="ttdeci">TObjectPtr&lt; UBehaviorTree &gt; BehaviorTree</div><div class="ttdoc">behavior tree를 지정합니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_n_p_c_controller_8h_source.html#l00034">QNPCController.h:34</a></div></div>
 <div class="ttc" id="aclass_a_q_n_p_c_controller_a7f6e9139a53a6f69539e3fd06dca095e_html_a7f6e9139a53a6f69539e3fd06dca095e"><div class="ttname"><a href="class_a_q_n_p_c_controller_a7f6e9139a53a6f69539e3fd06dca095e.html#a7f6e9139a53a6f69539e3fd06dca095e">AQNPCController::BlackboardComp</a></div><div class="ttdeci">UBlackboardComponent * BlackboardComp</div><div class="ttdoc">blackboard를 지정합니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_n_p_c_controller_8h_source.html#l00038">QNPCController.h:38</a></div></div>
 </div><!-- fragment -->

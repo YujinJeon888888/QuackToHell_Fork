@@ -1,0 +1,5 @@
+<map id="EndDialog" name="EndDialog">
+<area shape="rect" id="Node000001" title="대화를 중단합니다." alt="" coords="194,5,275,32"/>
+<area shape="rect" id="Node000002" href="$class_a_q_player_controller_aef2adbe624a4ffabbfcd457596ec0670.html#aef2adbe624a4ffabbfcd457596ec0670" title="대화중단 입력 처리 함수입니다." alt="" coords="5,5,146,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="178,21,146,21,146,16,178,16"/>
+</map>

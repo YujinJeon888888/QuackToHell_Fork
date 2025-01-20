@@ -1,0 +1,5 @@
+<map id="StartDialog" name="StartDialog">
+<area shape="rect" id="Node000001" title="대화를 시작합니다." alt="" coords="165,5,251,32"/>
+<area shape="rect" id="Node000002" href="$class_a_q_player_controller_a4dae5f3cb5e36be8060e06d4609445bf.html#a4dae5f3cb5e36be8060e06d4609445bf" title="상호작용 입력 처리 함수입니다." alt="" coords="5,5,117,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="149,21,117,21,117,16,149,16"/>
+</map>

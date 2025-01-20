@@ -5,5 +5,6 @@ var searchData=
   ['aqnpc_2',['AQNPC',['../class_a_q_n_p_c.html',1,'']]],
   ['aqnpccontroller_3',['AQNPCController',['../class_a_q_n_p_c_controller.html',1,'']]],
   ['aqplayer_4',['AQPlayer',['../class_a_q_player.html',1,'']]],
-  ['aqplayercontroller_5',['AQPlayerController',['../class_a_q_player_controller.html',1,'']]]
+  ['aqplayercontroller_5',['AQPlayerController',['../class_a_q_player_controller.html',1,'']]],
+  ['aqplayerstate_6',['AQPlayerState',['../class_a_q_player_state.html',1,'']]]
 ];
