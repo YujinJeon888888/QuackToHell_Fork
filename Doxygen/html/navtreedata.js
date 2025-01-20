@@ -25,13 +25,15 @@
 var NAVTREE =
 [
   [ "QuackToHell", "index.html", [
+    [ "할일 목록", "todo.html", null ],
     [ "클래스", "annotated.html", [
       [ "클래스 목록", "annotated.html", "annotated_dup" ],
       [ "클래스 색인", "classes.html", null ],
       [ "클래스 계통도", "hierarchy.html", "hierarchy" ],
       [ "클래스 멤버", "functions.html", [
         [ "모두", "functions.html", null ],
-        [ "함수", "functions_func.html", null ]
+        [ "함수", "functions_func.html", null ],
+        [ "변수", "functions_vars.html", null ]
       ] ]
     ] ],
     [ "파일들", "files.html", [
@@ -46,7 +48,7 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_q_character_8cpp.html"
+"_client_test_game_mode_8cpp.html"
 ];
 
 var SYNCONMSG = '패널 동기화를 비활성화하기 위해 클릭하십시오';

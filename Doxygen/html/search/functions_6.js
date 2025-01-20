@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tick_0',['Tick',['../class_a_q_character_a2fb3c0ec625280bd51ca1c64770ae425.html#a2fb3c0ec625280bd51ca1c64770ae425',1,'AQCharacter']]]
+  ['quacktohell_0',['QuackToHell',['../class_quack_to_hell_a882c72cf43ccb53e999d3f96ae761754.html#a882c72cf43ccb53e999d3f96ae761754',1,'QuackToHell']]]
 ];

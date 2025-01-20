@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.13.2"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>QuackToHell: C:/Users/swu/Documents/Unreal Projects/QuackToHell/Source/QuackToHell/NPC/QBTTFindPatrolPos.cpp 소스 파일</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+  $(function() { init_search(); });
+/* @license-end */
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">QuackToHell<span id="projectnumber">&#160;0.0.1</span>
+   </div>
+  </td>
+    <td>        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect"                onmouseover="return searchBox.OnSearchSelectShow()"                onmouseout="return searchBox.OnSearchSelectHide()">&#160;</span>
+          <input type="text" id="MSearchField" value="" placeholder="검색" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.svg" alt=""/></a>
+          </span>
+        </div>
+</td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 다음에 의해 생성됨 :  Doxygen 1.13.2 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+/* @license-end */
+</script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() { codefold.init(0); });
+/* @license-end */
+</script>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function(){initNavTree('_q_b_t_t_find_patrol_pos_8cpp_source.html',''); initResizable(true); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">로딩중...</div>
+<div class="SRStatus" id="Searching">검색중...</div>
+<div class="SRStatus" id="NoMatches">일치하는것 없음</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">QBTTFindPatrolPos.cpp</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="_q_b_t_t_find_patrol_pos_8cpp.html">이 파일의 문서화 페이지로 가기</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// Copyright_Team_AriAri</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="_q_b_t_t_find_patrol_pos_8h.html">NPC/QBTTFindPatrolPos.h</a>&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;AIController.h&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;GameFramework/Character.h&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;GameFramework/CharacterMovementComponent.h&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;BehaviorTree/BlackboardComponent.h&quot;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;BehaviorTree/Blackboard/BlackboardKeyType_Vector.h&quot;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;Navigation/PathFollowingComponent.h&quot;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;Kismet/KismetMathLibrary.h&quot;</span> <span class="comment">// 랜덤 방향 계산에 사용</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
+<div class="foldopen" id="foldopen00013" data-start="{" data-end="}">
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="class_u_q_b_t_t_find_patrol_pos_a0bf76ca0de63a2856ab2b0dac32b98b4.html#a0bf76ca0de63a2856ab2b0dac32b98b4">   13</a></span><a class="code hl_function" href="class_u_q_b_t_t_find_patrol_pos_a0bf76ca0de63a2856ab2b0dac32b98b4.html#a0bf76ca0de63a2856ab2b0dac32b98b4">UQBTTFindPatrolPos::UQBTTFindPatrolPos</a>()</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    this-&gt;NodeName = <span class="stringliteral">&quot;Find Patrol Pos&quot;</span>;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>}</div>
+</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="foldopen" id="foldopen00018" data-start="{" data-end="}">
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="class_u_q_b_t_t_find_patrol_pos_a19cb199dc83a332acb6e6c54bb0e8e2a.html#a19cb199dc83a332acb6e6c54bb0e8e2a">   18</a></span>EBTNodeResult::Type <a class="code hl_function" href="class_u_q_b_t_t_find_patrol_pos_a19cb199dc83a332acb6e6c54bb0e8e2a.html#a19cb199dc83a332acb6e6c54bb0e8e2a">UQBTTFindPatrolPos::ExecuteTask</a>(UBehaviorTreeComponent&amp; OwnerComp, uint8* NodeMemory)</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="comment">/*AI Controller 가져오기*/</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    TObjectPtr&lt;AAIController&gt; AIController = OwnerComp.GetAIOwner();</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keywordflow">if</span> (!AIController) {</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        <span class="keywordflow">return</span> EBTNodeResult::Failed;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    }</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="comment">/*캐릭터 가져오기*/</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    TObjectPtr&lt;ACharacter&gt; ControlledCharacter = Cast&lt;ACharacter&gt;(AIController-&gt;GetPawn());</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordflow">if</span> (!ControlledCharacter) {</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        <span class="keywordflow">return</span> EBTNodeResult::Failed;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    }</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="comment">/*blackboard 가져오기*/</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keyword">const</span> TObjectPtr&lt;UBlackboardComponent&gt; BlackboardComp = AIController-&gt;GetBlackboardComponent();</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordflow">if</span> (!BlackboardComp) {</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <span class="keywordflow">return</span> EBTNodeResult::Failed;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    }</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="comment">/*원형범위 내에서 랜덤한 patrol 위치 선택*/</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keyword">const</span> FVector CurrentLocation = ControlledCharacter-&gt;GetActorLocation();</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="comment">//순찰반경 반지름</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <a class="code hl_variable" href="class_u_q_b_t_t_find_patrol_pos_a8bb1c22ad507dff3d001e4c57e5ae784.html#a8bb1c22ad507dff3d001e4c57e5ae784">PatrolRadius</a> = 500.0f;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="comment">//꼭짓점에서 어떤 각도로 갈건지</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keyword">const</span> <span class="keywordtype">float</span> RandomAngle = FMath::RandRange(0.f, 360.f);</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="comment">//라디안으로 변환: FMath::Cos(). FMath::Sin()이 라디안단위를 사용하므로</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">const</span> <span class="keywordtype">float</span> RadAngle = FMath::DegreesToRadians(RandomAngle);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="comment">//꼭짓점에서 얼마만큼 떨어진 곳으로 갈건지</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keyword">const</span> <span class="keywordtype">float</span> RandomDistance = FMath::RandRange(<a class="code hl_variable" href="class_u_q_b_t_t_find_patrol_pos_a3e9f7c12ef1a541cbfdf7591941e3078.html#a3e9f7c12ef1a541cbfdf7591941e3078">MinimumDistance</a>, <a class="code hl_variable" href="class_u_q_b_t_t_find_patrol_pos_a8bb1c22ad507dff3d001e4c57e5ae784.html#a8bb1c22ad507dff3d001e4c57e5ae784">PatrolRadius</a>);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="comment">/*patrol 위치계산: 방향(각도) * 거리(반지름) = 위치 벡터 */</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <span class="keyword">const</span> FVector PatrolOffset = FVector</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        (FMath::Cos(RadAngle) * RandomDistance, <span class="comment">//x</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        FMath::Sin(RadAngle) * RandomDistance, <span class="comment">//y</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        0.0f); <span class="comment">// z: 평면 이동이므로 Z축 값은 0으로 고정</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="comment">//pawn기준 얼마나 떨어져있는지.</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keyword">const</span> FVector NewPatrolLocation = CurrentLocation + PatrolOffset;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="comment">/*블랙보드에 새 patrolpos 설정*/</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    BlackboardComp-&gt;SetValueAsVector(<a class="code hl_variable" href="class_u_q_b_t_t_find_patrol_pos_a79b501dfbd29a964e1495f9ea29161a3.html#a79b501dfbd29a964e1495f9ea29161a3">PatrolPosKey</a>, NewPatrolLocation);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordflow">return</span> EBTNodeResult::Succeeded;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>}</div>
+</div>
+<div class="ttc" id="a_q_b_t_t_find_patrol_pos_8h_html"><div class="ttname"><a href="_q_b_t_t_find_patrol_pos_8h.html">QBTTFindPatrolPos.h</a></div></div>
+<div class="ttc" id="aclass_u_q_b_t_t_find_patrol_pos_a0bf76ca0de63a2856ab2b0dac32b98b4_html_a0bf76ca0de63a2856ab2b0dac32b98b4"><div class="ttname"><a href="class_u_q_b_t_t_find_patrol_pos_a0bf76ca0de63a2856ab2b0dac32b98b4.html#a0bf76ca0de63a2856ab2b0dac32b98b4">UQBTTFindPatrolPos::UQBTTFindPatrolPos</a></div><div class="ttdeci">UQBTTFindPatrolPos()</div><div class="ttdef"><b>Definition</b> <a href="#l00013">QBTTFindPatrolPos.cpp:13</a></div></div>
+<div class="ttc" id="aclass_u_q_b_t_t_find_patrol_pos_a19cb199dc83a332acb6e6c54bb0e8e2a_html_a19cb199dc83a332acb6e6c54bb0e8e2a"><div class="ttname"><a href="class_u_q_b_t_t_find_patrol_pos_a19cb199dc83a332acb6e6c54bb0e8e2a.html#a19cb199dc83a332acb6e6c54bb0e8e2a">UQBTTFindPatrolPos::ExecuteTask</a></div><div class="ttdeci">virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent &amp;OwnerComp, uint8 *NodeMemory) override</div><div class="ttdoc">이 Behavior Tree 태스크의 실행 로직을 정의합니다.</div><div class="ttdef"><b>Definition</b> <a href="#l00018">QBTTFindPatrolPos.cpp:18</a></div></div>
+<div class="ttc" id="aclass_u_q_b_t_t_find_patrol_pos_a3e9f7c12ef1a541cbfdf7591941e3078_html_a3e9f7c12ef1a541cbfdf7591941e3078"><div class="ttname"><a href="class_u_q_b_t_t_find_patrol_pos_a3e9f7c12ef1a541cbfdf7591941e3078.html#a3e9f7c12ef1a541cbfdf7591941e3078">UQBTTFindPatrolPos::MinimumDistance</a></div><div class="ttdeci">float MinimumDistance</div><div class="ttdoc">minimum distance.</div><div class="ttdef"><b>Definition</b> <a href="_q_b_t_t_find_patrol_pos_8h_source.html#l00044">QBTTFindPatrolPos.h:44</a></div></div>
+<div class="ttc" id="aclass_u_q_b_t_t_find_patrol_pos_a79b501dfbd29a964e1495f9ea29161a3_html_a79b501dfbd29a964e1495f9ea29161a3"><div class="ttname"><a href="class_u_q_b_t_t_find_patrol_pos_a79b501dfbd29a964e1495f9ea29161a3.html#a79b501dfbd29a964e1495f9ea29161a3">UQBTTFindPatrolPos::PatrolPosKey</a></div><div class="ttdeci">FName PatrolPosKey</div><div class="ttdoc">블랙보드 키 지정</div><div class="ttdef"><b>Definition</b> <a href="_q_b_t_t_find_patrol_pos_8h_source.html#l00049">QBTTFindPatrolPos.h:49</a></div></div>
+<div class="ttc" id="aclass_u_q_b_t_t_find_patrol_pos_a8bb1c22ad507dff3d001e4c57e5ae784_html_a8bb1c22ad507dff3d001e4c57e5ae784"><div class="ttname"><a href="class_u_q_b_t_t_find_patrol_pos_a8bb1c22ad507dff3d001e4c57e5ae784.html#a8bb1c22ad507dff3d001e4c57e5ae784">UQBTTFindPatrolPos::PatrolRadius</a></div><div class="ttdeci">float PatrolRadius</div><div class="ttdoc">순찰반경 반지름.</div><div class="ttdef"><b>Definition</b> <a href="_q_b_t_t_find_patrol_pos_8h_source.html#l00039">QBTTFindPatrolPos.h:39</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="dir_320e33a89b1321a072d50dfb68a1fdef.html">QuackToHell</a></li><li class="navelem"><a class="el" href="dir_d115ea2de1d3b145387889c2bb17bbbe.html">Source</a></li><li class="navelem"><a class="el" href="dir_c6afc90b452902f38334042b7a7a3bb7.html">QuackToHell</a></li><li class="navelem"><a class="el" href="dir_4459bbe69a07c173037a9f5fb703d509.html">NPC</a></li><li class="navelem"><a class="el" href="_q_b_t_t_find_patrol_pos_8cpp.html">QBTTFindPatrolPos.cpp</a></li>
+    <li class="footer">다음에 의해 생성됨 :  <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+  </ul>
+</div>
+</body>
+</html>
