@@ -9,9 +9,6 @@
 Content/Art/**/*.uasset
 Content/Art/**/*.umap
 
-# QMaps 폴더 내 .umap 파일 허용
-!Content/Art/Maps/QMaps/
-!Content/Art/Maps/QMaps/**/*.umap
 ###########################################
 
 
