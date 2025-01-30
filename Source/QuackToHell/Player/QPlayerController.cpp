@@ -114,11 +114,11 @@ void AQPlayerController::EndDialog()
 	NPCController->EndDialog();
 }
 
-void AQPlayerController::FreezePawn()
+void AQPlayerController::FreezePawn_Implementation()
 {
 }
 
-void AQPlayerController::UnFreezePawn()
+void AQPlayerController::UnFreezePawn_Implementation()
 {
 }
 
