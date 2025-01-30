@@ -105,6 +105,14 @@ private:
 	 */
 	void EndDialog();
 	/**
+	 * @brief 공백말풍선 UI컴포넌트를 킵니다.
+	 */
+	void TurnOnPlayer2NSpeechBubble();
+	/**
+	 * @brief 공백말풍선 UI컴포넌트를 끕니다.
+	 */
+	void TurnOffPlayer2NSpeechBubble();
+	/**
 	 * @brief 몸을 멈춥니다.
 	 */
 	UFUNCTION(Client,Reliable)

@@ -114,6 +114,14 @@ void AQPlayerController::EndDialog()
 	NPCController->EndDialog();
 }
 
+void AQPlayerController::TurnOnPlayer2NSpeechBubble()
+{
+}
+
+void AQPlayerController::TurnOffPlayer2NSpeechBubble()
+{
+}
+
 void AQPlayerController::FreezePawn_Implementation()
 {
 }
