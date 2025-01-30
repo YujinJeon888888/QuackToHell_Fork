@@ -14,6 +14,7 @@ UCLASS()
 class QUACKTOHELL_API AQPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -103,6 +104,16 @@ private:
 	 * @brief 대화를 중단합니다.
 	 */
 	void EndDialog();
+	/**
+	 * @brief 몸을 멈춥니다.
+	 */
+	UFUNCTION(Client,Reliable)
+	void FreezePawn();
+	/**
+	 * @brief 몸을 얼음땡 합니다.
+	 */
+	UFUNCTION(Client, Reliable)
+	void UnFreezePawn();
 	/**
 	 * @brief 플레이어 상태를 들고 있습니다. 상태에 따른 논리변화에 활용됩니다.
 	 */

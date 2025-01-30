@@ -114,6 +114,14 @@ void AQPlayerController::EndDialog()
 	NPCController->EndDialog();
 }
 
+void AQPlayerController::FreezePawn()
+{
+}
+
+void AQPlayerController::UnFreezePawn()
+{
+}
+
 void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
 {
 	bEnableTurn = InputValue.Get<bool>() ? true : false;
