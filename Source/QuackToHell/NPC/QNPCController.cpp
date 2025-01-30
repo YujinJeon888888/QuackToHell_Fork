@@ -24,6 +24,10 @@ void AQNPCController::EndDialog()
     UE_LOG(LogLogic, Log, TEXT("구현 미완입니다."));
 }
 
+void AQNPCController::Response(FString& Text)
+{
+}
+
 void AQNPCController::BeginPlay()
 {
 	Super::BeginPlay();
