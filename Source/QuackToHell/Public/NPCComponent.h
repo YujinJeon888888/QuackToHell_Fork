@@ -8,11 +8,73 @@
 #include "Interfaces/IHttpResponse.h"
 #include "NPCComponent.generated.h"
 
+/**
+ * @auther 박시언
+ * @brief OpenAI API 요청을 위한 구조체
+ */
+USTRUCT()
+struct FOpenAIRequest
+{
+	GENERATED_BODY()
 
+	FString Prompt;
+	int32 MaxTokens = 100;
+
+	// ToJson()은 public임
+	FString ToJson() const
+	{
+		return FString::Printf(TEXT("{ \"prompt\": \"%s\", \"max_tokens\": %d }"), *Prompt, MaxTokens);
+	}
+};
+
+
+/**
+ * @auther 박시언
+ * @brief OpenAI API 응답을 위한 구조체
+ */
+USTRUCT()
+struct FOpenAIResponse
+{
+	GENERATED_BODY()
+
+	FString ResponseText;
+
+	static FOpenAIResponse FromJson(const FString& JsonContent)
+	{
+		FOpenAIResponse Response;
+		TSharedPtr<FJsonObject> JsonObject;
+		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonContent);
+
+		if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
+		{
+			const TArray<TSharedPtr<FJsonValue>>* ChoicesArray;
+			if (JsonObject->TryGetArrayField("choices", ChoicesArray) && ChoicesArray->Num() > 0)
+			{
+				Response.ResponseText = (*ChoicesArray)[0]->AsString();
+			}
+		}
+
+		if (Response.ResponseText.IsEmpty())
+		{
+			Response.ResponseText = TEXT("죄송합니다, 답변할 수 없습니다.");
+		}
+
+		return Response;
+	}
+};
+
+/**
+ * @author 유서현
+ */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class QUACKTOHELL_API UNPCComponent : public UActorComponent
 {
 	GENERATED_BODY()
+
+private:
+	FString NPCPersonality;
+	TArray<FString> NPCDialogueHistory;
+	FString LastAIResponse;
 
 public:
 	/**
@@ -44,6 +106,35 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "NPC")
 	void StartConversation(const FString& PlayerInput);
 
+	/**
+	 * @auther 박시언
+	 * @brief OpenAI API 요청 공통 함수
+	 * \param Prompt
+	 * \param Callback
+	 */
+	void RequestOpenAIResponse(const FOpenAIRequest& AIRequest, TFunction<void(FOpenAIResponse)> Callback);
+
+	/**
+	 * @auther 박시언
+	 * @brief NPC 성격 Get/Set
+	 */
+	FString GetNPCPersonality() const;
+	void SetNPCPersonality(const FString& NewPersonality);
+
+	/**
+	 * @auther 박시언
+	 * @brief NPC 대화 기록 Get/Set
+	 */
+	const TArray<FString>& GetNPCDialogueHistory() const;
+	void AddToDialogueHistory(const FString& Dialogue);
+
+	/**
+	 * @auther 박시언
+	 * @brief NPC 마지막 AI 응답 Get/Set
+	 */
+	FString GetLastAIResponse() const;
+	void SetLastAIResponse(const FString& AIResponse);
+
 protected:
 	/**
 	 * @auther 박시언
@@ -52,12 +143,27 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
 	FString PromptFilePath;
 
+public:
 	/**
 	 * @auther 박시언
-	 * @brief NPC의 성격 정보 (God이 생성한 데이터)
+	 * @brief NPC의 이름을 반환하는 함수입니다.
+	 * @return NPC의 이름 (JSON에서 불러온 값)
 	 */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
-	FString NPCPersonality;
+	UFUNCTION(BlueprintCallable, Category = "NPC")
+	FString GetNPCName() const;
+
+protected:
+	/**
+	 * @auther 박시언
+	 * OpenAI API Key 불러오기
+	 */
+	FString GetAPIKey();
+
+	/**
+	 * @auther 박시언
+	 * OpenAI 응답 JSON 파싱
+	 */
+	FOpenAIResponse ParseAIResponse(FString ResponseContent);
 
 private:
 	/**
@@ -93,26 +199,6 @@ private:
 	 */
 	void RequestAIResponse(const FString& PlayerInput);
 
-	/**
-	 * @auther 박시언
-	 * @brief OpenAI API로부터 NPC의 첫 인사말 응답을 처리합니다.
-	 *
-	 * @param Request HTTP 요청 객체
-	 * @param Response HTTP 응답 객체
-	 * @param bWasSuccessful 응답 성공 여부
-	 */
-	void OnGreetingResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-
-	/**
-	 * @auther 박시언
-	 * @brief OpenAI API로부터 NPC의 일반 대화 응답을 처리합니다.
-	 *
-	 * @param Request HTTP 요청 객체
-	 * @param Response HTTP 응답 객체
-	 * @param bWasSuccessful 응답 성공 여부
-	 */
-	void OnAIResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful);
-
 public:
 	/**
 	 * @auther 박시언
@@ -126,41 +212,19 @@ public:
 
 	/**
 	 * @auther 박시언
-     * @brief NPC 간 대화 응답을 처리하는 함수입니다. (재귀 방식)
-     *
-     * @param SpeakerNPCID 현재 대화하는 NPC의 ID입니다.
-     * @param ListenerNPCID 상대 NPC의 ID입니다.
-     * @param ReceivedMessage 상대 NPC가 보낸 대사입니다.
-     * @param RemainingTurns 남은 대화 턴 수입니다.
-     */
+	 * @brief NPC 간 대화 응답을 처리하는 함수입니다. (재귀 방식)
+	 *
+	 * @param SpeakerNPCID 현재 대화하는 NPC의 ID입니다.
+	 * @param ListenerNPCID 상대 NPC의 ID입니다.
+	 * @param ReceivedMessage 상대 NPC가 보낸 대사입니다.
+	 * @param RemainingTurns 남은 대화 턴 수입니다.
+	 */
 	void ContinueNPCToNPCDialog(
 		const FString& SpeakerNPCID,
 		const FString& ListenerNPCID,
 		const FString& ReceivedMessage,
 		int RemainingTurns
 	);
-
-protected:
-	/**
-	 * @auther 박시언
-	 * @brief NPC의 첫 인사말을 생성하는 함수입니다.
-	 *
-	 * @param SpeakerNPCID 대화를 시작하는 NPC의 ID입니다.
-	 * @param ListenerNPCID 대화를 듣는 NPC의 ID입니다.
-	 * @return FString OpenAI가 생성한 첫 번째 인사말입니다.
-	 */
-	FString GenerateNPCToNPCGreeting(const FString& SpeakerNPCID, const FString& ListenerNPCID, TFunction<void(FString)> Callback);
-
-	/**
-	 * @auther 박시언
-	 * @brief NPC가 상대 NPC의 말에 대한 응답을 생성하는 함수입니다.
-	 *
-	 * @param SpeakerNPCID 대화에 응답하는 NPC의 ID입니다.
-	 * @param ListenerNPCID 상대 NPC의 ID입니다.
-	 * @param ReceivedMessage 상대 NPC가 보낸 대사입니다.
-	 * @return FString OpenAI가 생성한 NPC의 응답 대사입니다.
-	 */
-	FString GenerateNPCToNPCResponse(const FString& SpeakerNPCID, const FString& ListenerNPCID, const FString& ReceivedMessage, TFunction<void(FString)> Callback);
 
 public:
 	/**
@@ -182,7 +246,7 @@ protected:
 	 * @param NPCResponse OpenAI로부터 생성된 NPC의 대사
 	 */
 	void SendNPCResponseToServer_Implementation(const FString& NPCResponse);
-	
+
 	/**
 	 * @auther 박시언
 	 * @brief SendNPCResponseToServer의 유효성 검증 함수입니다.
@@ -193,12 +257,6 @@ protected:
 	bool SendNPCResponseToServer_Validate(const FString& NPCResponse);
 
 public:
-	/**
-	 * @auther 박시언
-	 * @brief NPC가 플레이어와 대화한 대사를 저장하는 변수입니다.
-	 */
-	UPROPERTY()
-	TArray<FString> NPCDialogueHistory;
 
 	/**
 	 * @auther 박시언
@@ -210,15 +268,6 @@ public:
 
 	/**
 	 * @auther 박시언
-	 * @brief NPC가 이전 대화를 혼잣말로 변환하는 함수입니다.
-	 *
-	 * @param Callback 혼잣말을 생성한 후 실행할 함수입니다.
-	 * @return FString 기본 혼잣말 (비동기 처리 중 반환)
-	 */
-	FString GenerateNPCMonologue(TFunction<void(FString)> Callback);
-
-	/**
-	 * @auther 박시언
 	 * @brief NPC가 혼잣말을 실행하는 함수입니다.
 	 */
 	void PerformNPCMonologue();
@@ -227,5 +276,30 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+protected:
+	// Server RPC 함수
+	/** @brief 서버에게 NPC의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
+	UFUNCTION(Server, Reliable)
+	void ServerRPCGetGreeting(const FString& NPCID);
 
+	/** @brief 서버에게 플레이어 입력에 대한 NPC의 응답을 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
+	UFUNCTION(Server, Reliable)
+	void ServerRPCGetNPCResponseP2N(const FString& NPCID, const FString& PlayerInput);
+
+	/** @brief 서버에게 N2N 대화의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
+	UFUNCTION(Server, Reliable)
+	void ServerRPCGetGreetingN2N(const FString& SpeakerNPCID, const FString& ListenerNPCID);
+
+	/** @brief 서버에게 N2N 대화의 NPC 응답을 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
+	UFUNCTION(Server, Reliable)
+	void ServerRPCGetNPCResponseN2N(const FString& SpeakerNPCID, const FString& ListenerNPCID, const FString& NPCInput);
+
+	/** @brief 서버에게 NPC 혼잣말을 생성하도록 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
+	UFUNCTION(Server, Reliable)
+	void ServerRPCGetNPCMonologue(const FString& NPCID);
+
+public:
+	// 공용 인터페이스
+	/** @brief */
+	FString GetNPCResponse(const FString& SpeakerNPCID, const FString& NPCInput, const FString& ListenerNPCID = TEXT(""));
 };
