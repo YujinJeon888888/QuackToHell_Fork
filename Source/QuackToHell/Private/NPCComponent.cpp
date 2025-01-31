@@ -44,6 +44,26 @@ void UNPCComponent::PerformNPCLogic()
 	// Base logic for NPCs (override this in child classes)
 }
 
+// NPC 이름 가져오기
+FString UNPCComponent::GetNPCName() const
+{
+	FString FilePath = PromptFilePath;
+	FString FileContent;
+
+	if (FFileHelper::LoadFileToString(FileContent, *FilePath))
+	{
+		TSharedPtr<FJsonObject> JsonObject;
+		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(FileContent);
+
+		if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
+		{
+			return JsonObject->GetStringField("name");
+		}
+	}
+
+	return TEXT("Unknown NPC");
+}
+
 // 플레이어가 NPC와 대화 시작
 void UNPCComponent::StartConversation(const FString& PlayerInput)
 {
