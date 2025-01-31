@@ -96,32 +96,32 @@ void UNPCComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 // -------------------------------------------------------------------------------------- //
 
-FString UNPCComponent::ServerRPCGetGreeting_Implementation(FString NPCID)
+void UNPCComponent::ServerRPCGetGreeting_Implementation(const FString& NPCID)
 {
-	FString GreetingResponse;
-	return GreetingResponse;
 }
 
-FString UNPCComponent::ServerRPCGetNPCResponseP2N_Implementation(FString NPCID, FString PlayerInput)
+void UNPCComponent::ServerRPCGetNPCResponseP2N_Implementation(const FString& NPCID, const FString& PlayerInput)
 {
-	FString NPCResponse;
+}
+
+void UNPCComponent::ServerRPCGetGreetingN2N_Implementation(const FString& SpeakerNPCID, const FString& ListenerNPCID)
+{
+}
+
+void UNPCComponent::ServerRPCGetNPCResponseN2N_Implementation(const FString& SpeakerNPCID, const FString& ListenerNPCID,
+	const FString& NPCInput)
+{
+}
+
+void UNPCComponent::ServerRPCGetNPCMonologue_Implementation(const FString& NPCID)
+{
+}
+
+// ------------------------------------- //
+
+FString UNPCComponent::GetNPCResponse(const FString& SpeakerNPCID, const FString& NPCInput,
+	const FString& ListenerNPCID)
+{
+	FString NPCResponse = TEXT("temp response");
 	return NPCResponse;
-}
-
-FString UNPCComponent::ServerRPCGetGreetingN2N_Implementation(FString SpeakerNPCID, FString ListenerNPCID)
-{
-	FString NPCResponse;
-	return NPCResponse;
-}
-
-FString UNPCComponent::ServerRPCGetNPCResponseN2N_Implementation(FString SpeakerNPCID, FString ListenerNPCID, FString NPCInput)
-{
-	FString NPCResponse;
-	return NPCResponse;
-}
-
-FString UNPCComponent::ServerRPCGetNPCMonologue_Implementation(FString NPCID)
-{
-	FString NPCMonologue;
-	return NPCMonologue;
 }

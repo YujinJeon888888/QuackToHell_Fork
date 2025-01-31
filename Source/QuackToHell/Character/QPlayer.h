@@ -4,9 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "QNPC.h"
-#include "Character/QCharacter.h"
 #include "QPlayer.generated.h"
-
 
 /**
  * @author 전유진 유서현
@@ -56,25 +54,41 @@ private:
 	/** @brief overlap에 들어온 대상을 담습니다. */
 	TArray<TObjectPtr<AActor>> OverlappingNPCs;
 
-private:
-	// NPC 대화와 관련된 함수
-	/** @breif 해당 NPC가 대화가능한지 check한 후 bool값 반환 */
-	UFUNCTION(Server, Reliable)
-	bool ServerRPCCanStartConversP2N(TObjectPtr<AQNPC> NPC);
+protected:
+	// NPC 대화
+	UPROPERTY(Replicated)
+	bool bCanStartConversP2N = false;
 
-	/** @brief 해당 NPC와의 대화를 마칠 수 있는 check한 후 bool값 반환 */
+	UPROPERTY(Replicated)
+	bool bCanFinishConversP2N = false;
+
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
+	/** @breif 해당 NPC와 대화가능한지 check한 후 내부적으로 bCanStartConversP2N 값 업데이트 */
 	UFUNCTION(Server, Reliable)
-	bool ServerRPCCanFinishConversP2N(TObjectPtr<AQNPC> NPC);
+	void ServerRPCCanStartConversP2N(const AQNPC* NPC);
 	
-	/** @brief NPC와의 대화 시작.
-	 * 혹시라도 예기치 못한 오류로 대화를 시작하지 못하였다면 false 반환
-	 */
+	/** @brief 해당 NPC와의 대화를 마칠 수 있는 check한 후 내부적으로 bCanFinishConversP2N 값 업데이트 */
 	UFUNCTION(Server, Reliable)
-	bool ServerRPCStartConversation(TObjectPtr<AQNPC> NPC);
+	void ServerRPCCanFinishConversP2N(const AQNPC* NPC);
+	
+	/** @brief NPC와의 대화 시작. 혹시라도 예기치 못한 오류로 대화를 시작하지 못하였다면 false 반환 */
+	UFUNCTION(Server, Reliable)
+	void ServerRPCStartConversation(const AQNPC* NPC);
 
-	/** @brief NPC와의 대화 마무리
-	 * 혹시라도 예기치 못한 오류로 대화를 마치지 못하였다면 false 반환
-	 */
+	/** @brief NPC와의 대화 마무리 혹시라도 예기치 못한 오류로 대화를 마치지 못하였다면 false 반환 */
 	UFUNCTION(Server, Reliable)
-	bool ServerRPCFinishConversation(TObjectPtr<AQNPC> NPC);
+	void ServerRPCFinishConversation(const AQNPC* NPC);
+
+public:
+	// 공용 인터페이스
+	/** @brief NPC와의 대화가 가능한지에 대한 Getter*/
+	bool GetCanStartConversP2N(const AQNPC* NPC);
+	/** @brief NPC와의 대화를 마칠 수 있는지에 대한 Getter*/
+	bool GetCanFinishConversP2N(const AQNPC* NPC);
+
+	/** @brief NPC와의 대화 시작 공용 인터페이스*/
+	void StartConversation(const AQNPC* NPC);
+	/** @brief NPC와의 대화 마무리 공용 인터페이스*/
+	void FinishConversation(const AQNPC* NPC);
 };
