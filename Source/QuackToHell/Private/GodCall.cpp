@@ -7,11 +7,9 @@
 // Sets default values for this component's properties
 UGodCall::UGodCall()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
+	
 	PrimaryComponentTick.bCanEverTick = true;
 
-	// ...
 }
 
 
@@ -20,14 +18,20 @@ void UGodCall::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
 }
 
 void UGodCall::StartGodProcess()
 {
-	FString PromptData = UGodFunction::LoadPromptData();
-	UE_LOG(LogTemp, Log, TEXT("God Generated Data: %s"), *PromptData);
+    FString PromptData = UGodFunction::LoadPromptData();
+    if (!PromptData.Contains(TEXT("Error")))
+    {
+        UGodFunction::GenerateNPCDataFromOpenAI();
+        UE_LOG(LogTemp, Log, TEXT("God process started. Generating NPC data..."));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to start God process: Could not load PromptToGod.json"));
+    }
 }
 
 // Called every frame
@@ -35,6 +39,5 @@ void UGodCall::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompone
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
 }
 

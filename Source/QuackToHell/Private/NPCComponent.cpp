@@ -90,18 +90,20 @@ void UNPCComponent::RequestGreetingFromAI()
 // OpenAI 첫 인사 응답 처리
 void UNPCComponent::OnGreetingResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
+	FString AIResponse = TEXT("..."); // 기본값 설정 (OpenAI 응답 실패 시)
+
 	if (bWasSuccessful && Response.IsValid())
 	{
-		FString AIResponse = Response->GetContentAsString();
+		AIResponse = Response->GetContentAsString();
 		UE_LOG(LogTemp, Log, TEXT("NPC Greeting Response: %s"), *AIResponse);
-
-		// 첫 인사말을 서버로 전달
-		SendNPCResponseToServer(AIResponse);
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to get NPC greeting response from OpenAI."));
 	}
+
+	// 첫 인사말을 서버로 전달
+	SendNPCResponseToServer(AIResponse);
 }
 
 // OpenAI API에 일반 대화 요청
@@ -126,18 +128,21 @@ void UNPCComponent::RequestAIResponse(const FString& PlayerInput)
 // OpenAI 일반 대화 응답 처리
 void UNPCComponent::OnAIResponseReceived(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 {
+	FString AIResponse = TEXT("..."); // 기본값 설정 (OpenAI 응답 실패 시)
+
 	if (bWasSuccessful && Response.IsValid())
 	{
-		FString AIResponse = Response->GetContentAsString();
+		AIResponse = Response->GetContentAsString();
 		UE_LOG(LogTemp, Log, TEXT("OpenAI Response: %s"), *AIResponse);
-
-		// 서버로 응답 전달
-		SendNPCResponseToServer(AIResponse);
 	}
+
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to get OpenAI response."));
 	}
+
+	// 서버로 응답 전달
+	SendNPCResponseToServer(AIResponse);
 }
 
 // NPC 간 대화 시작 (콜백 방식 적용)
