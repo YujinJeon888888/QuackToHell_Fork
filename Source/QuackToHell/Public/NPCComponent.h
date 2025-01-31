@@ -231,24 +231,28 @@ public:
 
 protected:
 	// Server RPC 함수
-
-	/** @brief 서버에게 NPC의 시작멘트를 요청한다 */
+	/** @brief 서버에게 NPC의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
 	UFUNCTION(Server, Reliable)
-	FString ServerRPCGetGreeting(FString NPCID);
+	void ServerRPCGetGreeting(const FString& NPCID);
 
-	/** @brief 서버에게 플레이어 입력에 대한 NPC의 응답을 요청한다. */
+	/** @brief 서버에게 플레이어 입력에 대한 NPC의 응답을 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
 	UFUNCTION(Server, Reliable)
-	FString ServerRPCGetNPCResponseP2N(FString NPCID, FString PlayerInput);
+	void ServerRPCGetNPCResponseP2N(const FString& NPCID, const FString& PlayerInput);
 	
-	/** @brief 서버에게 N2N 대화의 시작멘트를 요청한다 */
+	/** @brief 서버에게 N2N 대화의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
 	UFUNCTION(Server, Reliable)
-	FString ServerRPCGetGreetingN2N(FString SpeakerNPCID, FString ListenerNPCID);
+	void ServerRPCGetGreetingN2N(const FString& SpeakerNPCID, const FString& ListenerNPCID);
 
-	/** @brief 서버에게 N2N 대화의 NPC 응답을 요청한다. */
+	/** @brief 서버에게 N2N 대화의 NPC 응답을 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
 	UFUNCTION(Server, Reliable)
-	FString ServerRPCGetNPCResponseN2N(FString SpeakerNPCID, FString ListenerNPCID, FString NPCInput);
+	void ServerRPCGetNPCResponseN2N(const FString& SpeakerNPCID, const FString& ListenerNPCID, const FString& NPCInput);
 
-	/** @brief 서버에게 NPC 혼잣말을 생성하도록 요청한다. */
+	/** @brief 서버에게 NPC 혼잣말을 생성하도록 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
 	UFUNCTION(Server, Reliable)
-	FString ServerRPCGetNPCMonologue(FString NPCID);
+	void ServerRPCGetNPCMonologue(const FString& NPCID);
+
+public:
+	// 공용 인터페이스
+	/** @brief */
+	FString GetNPCResponse(const FString& SpeakerNPCID, const FString& NPCInput, const FString& ListenerNPCID = TEXT("")); 
 };
