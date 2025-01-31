@@ -281,7 +281,7 @@ FString UNPCComponent::GenerateNPCMonologue(TFunction<void(FString)> Callback)
 	// 최근 대화가 없다면 기본값 반환
 	if (NPCDialogueHistory.Num() == 0)
 	{
-		return TEXT("...");
+		return TEXT("");
 	}
 
 	// 가장 최근 대화를 가져옴
@@ -306,15 +306,19 @@ FString UNPCComponent::GenerateNPCMonologue(TFunction<void(FString)> Callback)
 	Request->SetContentAsString(PostData);
 
 	// 기본 반환값
-	FString DefaultMonologue = TEXT("응...?");
+	FString DefaultMonologue = TEXT("...");
 
 	// 응답을 받으면 콜백 실행
 	Request->OnProcessRequestComplete().BindLambda([Callback](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 		{
-			FString Monologue = TEXT("음...");
+			FString Monologue = TEXT("...");
 			if (bWasSuccessful && Response.IsValid())
 			{
 				Monologue = Response->GetContentAsString();
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Failed to generate monologue.")); // 디버깅용 로그 출력
 			}
 			Callback(Monologue); // 콜백 실행
 		});
