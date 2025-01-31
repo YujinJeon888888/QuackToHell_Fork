@@ -25,6 +25,11 @@ public:
     *
     */
     void EndDialog();
+    /**
+     * @brief 입력에 대해 대답하라는 요구를 처리합니다.
+     * @param query을 인자로 넣습니다.
+     */
+    void Response(FString& Text);
 protected:
     virtual void BeginPlay() override;
 

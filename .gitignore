@@ -6,8 +6,8 @@
 *.d
 ###########################################
 # 에셋 파일 무시
-Content/Art/**/*.uasset
-Content/Art/**/*.umap
+# Ignore Maps folder
+Content/Art/Maps/
 
 ###########################################
 
