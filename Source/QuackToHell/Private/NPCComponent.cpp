@@ -94,3 +94,34 @@ void UNPCComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	// ...
 }
 
+// -------------------------------------------------------------------------------------- //
+
+FString UNPCComponent::ServerRPCGetGreeting_Implementation(FString NPCID)
+{
+	FString GreetingResponse;
+	return GreetingResponse;
+}
+
+FString UNPCComponent::ServerRPCGetNPCResponseP2N_Implementation(FString NPCID, FString PlayerInput)
+{
+	FString NPCResponse;
+	return NPCResponse;
+}
+
+FString UNPCComponent::ServerRPCGetGreetingN2N_Implementation(FString SpeakerNPCID, FString ListenerNPCID)
+{
+	FString NPCResponse;
+	return NPCResponse;
+}
+
+FString UNPCComponent::ServerRPCGetNPCResponseN2N_Implementation(FString SpeakerNPCID, FString ListenerNPCID, FString NPCInput)
+{
+	FString NPCResponse;
+	return NPCResponse;
+}
+
+FString UNPCComponent::ServerRPCGetNPCMonologue_Implementation(FString NPCID)
+{
+	FString NPCMonologue;
+	return NPCMonologue;
+}

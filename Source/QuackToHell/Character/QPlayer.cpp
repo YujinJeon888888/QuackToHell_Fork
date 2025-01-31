@@ -92,6 +92,48 @@ void AQPlayer::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 	}
 }
 
+// -------------------------------------------------------------------------------------------------------- //
 
+bool AQPlayer::ServerRPCCanStartConversP2N_Implementation(TObjectPtr<AQNPC> NPC)
+{
+	// NPC null체크
+	if (NPC == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("NPC is null"));
+		return false;
+	}
+	return true;
+}
 
+bool AQPlayer::ServerRPCCanFinishConversP2N_Implementation(TObjectPtr<AQNPC> NPC)
+{
+	// NPC null체크
+	if (NPC == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("NPC is null"));
+		return false;
+	}
+	return true;
+}
 
+bool AQPlayer::ServerRPCStartConversation_Implementation(TObjectPtr<AQNPC> NPC)
+{
+	// NPC null체크
+	if (NPC == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("NPC is null"));
+		return false;
+	}
+	return true;
+}
+
+bool AQPlayer::ServerRPCFinishConversation_Implementation(TObjectPtr<AQNPC> NPC)
+{
+	// NPC null체크
+	if (NPC == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("NPC is null"));
+		return false;
+	}
+	return true;
+}

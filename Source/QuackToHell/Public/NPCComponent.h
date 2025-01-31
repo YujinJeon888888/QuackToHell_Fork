@@ -8,7 +8,9 @@
 #include "Interfaces/IHttpResponse.h"
 #include "NPCComponent.generated.h"
 
-
+/**
+ * @author 유서현
+ */
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class QUACKTOHELL_API UNPCComponent : public UActorComponent
 {
@@ -53,5 +55,26 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+protected:
+	// Server RPC 함수
 
+	/** @brief 서버에게 NPC의 시작멘트를 요청한다 */
+	UFUNCTION(Server, Reliable)
+	FString ServerRPCGetGreeting(FString NPCID);
+
+	/** @brief 서버에게 플레이어 입력에 대한 NPC의 응답을 요청한다. */
+	UFUNCTION(Server, Reliable)
+	FString ServerRPCGetNPCResponseP2N(FString NPCID, FString PlayerInput);
+	
+	/** @brief 서버에게 N2N 대화의 시작멘트를 요청한다 */
+	UFUNCTION(Server, Reliable)
+	FString ServerRPCGetGreetingN2N(FString SpeakerNPCID, FString ListenerNPCID);
+
+	/** @brief 서버에게 N2N 대화의 NPC 응답을 요청한다. */
+	UFUNCTION(Server, Reliable)
+	FString ServerRPCGetNPCResponseN2N(FString SpeakerNPCID, FString ListenerNPCID, FString NPCInput);
+
+	/** @brief 서버에게 NPC 혼잣말을 생성하도록 요청한다. */
+	UFUNCTION(Server, Reliable)
+	FString ServerRPCGetNPCMonologue(FString NPCID);
 };

@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "QNPC.h"
 #include "Character/QCharacter.h"
 #include "QPlayer.generated.h"
 
 
 /**
- * @author 전유진
+ * @author 전유진 유서현
  * @brief 플레이어 캐릭터 클래스입니다.
  */
 UCLASS()
@@ -55,4 +56,25 @@ private:
 	/** @brief overlap에 들어온 대상을 담습니다. */
 	TArray<TObjectPtr<AActor>> OverlappingNPCs;
 
+private:
+	// NPC 대화와 관련된 함수
+	/** @breif 해당 NPC가 대화가능한지 check한 후 bool값 반환 */
+	UFUNCTION(Server, Reliable)
+	bool ServerRPCCanStartConversP2N(TObjectPtr<AQNPC> NPC);
+
+	/** @brief 해당 NPC와의 대화를 마칠 수 있는 check한 후 bool값 반환 */
+	UFUNCTION(Server, Reliable)
+	bool ServerRPCCanFinishConversP2N(TObjectPtr<AQNPC> NPC);
+	
+	/** @brief NPC와의 대화 시작.
+	 * 혹시라도 예기치 못한 오류로 대화를 시작하지 못하였다면 false 반환
+	 */
+	UFUNCTION(Server, Reliable)
+	bool ServerRPCStartConversation(TObjectPtr<AQNPC> NPC);
+
+	/** @brief NPC와의 대화 마무리
+	 * 혹시라도 예기치 못한 오류로 대화를 마치지 못하였다면 false 반환
+	 */
+	UFUNCTION(Server, Reliable)
+	bool ServerRPCFinishConversation(TObjectPtr<AQNPC> NPC);
 };
