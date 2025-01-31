@@ -46,16 +46,27 @@ void UGodFunction::GenerateNPCDataFromOpenAI()
             if (bWasSuccessful && Response.IsValid())
             {
                 FString AIResponse = Response->GetContentAsString();
-                FString SavePath = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("Prompts/GeneratedNPCData.json"));
+                FString ContentPath = FPaths::ProjectContentDir();
 
-                if (FFileHelper::SaveStringToFile(AIResponse, *SavePath))
+                // 피고인(Defendant) JSON 저장
+                FString DefendantPath = FPaths::Combine(ContentPath, TEXT("Prompts/JsonOfDefendant.json"));
+                FFileHelper::SaveStringToFile(AIResponse, *DefendantPath);
+
+                // 배심원(Jury) JSON 저장 (3명)
+                for (int i = 1; i <= 3; i++)
                 {
-                    UE_LOG(LogTemp, Log, TEXT("Generated NPC data saved successfully."));
+                    FString JuryPath = FPaths::Combine(ContentPath, FString::Printf(TEXT("Prompts/JsonOfJury%d.json"), i));
+                    FFileHelper::SaveStringToFile(AIResponse, *JuryPath);
                 }
-                else
+
+                // 주민(Resident) JSON 저장 (4명)
+                for (int i = 1; i <= 4; i++)
                 {
-                    UE_LOG(LogTemp, Error, TEXT("Failed to save NPC data."));
+                    FString ResidentPath = FPaths::Combine(ContentPath, FString::Printf(TEXT("Prompts/JsonOfResident%d.json"), i));
+                    FFileHelper::SaveStringToFile(AIResponse, *ResidentPath);
                 }
+
+                UE_LOG(LogTemp, Log, TEXT("Generated NPC data saved successfully."));
             }
             else
             {
