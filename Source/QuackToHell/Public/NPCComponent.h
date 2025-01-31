@@ -61,6 +61,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
 	FString NPCPersonality;
 
+public:
+	/**
+	 * @brief NPC의 이름을 반환하는 함수입니다.
+	 * @return NPC의 이름 (JSON에서 불러온 값)
+	 */
+	UFUNCTION(BlueprintCallable, Category = "NPC")
+	FString GetNPCName() const;
+
 private:
 	/**
 	 * @auther 박시언
