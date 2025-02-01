@@ -3,12 +3,16 @@
 
 #include "Character/QPlayer.h"
 #include "Camera/CameraComponent.h"
+#include "QLogCategories.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/PrimitiveComponent.h"
+#include "UI/QNameWidget.h"
 #include "Character/QNPC.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "Net/UnrealNetwork.h"
 
 
@@ -44,6 +48,8 @@ AQPlayer::AQPlayer()
 	this->GetMesh()->SetRelativeRotation(FRotator(0.f, 0.f, -90.f));
 	/*캡슐 콜라이더 세팅*/
 	this->GetCapsuleComponent()->InitCapsuleSize(21.0f, 21.0f);
+
+
 }
 
 TObjectPtr<AActor> AQPlayer::GetClosestNPC()
@@ -72,7 +78,16 @@ TObjectPtr<AActor> AQPlayer::GetClosestNPC()
 void AQPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	UE_LOG(LogLogic, Log, TEXT("Player의Beginplay호출"));
+	/*이름 세팅*/
+	FString _Name = TEXT("플레이어");
+	this->SetCharacterName(_Name);
+	NameToNameWidget();
+}
+
+void AQPlayer::NameToNameWidget()
+{
+	Super::NameWidget->SetNameWidgetText(Super::GetCharacterName());
 }
 
 void AQPlayer::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -92,6 +107,9 @@ void AQPlayer::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 		OverlappingNPCs.Remove(OtherActor);
 	}
 }
+
+
+
 
 // -------------------------------------------------------------------------------------------------------- //
 void AQPlayer::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
