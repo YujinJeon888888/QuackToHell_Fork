@@ -17,7 +17,16 @@ class QUACKTOHELL_API AQNPC : public AQCharacter
 
 public:
 	AQNPC();
-
+public:
+	// 공용 인터페이스
+	/** @brief N2N 대화가 가능한지에 대한 Getter*/
+	bool GetCanStartConversN2N(const AQNPC* NPC);
+	/** @brief NPC와의 대화를 마칠 수 있는지에 대한 Getter*/
+	bool GetCanFinishConversN2N(const AQNPC* NPC);
+protected:
+	virtual void BeginPlay() override;
+	/** @brief 이름을 namewidget에 반영합니다. */
+	virtual void NameToNameWidget();
 private:
 	// NPC 대화
 	UPROPERTY(Replicated)
@@ -34,10 +43,9 @@ private:
 	UFUNCTION(Server, Reliable)
 	void ServerRPCCanCanFinishConversN2N(const AQNPC* NPC);
 
-public:
-	// 공용 인터페이스
-	/** @brief N2N 대화가 가능한지에 대한 Getter*/
-	bool GetCanStartConversN2N(const AQNPC* NPC);
-	/** @brief NPC와의 대화를 마칠 수 있는지에 대한 Getter*/
-	bool GetCanFinishConversN2N(const AQNPC* NPC);
+
 };
+
+
+
+
