@@ -14,7 +14,17 @@ UCLASS()
 class QUACKTOHELL_API AQPlayer : public AQCharacter
 {
 	GENERATED_BODY()
+public:
+	// 공용 인터페이스
+	/** @brief NPC와의 대화가 가능한지에 대한 Getter*/
+	bool GetCanStartConversP2N(const AQNPC* NPC);
+	/** @brief NPC와의 대화를 마칠 수 있는지에 대한 Getter*/
+	bool GetCanFinishConversP2N(const AQNPC* NPC);
 
+	/** @brief NPC와의 대화 시작 공용 인터페이스*/
+	void StartConversation(const AQNPC* NPC);
+	/** @brief NPC와의 대화 마무리 공용 인터페이스*/
+	void FinishConversation(const AQNPC* NPC);
 public:
 	AQPlayer();
 	/**
@@ -23,8 +33,12 @@ public:
 	 * @return 캐릭터 기준 가장 가까이 있는 npc
 	 */
 	TObjectPtr<AActor> GetClosestNPC();
+
+
 protected:
 	virtual void BeginPlay() override;
+	/** @brief 이름을 namewidget에 반영합니다. */
+	virtual void NameToNameWidget();
 	/**
 	 * @brief 스프링암 컴포넌트입니다.
 	 */
@@ -35,6 +49,7 @@ protected:
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UCameraComponent> CameraComponent;
+	
 	/**
 	 * @brief Sphere 컴포넌트입니다. 플레이어를 기준으로 원형을 그려 트리거를 탐지합니다.
 	 */
@@ -45,15 +60,6 @@ protected:
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Interaction")
 	float SphereRadius = 500.f;
-private:
-	UFUNCTION()
-	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	/** @brief overlap에 들어온 대상을 담습니다. */
-	TArray<TObjectPtr<AActor>> OverlappingNPCs;
-
 protected:
 	// NPC 대화
 	UPROPERTY(Replicated)
@@ -67,11 +73,11 @@ protected:
 	/** @breif 해당 NPC와 대화가능한지 check한 후 내부적으로 bCanStartConversP2N 값 업데이트 */
 	UFUNCTION(Server, Reliable)
 	void ServerRPCCanStartConversP2N(const AQNPC* NPC);
-	
+
 	/** @brief 해당 NPC와의 대화를 마칠 수 있는 check한 후 내부적으로 bCanFinishConversP2N 값 업데이트 */
 	UFUNCTION(Server, Reliable)
 	void ServerRPCCanFinishConversP2N(const AQNPC* NPC);
-	
+
 	/** @brief NPC와의 대화 시작. 혹시라도 예기치 못한 오류로 대화를 시작하지 못하였다면 false 반환 */
 	UFUNCTION(Server, Reliable)
 	void ServerRPCStartConversation(const AQNPC* NPC);
@@ -79,16 +85,13 @@ protected:
 	/** @brief NPC와의 대화 마무리 혹시라도 예기치 못한 오류로 대화를 마치지 못하였다면 false 반환 */
 	UFUNCTION(Server, Reliable)
 	void ServerRPCFinishConversation(const AQNPC* NPC);
+private:
+	UFUNCTION()
+	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-public:
-	// 공용 인터페이스
-	/** @brief NPC와의 대화가 가능한지에 대한 Getter*/
-	bool GetCanStartConversP2N(const AQNPC* NPC);
-	/** @brief NPC와의 대화를 마칠 수 있는지에 대한 Getter*/
-	bool GetCanFinishConversP2N(const AQNPC* NPC);
+	UFUNCTION()
+	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	/** @brief overlap에 들어온 대상을 담습니다. */
+	TArray<TObjectPtr<AActor>> OverlappingNPCs;
 
-	/** @brief NPC와의 대화 시작 공용 인터페이스*/
-	void StartConversation(const AQNPC* NPC);
-	/** @brief NPC와의 대화 마무리 공용 인터페이스*/
-	void FinishConversation(const AQNPC* NPC);
 };

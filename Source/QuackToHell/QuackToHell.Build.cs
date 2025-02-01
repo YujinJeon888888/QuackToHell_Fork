@@ -10,9 +10,8 @@ public class QuackToHell : ModuleRules
 		
 		PublicIncludePaths.AddRange(new string[]{"QuackToHell"});
 
-        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "NavigationSystem", "AIModule", "EnhancedInput", "GameplayTags", "HTTP", "Json", "JsonUtilities" });
+        PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "NavigationSystem", "AIModule", "EnhancedInput", "GameplayTags", "HTTP", "Json", "JsonUtilities", "Slate", "SlateCore", "UMG" });
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "UMG" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
