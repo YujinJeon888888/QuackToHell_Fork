@@ -313,6 +313,17 @@ void UNPCComponent::PerformNPCMonologue()
 
 }
 
+FString UNPCComponent::GetLastDialogue() const
+{
+	if (LastDialogue.IsEmpty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No dialogue available in NPCComponent."));
+		return TEXT("...");
+	}
+
+	return LastDialogue;
+}
+
 // 서버로 NPC의 응답을 보내는 RPC 함수
 void UNPCComponent::SendNPCResponseToServer_Implementation(const FString& NPCResponse)
 {

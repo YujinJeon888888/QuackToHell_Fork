@@ -168,6 +168,9 @@ protected:
 	 */
 	FOpenAIResponse ParseAIResponse(FString ResponseContent);
 
+	/** @brief NPC의 마지막 대사 */
+	FString LastDialogue;
+
 private:
 	/**
 	 * @auther 박시언
@@ -229,7 +232,14 @@ public:
 		int RemainingTurns
 	);
 
-public:
+	public:
+		/**
+		 * @auther 박시언
+		 * @brief NPC의 마지막 대사를 반환하는 함수 (NPCController에서 호출 가능)
+		 * @return NPC가 마지막으로 생성한 대사 (FString)
+		 */
+		FString GetLastDialogue() const;
+
 	/**
 	 * @auther 박시언
 	 * @brief NPC의 응답을 서버로 보내는 RPC 함수입니다.
