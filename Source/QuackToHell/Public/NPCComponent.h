@@ -280,6 +280,11 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
+	// Client RPC 함수
+	/** @brief 클라이언트가 NPC의 응답을 받는 함수 (서버에서 호출됨) */
+	UFUNCTION(Client, Reliable)
+	void ClientRPCReceiveNPCResponse(const FString& PlayerName, const FString& NPCResponse);
+	
 	// Server RPC 함수
 	/** @brief 서버에게 NPC의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
 	UFUNCTION(Server, Reliable)
@@ -288,11 +293,11 @@ protected:
 	/** @brief 서버에게 플레이어 입력에 대한 NPC의 응답을 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
 	UFUNCTION(Server, Reliable)
 	void ServerRPCGetNPCResponseP2N(const FString& NPCID, const FString& PlayerInput);
-<<<<<<< HEAD
+// <<<<<<< HEAD
 	
-=======
+// =======
 
->>>>>>> origin/SCRUM-433_A_NPCConversation
+// >>>>>>> origin/SCRUM-433_A_NPCConversation
 	/** @brief 서버에게 N2N 대화의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
 	UFUNCTION(Server, Reliable)
 	void ServerRPCGetGreetingN2N(const FString& SpeakerNPCID, const FString& ListenerNPCID);
@@ -308,9 +313,9 @@ protected:
 public:
 	// 공용 인터페이스
 	/** @brief */
-<<<<<<< HEAD
+// <<<<<<< HEAD
 	FString GetNPCResponse(const FString& SpeakerNPCID, const FString& NPCInput, const FString& ListenerNPCID = TEXT("")); 
-=======
+// =======
 	FString GetNPCResponse(const FString& SpeakerNPCID, const FString& NPCInput, const FString& ListenerNPCID = TEXT(""));
->>>>>>> origin/SCRUM-433_A_NPCConversation
+// >>>>>>> origin/SCRUM-433_A_NPCConversation
 };
