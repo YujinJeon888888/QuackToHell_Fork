@@ -123,6 +123,7 @@ void AQPlayer::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLi
 
 void AQPlayer::ServerRPCCanStartConversP2N_Implementation(const AQNPC* NPC)
 {
+
 }
 
 void AQPlayer::ServerRPCCanFinishConversP2N_Implementation(const AQNPC* NPC)
