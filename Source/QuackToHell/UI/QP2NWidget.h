@@ -20,11 +20,16 @@ public:
 	 * @brief 대화상자의 글씨를 업데이트합니다.
 	 * @param 새로 띄울 텍스트를 인자로 넣습니다.
 	 */
+<<<<<<< HEAD
 	void UpdatePlayerText(const FString& Text);
+=======
+	void UpdatePlayerText(FString& Text);
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
 	/**
 	 * @brief 대화상자의 글씨를 업데이트합니다.
 	 * @param 새로 띄울 텍스트를 인자로 넣습니다.
 	 */
+<<<<<<< HEAD
 	UFUNCTION(BlueprintCallable)
 	void UpdatePlayerText(const FText& Text);
 	/**
@@ -56,6 +61,9 @@ public:
 	/** @brief 종료버튼 눌렸을때의 처리; */
 	UFUNCTION(BlueprintCallable)
 	void HandleEnterEndButton();
+=======
+	void UpdateNPCText(FString& Text);
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
 private:
 	/**
 	 * @brie PlayerText 컴포넌트 바인드
@@ -67,6 +75,7 @@ private:
 	 */
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> NPCText;
+<<<<<<< HEAD
 	/**
 	 * @brie inputBox 컴포넌트 바인드
 	 */
@@ -83,6 +92,8 @@ private:
 	/** @brief 응답생성중일때의 멘트 */
 	const FString WhenGenerateResponseText = "음...";
 
+=======
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
 };
 
 

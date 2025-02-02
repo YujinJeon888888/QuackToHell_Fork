@@ -2,6 +2,7 @@
 
 
 #include "UI/QP2NWidget.h"
+<<<<<<< HEAD
 #include "Components/EditableTextBox.h"
 #include "NPC/QNPCController.h"
 #include "QLogCategories.h"
@@ -15,6 +16,18 @@
 void UQP2NWidget::UpdatePlayerText(const FString& Text)
 {
 	PlayerText->SetText(FText::FromString(Text));
+=======
+#include "Components/TextBlock.h"
+
+void UQP2NWidget::UpdatePlayerText(FString& Text)
+{
+	PlayerText->SetText(FText::FromString(Text));
+}
+
+void UQP2NWidget::UpdateNPCText(FString& Text)
+{
+	NPCText->SetText(FText::FromString(Text));
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
 }
 
 void UQP2NWidget::UpdatePlayerText(const FText& Text)

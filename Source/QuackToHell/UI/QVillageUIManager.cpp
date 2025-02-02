@@ -4,9 +4,14 @@
 #include "UI/QVillageUIManager.h"
 #include "UI/QP2NWidget.h"
 #include "Kismet/GameplayStatics.h"
+<<<<<<< HEAD
 
 #include "QLogCategories.h"
 
+=======
+#include "QLogCategories.h"
+
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
 TObjectPtr<AQVillageUIManager> AQVillageUIManager::Instance = nullptr;
 
 // Sets default values
@@ -82,7 +87,11 @@ void AQVillageUIManager::DestroyAllUI()
 void AQVillageUIManager::OnMapLoad()
 {
 	FString CurrentMap = UGameplayStatics::GetCurrentLevelName(this);
+<<<<<<< HEAD
 	//TODO: 마을맵으로바꾸기  / 마을맵이면 기본으로 활성화 할 것들
+=======
+	//마을맵이면 기본으로 활성화 할 것들
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
 	if (CurrentMap == "ClinetTestMap") {
 		//TODO: 기본 마을 UI들 띄운다 (초기화작업)
 		TurnOnUI(EVillageUIType::P2N);
@@ -108,6 +117,10 @@ void AQVillageUIManager::TurnOnUI(EVillageUIType UIType)
 {
 	if (ActiveWidgets.Contains(UIType)) {
 		ActiveWidgets[UIType]->SetVisibility(ESlateVisibility::Visible);
+<<<<<<< HEAD
+=======
+		
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
 		return;
 	}
 	if (!UIWidgetClasses[UIType]) {
