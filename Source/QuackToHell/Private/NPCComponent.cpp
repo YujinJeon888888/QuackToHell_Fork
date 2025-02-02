@@ -344,18 +344,6 @@ void UNPCComponent::SendNPCResponseToServer_Implementation(const FString& NPCRes
 	{
 
 		FString PlayerName = TEXT("Unknown Player");  // 기본값 설정
-
-		for (APlayerController* PlayerController : TActorRange<APlayerController>(GetWorld()))
-		{
-			if (PlayerController)
-			{
-				PlayerName = PlayerController->GetName();  // 루프 내에서 값 변경
-				ClientRPCReceiveNPCResponse(PlayerName, NPCResponse);
-			}
-		}
-
-		UE_LOG(LogTemp, Log, TEXT("%s received NPC response: %s"), *PlayerName, *NPCResponse);
-
 		UE_LOG(LogTemp, Log, TEXT("Sending NPC response to server: %s"), *NPCResponse);
 
 		// 클라이언트에게도 응답을 전송
@@ -363,7 +351,6 @@ void UNPCComponent::SendNPCResponseToServer_Implementation(const FString& NPCRes
 
 		// 델리게이트를 활용하여 브로드캐스트 (서버 & 클라이언트에 전달)
 		OnNPCResponseReceived.Broadcast(NPCResponse);
-
 	}
 }
 
