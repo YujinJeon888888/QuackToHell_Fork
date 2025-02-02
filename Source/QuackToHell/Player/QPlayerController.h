@@ -115,17 +115,17 @@ private:
 	/**
 	 * @brief 몸을 멈춥니다.
 	 */
-	UFUNCTION(Client,Reliable)
 	void FreezePawn();
+	
 	/**
 	 * @brief 몸을 얼음땡 합니다.
 	 */
-	UFUNCTION(Client, Reliable)
 	void UnFreezePawn();
 	/**
-	 * @brief 플레이어 상태를 들고 있습니다. 상태에 따른 논리변화에 활용됩니다.
+	 * @brief 대화중일때의 처리를 구현합니다. 1. 몸 멈추기 2. 대화상태로 전환하기
 	 */
-	TObjectPtr<class AQPlayerState> PlayerState;
+	void ConverseProcess(TObjectPtr<class AQNPC> NPC);
+
 };
 
 

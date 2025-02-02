@@ -69,9 +69,7 @@ void AQPlayerController::InputConversingQuit(const FInputActionValue& InputValue
 		/** @todo 상호작용 유형별로 나누기 */
 		//대화중단해라
 		//상태조건: 내가 대화중일 때.
-		if (PlayerState->HasStateTag(QGameplayTags::GetTag(EQGameplayTags::Conversing))) {
-			this->EndDialog();
-		}
+		
 	}
 }
 
@@ -82,27 +80,29 @@ void AQPlayerController::InputEnableConversingQuit(const FInputActionValue& Inpu
 
 void AQPlayerController::StartDialog()
 {
-	//0. 대화중이라고 상태전환
-	FGameplayTag ConversingTag = QGameplayTags::GetTag(EQGameplayTags::Conversing);
-	PlayerState->AddStateTag(ConversingTag);
-	UE_LOG(LogLogic, Log, TEXT("플레이어 상태 변경: 대화 중"));
 
-	//1. 상대방 NPC를 불러옴
+	//0. 상대방 NPC를 불러옴
 	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
-	//2. 상대방 NPC의 컨트롤러를 불러옴
 	TObjectPtr<AQNPC> NPC = Cast<AQNPC>(_Player->GetClosestNPC());
-	TObjectPtr<AQNPCController> NPCController = Cast<AQNPCController>(NPC->GetController());
-	
-	//3. 대화 시작하라고 명령한다.
-	NPCController->StartDialog();
+	//1. 대화 가능한지 check
+	if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
+	{
+		//2. 상대방 NPC의 컨트롤러를 불러옴
+		TObjectPtr<AQNPCController> NPCController = Cast<AQNPCController>(NPC->GetController());
+
+		//3. 대화 시작하라고 명령한다.
+		NPCController->StartDialog();
+
+		//4. 플레이어를 대화처리한다.
+		this->ConverseProcess(NPC);
+	}
+
+
 }
 
 void AQPlayerController::EndDialog()
 {
 	//0. 대화중의 상태를 remove
-	FGameplayTag ConversingTag = QGameplayTags::GetTag(EQGameplayTags::Conversing);
-	PlayerState->RemoveStateTag(ConversingTag);
-	UE_LOG(LogLogic, Log, TEXT("플레이어 상태 변경: 대화x"));
 
 	//1. 상대방 NPC를 불러옴
 	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
@@ -122,12 +122,21 @@ void AQPlayerController::TurnOffPlayer2NSpeechBubble()
 {
 }
 
-void AQPlayerController::FreezePawn_Implementation()
+void AQPlayerController::FreezePawn()
 {
 }
 
-void AQPlayerController::UnFreezePawn_Implementation()
+void AQPlayerController::UnFreezePawn()
 {
+}
+
+void AQPlayerController::ConverseProcess(TObjectPtr<AQNPC> NPC)
+{
+	//1. 몸 멈추기
+	FreezePawn();
+	//2. 대화상태로 전환
+	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
+	_Player->StartConversation(NPC);
 }
 
 void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
@@ -142,9 +151,7 @@ void AQPlayerController::InputInteraction(const FInputActionValue& InputValue)
 		/** @todo 상호작용 유형별로 나누기 */
 		//대화시작해라
 		//상태조건: 내가 대화중이 아닐 때.
-		if (!PlayerState->HasStateTag(QGameplayTags::GetTag(EQGameplayTags::Conversing))) {
-			this->StartDialog();
-		}
+		
 	}
 }
 
