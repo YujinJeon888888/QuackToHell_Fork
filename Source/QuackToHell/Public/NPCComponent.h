@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
+#include "Delegates/DelegateCombinations.h"
 #include "NPCComponent.generated.h"
 
 /**
@@ -63,6 +64,9 @@ struct FOpenAIResponse
 	}
 };
 
+// 델리게이트 선언 추가 (NPC 응답이 발생할 때 실행됨)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNPCResponseReceived, const FString&, NPCResponse);
+
 /**
  * @author 유서현
  */
@@ -96,6 +100,10 @@ public:
 	 * @brief NPC의 논리 실행 함수 (자식 클래스에서 오버라이드 가능)
 	 */
 	virtual void PerformNPCLogic();
+
+	// OpenAI 응답이 완료되었을 때 실행될 델리게이트 선언
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnNPCResponseReceived OnNPCResponseReceived;
 
 	/**
 	 * @auther 박시언
@@ -265,6 +273,15 @@ protected:
 	 * @return true면 유효한 데이터로 간주
 	 */
 	bool SendNPCResponseToServer_Validate(const FString& NPCResponse);
+
+	/**
+	 * @author 박시언
+	 * @brief 클라이언트가 NPC의 응답을 받을 수 있도록 브로드캐스트하는 함수
+	 */
+	UFUNCTION(Client, Reliable)
+	void ClientReceiveNPCResponse(const FString& NPCResponse);
+
+	void ClientReceiveNPCResponse_Implementation(const FString& NPCResponse);
 
 public:
 
