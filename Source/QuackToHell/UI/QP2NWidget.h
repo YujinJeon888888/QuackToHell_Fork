@@ -43,6 +43,7 @@ public:
 	 * @brief 대화상자의 글씨를 업데이트합니다.
 	 * @param 새로 띄울 텍스트를 인자로 넣습니다.
 	 */
+	UFUNCTION() //델리게이트 콜백
 	void UpdateNPCText(const FString& Text);
 	/**
 	 * @brief 대화상자의 글씨를 업데이트합니다.
