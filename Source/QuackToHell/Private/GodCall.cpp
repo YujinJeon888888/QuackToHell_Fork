@@ -22,22 +22,16 @@ void UGodCall::BeginPlay()
 
 void UGodCall::StartGodProcess()
 {
-    FString PromptData = UGodFunction::LoadPromptData();
-    if (!PromptData.Contains(TEXT("Error")))
-    {
-        UGodFunction::GenerateNPCDataFromOpenAI();
-        UE_LOG(LogTemp, Log, TEXT("God process started. Generating NPC data..."));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to start God process: Could not load PromptToGod.json"));
-    }
+    UE_LOG(LogTemp, Log, TEXT("God process started. Generating NPC Prompts..."));
+
+    // 새롭게 업데이트된 `GenerateNPCPrompts()` 호출
+    UGodFunction::GenerateNPCPrompts();
+
+    UE_LOG(LogTemp, Log, TEXT("God process finished NPC generation."));
 }
 
-// Called every frame
 void UGodCall::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
