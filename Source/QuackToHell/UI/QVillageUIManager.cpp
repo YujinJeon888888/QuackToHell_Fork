@@ -4,23 +4,9 @@
 #include "UI/QVillageUIManager.h"
 #include "UI/QP2NWidget.h"
 #include "Kismet/GameplayStatics.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 
 #include "QLogCategories.h"
 
-=======
-#include "QLogCategories.h"
-
->>>>>>> 0ef06a8 (feat: P2N UI 생성)
-=======
-
-#include "QLogCategories.h"
-
->>>>>>> origin/SCRUM-432_C_P2N
 TObjectPtr<AQVillageUIManager> AQVillageUIManager::Instance = nullptr;
 
 // Sets default values
@@ -96,19 +82,9 @@ void AQVillageUIManager::DestroyAllUI()
 void AQVillageUIManager::OnMapLoad()
 {
 	FString CurrentMap = UGameplayStatics::GetCurrentLevelName(this);
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 	//TODO: 마을맵으로바꾸기  / 마을맵이면 기본으로 활성화 할 것들
-=======
 	//마을맵이면 기본으로 활성화 할 것들
->>>>>>> 0ef06a8 (feat: P2N UI 생성)
-=======
-	//TODO: 마을맵으로바꾸기  / 마을맵이면 기본으로 활성화 할 것들
->>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
-=======
-	//TODO: 마을맵으로바꾸기  / 마을맵이면 기본으로 활성화 할 것들
->>>>>>> origin/SCRUM-432_C_P2N
 	if (CurrentMap == "ClinetTestMap") {
 		//TODO: 기본 마을 UI들 띄운다 (초기화작업)
 		TurnOnUI(EVillageUIType::P2N);
@@ -132,20 +108,13 @@ void AQVillageUIManager::Tick(float DeltaTime)
 
 void AQVillageUIManager::TurnOnUI(EVillageUIType UIType)
 {
+	//위젯 이미 만들어져있으면 visible 전환
 	if (ActiveWidgets.Contains(UIType)) {
 		ActiveWidgets[UIType]->SetVisibility(ESlateVisibility::Visible);
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-		
->>>>>>> 0ef06a8 (feat: P2N UI 생성)
-=======
->>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
-=======
->>>>>>> origin/SCRUM-432_C_P2N
 		return;
 	}
+
+	//마을 UI로 타입을 넣어두지않았으면
 	if (!UIWidgetClasses[UIType]) {
 		UE_LOG(LogLogic, Warning, TEXT("QVillageUIManager: UIClassWidgetClasses에 UI타입에 맞는 값을 생성하세요"));
 		return;
@@ -153,7 +122,7 @@ void AQVillageUIManager::TurnOnUI(EVillageUIType UIType)
 
 	TObjectPtr<UWorld> World = GetWorld();
 	if (!World) return;
-
+	//위젯 새로 만들기
 	TObjectPtr<UUserWidget> NewWidget = CreateWidget<UUserWidget>(World, UIWidgetClasses[UIType]);
 	if (NewWidget) {
 		NewWidget->AddToViewport();

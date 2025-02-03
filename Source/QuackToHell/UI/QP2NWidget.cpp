@@ -2,11 +2,6 @@
 
 
 #include "UI/QP2NWidget.h"
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> origin/SCRUM-432_C_P2N
 #include "Components/EditableTextBox.h"
 #include "NPC/QNPCController.h"
 #include "QLogCategories.h"
@@ -19,72 +14,17 @@
 
 void UQP2NWidget::UpdatePlayerText(const FString& Text)
 {
-	PlayerText->SetText(FText::FromString(Text));
-<<<<<<< HEAD
-=======
-#include "Components/TextBlock.h"
-=======
-#include "Components/EditableTextBox.h"
-#include "NPC/QNPCController.h"
-#include "QLogCategories.h"
->>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+    PlayerText->SetText(FText::FromString(Text));
 
-#include "Player/QPlayerController.h"
-#include "Character/QPlayer.h"
-#include "Components/TextBlock.h"
-#include "NPCComponent.h"
-#include "UI/QVillageUIManager.h"
-
-void UQP2NWidget::UpdatePlayerText(const FString& Text)
-{
-	PlayerText->SetText(FText::FromString(Text));
-=======
->>>>>>> origin/SCRUM-432_C_P2N
 }
 
-void UQP2NWidget::UpdatePlayerText(const FText& Text)
-{
-	PlayerText->SetText(Text);
-    FString _PlayerText = PlayerText->GetText().ToString();
-    UE_LOG(LogLogic, Log, TEXT("PlayerText: %s"), *_PlayerText); // FString의 TCHAR* 캐스팅
-}
 
 void UQP2NWidget::UpdateNPCText(const FString& Text)
 {
 	NPCText->SetText(FText::FromString(Text));
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 0ef06a8 (feat: P2N UI 생성)
 }
 
-void UQP2NWidget::UpdatePlayerText(const FText& Text)
-{
-	PlayerText->SetText(Text);
-    FString _PlayerText = PlayerText->GetText().ToString();
-    UE_LOG(LogLogic, Log, TEXT("PlayerText: %s"), *_PlayerText); // FString의 TCHAR* 캐스팅
-}
 
-void UQP2NWidget::UpdateNPCText(const FString& Text)
-{
-	NPCText->SetText(FText::FromString(Text));
-
-}
-
-=======
-
-}
-
->>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
-=======
-
-}
-
->>>>>>> origin/SCRUM-432_C_P2N
-void UQP2NWidget::UpdateNPCText(const FText& Text)
-{
-	NPCText->SetText(Text);
-
-}
 
 void UQP2NWidget::SetConversingNPC(const TObjectPtr<class AQNPCController> NPC)
 {
@@ -111,13 +51,13 @@ void UQP2NWidget::HandleEnterKeyPress()
     }
     ////////////////////////////////////////////////////
     //1 .플레이어 텍스트를 inputbox에 있던거로 업뎃한다.  
-    UpdatePlayerText(inputBox->GetText());
+    UpdatePlayerText(inputBox->GetText().ToString());
     FString PlayerInput = inputBox->GetText().ToString();
 
     //2. inputbox는 공란으로 만든다.
     inputBox->SetText(FText::FromString(TEXT("")));
     //3. NPC Text는 음.. 으로 바꾼다.
-    UpdateNPCText(FText::FromString(WhenGenerateResponseText));
+    UpdateNPCText(WhenGenerateResponseText);
     //4. NPC에게 응답을 요청한다.
     ConversingNPC->Response(PlayerInput);
 }
