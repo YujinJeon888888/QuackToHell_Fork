@@ -14,6 +14,12 @@ UCLASS()
 class QUACKTOHELL_API AQPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+public:
+	/**
+	* @brief 대화끝날때의 처리를 구현합니다. 대화끝의 트리거를 외부에서 수집하므로, 외부에 public으로 해당 함수를 열었습니다. 1. 얼음땡 2. 상태전환
+	* @param 대화중인 NPC
+	*/
+	void ConverseEndProcess(TObjectPtr<class AQNPC> NPC);
 
 protected:
 	virtual void BeginPlay() override;
@@ -71,7 +77,7 @@ private:
 	void InputEnableInteracton(const FInputActionValue& InputValue);
 	
 	/**
-	 * @brief 대화중단 입력 처리 함수입니다..
+	 * @brief 대화중단 입력 처리 함수입니다.. (버튼 없을 때 테스트위한 임시)
 	 *
 	 * @param InputValue 입력 값
 	 */
@@ -115,17 +121,32 @@ private:
 	/**
 	 * @brief 몸을 멈춥니다.
 	 */
-	UFUNCTION(Client,Reliable)
 	void FreezePawn();
+	
 	/**
 	 * @brief 몸을 얼음땡 합니다.
 	 */
-	UFUNCTION(Client, Reliable)
 	void UnFreezePawn();
 	/**
-	 * @brief 플레이어 상태를 들고 있습니다. 상태에 따른 논리변화에 활용됩니다.
+	 * @brief 대화중일때의 처리를 구현합니다. 1. 몸 멈추기 2. 대화상태로 전환하기
 	 */
-	TObjectPtr<class AQPlayerState> PlayerState;
+	void ConverseProcess(TObjectPtr<class AQNPC> NPC);
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+	/** @brief VillageUIManager정보를 갖습니다. */
+	TObjectPtr<class AQVillageUIManager> VillageUIManager;
+=======
+
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+	/** @brief VillageUIManager정보를 갖습니다. */
+	TObjectPtr<class AQVillageUIManager> VillageUIManager;
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+	/** @brief VillageUIManager정보를 갖습니다. */
+	TObjectPtr<class AQVillageUIManager> VillageUIManager;
+>>>>>>> origin/SCRUM-432_C_P2N
 };
 
 

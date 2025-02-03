@@ -5,6 +5,8 @@
 #include "QLogCategories.h"
 #include "InputAction.h"
 #include "EnhancedInputSubsystems.h"
+#include "UI/QVillageUIManager.h"
+#include "UI/QP2NWidget.h"
 #include "EnhancedInputComponent.h"
 #include "Character/QPlayer.h"
 #include "Character/QNPC.h"
@@ -26,11 +28,10 @@ void AQPlayerController::BeginPlay()
 		SubSystem->AddMappingContext(InputMappingContext, 0);
 	}
 
-	//Player State를 가져온다.
-	PlayerState = this->GetPlayerState<AQPlayerState>();
-	if (PlayerState == nullptr) {
-		UE_LOG(LogLogic, Error, TEXT("플레이어 스테이트를 지정하세요!!"));
-	}
+	//villagemanager를 가져온다
+	VillageUIManager = AQVillageUIManager::GetInstance(GetWorld());
+
+
 }
 
 void AQPlayerController::SetupInputComponent()
@@ -69,9 +70,7 @@ void AQPlayerController::InputConversingQuit(const FInputActionValue& InputValue
 		/** @todo 상호작용 유형별로 나누기 */
 		//대화중단해라
 		//상태조건: 내가 대화중일 때.
-		if (PlayerState->HasStateTag(QGameplayTags::GetTag(EQGameplayTags::Conversing))) {
-			this->EndDialog();
-		}
+		
 	}
 }
 
@@ -82,27 +81,64 @@ void AQPlayerController::InputEnableConversingQuit(const FInputActionValue& Inpu
 
 void AQPlayerController::StartDialog()
 {
-	//0. 대화중이라고 상태전환
-	FGameplayTag ConversingTag = QGameplayTags::GetTag(EQGameplayTags::Conversing);
-	PlayerState->AddStateTag(ConversingTag);
-	UE_LOG(LogLogic, Log, TEXT("플레이어 상태 변경: 대화 중"));
 
-	//1. 상대방 NPC를 불러옴
+	//0. 상대방 NPC를 불러옴
 	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
-	//2. 상대방 NPC의 컨트롤러를 불러옴
 	TObjectPtr<AQNPC> NPC = Cast<AQNPC>(_Player->GetClosestNPC());
-	TObjectPtr<AQNPCController> NPCController = Cast<AQNPCController>(NPC->GetController());
-	
-	//3. 대화 시작하라고 명령한다.
-	NPCController->StartDialog();
+	//1. 대화 가능한지 check
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+	//임시 지우고 주석풀기 : if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
+	//임시
+=======
+	if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+	//임시 지우고 주석풀기 : if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
+	//임시
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+	//임시 지우고 주석풀기 : if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
+	//임시
+>>>>>>> origin/SCRUM-432_C_P2N
+	{
+		//2. 상대방 NPC의 컨트롤러를 불러옴
+		TObjectPtr<AQNPCController> NPCController = Cast<AQNPCController>(NPC->GetController());
+
+		//3. 대화 시작하라고 명령한다.
+		NPCController->StartDialog();
+
+		//4. 플레이어를 대화처리한다.
+		this->ConverseProcess(NPC);
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
+
+		//5. P2N Widget에게 자신의 정보를 넘긴다.
+		//내 정보 넘겨주기
+		Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->SetConversingPlayer(this);
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
+	}
+
+
 }
 
 void AQPlayerController::EndDialog()
 {
 	//0. 대화중의 상태를 remove
-	FGameplayTag ConversingTag = QGameplayTags::GetTag(EQGameplayTags::Conversing);
-	PlayerState->RemoveStateTag(ConversingTag);
-	UE_LOG(LogLogic, Log, TEXT("플레이어 상태 변경: 대화x"));
 
 	//1. 상대방 NPC를 불러옴
 	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
@@ -122,14 +158,46 @@ void AQPlayerController::TurnOffPlayer2NSpeechBubble()
 {
 }
 
-void AQPlayerController::FreezePawn_Implementation()
+void AQPlayerController::FreezePawn()
 {
 }
 
-void AQPlayerController::UnFreezePawn_Implementation()
+void AQPlayerController::UnFreezePawn()
 {
 }
 
+void AQPlayerController::ConverseProcess(TObjectPtr<AQNPC> NPC)
+{
+	//1. 몸 멈추기
+	FreezePawn();
+	//2. 대화상태로 전환
+	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
+	_Player->StartConversation(NPC);
+}
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
+void AQPlayerController::ConverseEndProcess(TObjectPtr<class AQNPC> NPC)
+{
+	//1. 얼음땡
+	UnFreeze();
+	//2. 상태전환
+	Cast<AQPlayer>(GetPawn())->FinishConversation(NPC);
+}
+
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
 void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
 {
 	bEnableTurn = InputValue.Get<bool>() ? true : false;
@@ -142,9 +210,19 @@ void AQPlayerController::InputInteraction(const FInputActionValue& InputValue)
 		/** @todo 상호작용 유형별로 나누기 */
 		//대화시작해라
 		//상태조건: 내가 대화중이 아닐 때.
-		if (!PlayerState->HasStateTag(QGameplayTags::GetTag(EQGameplayTags::Conversing))) {
-			this->StartDialog();
-		}
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+		StartDialog();
+=======
+		
+>>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+		StartDialog();
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+		StartDialog();
+>>>>>>> origin/SCRUM-432_C_P2N
 	}
 }
 
