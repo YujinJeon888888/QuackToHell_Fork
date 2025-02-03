@@ -14,12 +14,16 @@
 
 void AQNPCController::StartDialog()
 {
-    //TODO: 첫 멘트를 저장
-    /*Response = NPCComponent->;*/
+    //TODO: 첫 멘트를 저장 (콜백함수등록)
+    //첫멘트 줘 (응답은 브로드캐스트로 옴)
+    NPCComponent->StartConversation("");
     //임시코드(원래서버에서킴)
     VillageUIManager->TurnOnUI(EVillageUIType::P2N);
     //텍스트세팅
+    //텍스트세팅하는 줄 콜백등록해야함
     Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->UpdateNPCText(NewResponse);
+    //내 정보 넘겨주기
+    Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->SetConversingNPC(this);
 }
 
 void AQNPCController::EndDialog()
@@ -33,7 +37,10 @@ void AQNPCController::EndDialog()
 
 void AQNPCController::Response(FString& Text)
 {
-
+    //1. 응답 요청
+    NPCComponent->StartConversation(Text);
+    //2. 콜백함수등록(응답시처리)
+    UE_LOG(LogLogic, Log, TEXT("응답요청함수 들어옴: NPCController"));
 }
 
 void AQNPCController::BeginPlay()
