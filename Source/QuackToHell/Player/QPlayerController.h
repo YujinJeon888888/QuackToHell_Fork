@@ -132,11 +132,16 @@ private:
 	 */
 	void ConverseProcess(TObjectPtr<class AQNPC> NPC);
 <<<<<<< HEAD
+<<<<<<< HEAD
 	/** @brief VillageUIManager정보를 갖습니다. */
 	TObjectPtr<class AQVillageUIManager> VillageUIManager;
 =======
 
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+	/** @brief VillageUIManager정보를 갖습니다. */
+	TObjectPtr<class AQVillageUIManager> VillageUIManager;
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 };
 
 

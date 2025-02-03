@@ -3,6 +3,7 @@
 
 #include "UI/QP2NWidget.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
 #include "Components/EditableTextBox.h"
 #include "NPC/QNPCController.h"
 #include "QLogCategories.h"
@@ -18,15 +19,34 @@ void UQP2NWidget::UpdatePlayerText(const FString& Text)
 	PlayerText->SetText(FText::FromString(Text));
 =======
 #include "Components/TextBlock.h"
+=======
+#include "Components/EditableTextBox.h"
+#include "NPC/QNPCController.h"
+#include "QLogCategories.h"
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 
-void UQP2NWidget::UpdatePlayerText(FString& Text)
+#include "Player/QPlayerController.h"
+#include "Character/QPlayer.h"
+#include "Components/TextBlock.h"
+#include "NPCComponent.h"
+#include "UI/QVillageUIManager.h"
+
+void UQP2NWidget::UpdatePlayerText(const FString& Text)
 {
 	PlayerText->SetText(FText::FromString(Text));
 }
 
-void UQP2NWidget::UpdateNPCText(FString& Text)
+void UQP2NWidget::UpdatePlayerText(const FText& Text)
+{
+	PlayerText->SetText(Text);
+    FString _PlayerText = PlayerText->GetText().ToString();
+    UE_LOG(LogLogic, Log, TEXT("PlayerText: %s"), *_PlayerText); // FString의 TCHAR* 캐스팅
+}
+
+void UQP2NWidget::UpdateNPCText(const FString& Text)
 {
 	NPCText->SetText(FText::FromString(Text));
+<<<<<<< HEAD
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
 }
 
@@ -43,6 +63,11 @@ void UQP2NWidget::UpdateNPCText(const FString& Text)
 
 }
 
+=======
+
+}
+
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 void UQP2NWidget::UpdateNPCText(const FText& Text)
 {
 	NPCText->SetText(Text);

@@ -87,11 +87,16 @@ void AQPlayerController::StartDialog()
 	TObjectPtr<AQNPC> NPC = Cast<AQNPC>(_Player->GetClosestNPC());
 	//1. 대화 가능한지 check
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//임시 지우고 주석풀기 : if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
 	//임시
 =======
 	if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+	//임시 지우고 주석풀기 : if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
+	//임시
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 	{
 		//2. 상대방 NPC의 컨트롤러를 불러옴
 		TObjectPtr<AQNPCController> NPCController = Cast<AQNPCController>(NPC->GetController());
@@ -102,13 +107,19 @@ void AQPlayerController::StartDialog()
 		//4. 플레이어를 대화처리한다.
 		this->ConverseProcess(NPC);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 
 		//5. P2N Widget에게 자신의 정보를 넘긴다.
 		//내 정보 넘겨주기
 		Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->SetConversingPlayer(this);
 
+<<<<<<< HEAD
 =======
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 	}
 
 
@@ -154,6 +165,9 @@ void AQPlayerController::ConverseProcess(TObjectPtr<AQNPC> NPC)
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 void AQPlayerController::ConverseEndProcess(TObjectPtr<class AQNPC> NPC)
 {
 	//1. 얼음땡
@@ -162,8 +176,11 @@ void AQPlayerController::ConverseEndProcess(TObjectPtr<class AQNPC> NPC)
 	Cast<AQPlayer>(GetPawn())->FinishConversation(NPC);
 }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
 {
 	bEnableTurn = InputValue.Get<bool>() ? true : false;
@@ -177,10 +194,14 @@ void AQPlayerController::InputInteraction(const FInputActionValue& InputValue)
 		//대화시작해라
 		//상태조건: 내가 대화중이 아닐 때.
 <<<<<<< HEAD
+<<<<<<< HEAD
 		StartDialog();
 =======
 		
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+		StartDialog();
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 	}
 }
 

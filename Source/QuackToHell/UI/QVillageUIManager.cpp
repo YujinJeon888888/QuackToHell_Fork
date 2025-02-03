@@ -5,6 +5,9 @@
 #include "UI/QP2NWidget.h"
 #include "Kismet/GameplayStatics.h"
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 
 #include "QLogCategories.h"
 
@@ -88,10 +91,14 @@ void AQVillageUIManager::OnMapLoad()
 {
 	FString CurrentMap = UGameplayStatics::GetCurrentLevelName(this);
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//TODO: 마을맵으로바꾸기  / 마을맵이면 기본으로 활성화 할 것들
 =======
 	//마을맵이면 기본으로 활성화 할 것들
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+	//TODO: 마을맵으로바꾸기  / 마을맵이면 기본으로 활성화 할 것들
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 	if (CurrentMap == "ClinetTestMap") {
 		//TODO: 기본 마을 UI들 띄운다 (초기화작업)
 		TurnOnUI(EVillageUIType::P2N);
@@ -118,9 +125,12 @@ void AQVillageUIManager::TurnOnUI(EVillageUIType UIType)
 	if (ActiveWidgets.Contains(UIType)) {
 		ActiveWidgets[UIType]->SetVisibility(ESlateVisibility::Visible);
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 		
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+>>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 		return;
 	}
 	if (!UIWidgetClasses[UIType]) {
