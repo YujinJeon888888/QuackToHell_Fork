@@ -1,0 +1,9 @@
+<map id="FreezePawn" name="FreezePawn">
+<area shape="rect" id="Node000001" title="몸을 멈춥니다." alt="" coords="472,5,567,32"/>
+<area shape="rect" id="Node000002" href="$class_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7.html#a66b375b04abb56ba1134e69a8ddb66b7" title="대화중일때의 처리를 구현합니다." alt="" coords="299,5,424,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="457,21,425,21,425,16,457,16"/>
+<area shape="rect" id="Node000003" href="$class_a_q_player_controller_a38a79cd4e9b65be6b4a77bd2e960171f.html#a38a79cd4e9b65be6b4a77bd2e960171f" title="대화를 시작합니다." alt="" coords="165,5,251,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="283,21,251,21,251,16,283,16"/>
+<area shape="rect" id="Node000004" href="$class_a_q_player_controller_a4dae5f3cb5e36be8060e06d4609445bf.html#a4dae5f3cb5e36be8060e06d4609445bf" title="상호작용 입력 처리 함수입니다." alt="" coords="5,5,117,32"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="149,21,117,21,117,16,149,16"/>
+</map>

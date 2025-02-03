@@ -1,8 +1,9 @@
 <map id="InputInteraction" name="InputInteraction">
 <area shape="rect" id="Node000001" title="상호작용 입력 처리 함수입니다." alt="" coords="5,5,117,32"/>
-<area shape="rect" id="Node000002" href="$class_q_gameplay_tags_a734f3aed5faac5429e4a1883d87348bd.html#a734f3aed5faac5429e4a1883d87348bd" title="열거형 이름에 맞는 태그를 리턴합니다." alt="" coords="299,5,467,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,16,284,16,284,21,117,21"/>
-<area shape="rect" id="Node000003" href="$class_a_q_player_controller_a38a79cd4e9b65be6b4a77bd2e960171f.html#a38a79cd4e9b65be6b4a77bd2e960171f" title="대화를 시작합니다." alt="" coords="165,31,251,57"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="118,26,150,31,149,37,117,31"/>
-<area shape="poly" id="edge3_Node000003_Node000002" title=" " alt="" coords="251,35,283,30,284,36,252,40"/>
+<area shape="rect" id="Node000002" href="$class_a_q_player_controller_a38a79cd4e9b65be6b4a77bd2e960171f.html#a38a79cd4e9b65be6b4a77bd2e960171f" title="대화를 시작합니다." alt="" coords="165,5,251,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,16,149,16,149,21,117,21"/>
+<area shape="rect" id="Node000003" href="$class_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7.html#a66b375b04abb56ba1134e69a8ddb66b7" title="대화중일때의 처리를 구현합니다." alt="" coords="299,5,424,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="251,16,284,16,284,21,251,21"/>
+<area shape="rect" id="Node000004" href="$class_a_q_player_controller_a47d70e05956f914b4d9e8949fc200efe.html#a47d70e05956f914b4d9e8949fc200efe" title="몸을 멈춥니다." alt="" coords="472,5,567,32"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="425,16,457,16,457,21,425,21"/>
 </map>

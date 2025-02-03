@@ -1,0 +1,5 @@
+<map id="SetConversingNPC" name="SetConversingNPC">
+<area shape="rect" id="Node000001" title="대화중인 NPC정보를 세팅합니다." alt="" coords="5,5,142,32"/>
+<area shape="rect" id="Node000002" href="$class_u_q_p2_n_widget_a295cbf313003db73b1ec4d8c916c6cf7.html#a295cbf313003db73b1ec4d8c916c6cf7" title="대화상자의 글씨를 업데이트합니다." alt="" coords="190,5,307,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="142,16,174,16,174,21,142,21"/>
+</map>

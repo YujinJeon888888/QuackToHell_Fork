@@ -1,0 +1,7 @@
+<map id="HandleEnterEndButton" name="HandleEnterEndButton">
+<area shape="rect" id="Node000001" title="종료버튼 눌렸을때의 처리;" alt="" coords="5,43,160,69"/>
+<area shape="rect" id="Node000002" href="$class_a_q_village_u_i_manager_a14027a8dd3d11d56d004556d8463c218.html#a14027a8dd3d11d56d004556d8463c218" title="싱글톤 인스턴스 반환." alt="" coords="215,5,358,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="160,42,200,36,201,42,160,48"/>
+<area shape="rect" id="Node000003" href="$class_u_q_p2_n_widget_a0044bd9e9407814b25f1516eed317afc.html#a0044bd9e9407814b25f1516eed317afc" title="NPC가 응답생성중인지 체크" alt="" coords="208,72,366,99"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="160,64,192,69,192,74,160,70"/>
+</map>

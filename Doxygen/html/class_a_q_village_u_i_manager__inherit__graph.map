@@ -1,0 +1,5 @@
+<map id="AQVillageUIManager" name="AQVillageUIManager">
+<area shape="rect" id="Node000001" title="마을 맵 내에서만 존재하는 마을 UI manager" alt="" coords="5,123,207,667"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="81,5,132,75"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,90,109,123,104,123,104,90"/>
+</map>

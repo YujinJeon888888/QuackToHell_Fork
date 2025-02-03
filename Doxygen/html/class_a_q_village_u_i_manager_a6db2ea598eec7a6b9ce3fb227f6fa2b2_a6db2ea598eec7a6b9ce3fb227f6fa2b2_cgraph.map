@@ -1,0 +1,5 @@
+<map id="OnMapUnLoad" name="OnMapUnLoad">
+<area shape="rect" id="Node000001" title="맵 언로드 시 실행" alt="" coords="5,5,114,32"/>
+<area shape="rect" id="Node000002" href="$class_a_q_village_u_i_manager_a08681e6e1314c5fb850d5b74764509eb.html#a08681e6e1314c5fb850d5b74764509eb" title="마을 맵 언로드될 때 UI들 파괴" alt="" coords="162,5,258,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="114,16,146,16,146,21,114,21"/>
+</map>

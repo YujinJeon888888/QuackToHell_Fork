@@ -1,5 +1,5 @@
 <map id="AQPlayerController" name="AQPlayerController">
-<area shape="rect" id="Node000001" title="플레이어 컨트롤러 클래스입니다." alt="" coords="5,123,225,949"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="59,5,172,75"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,90,118,123,113,123,113,90"/>
+<area shape="rect" id="Node000001" title="플레이어 컨트롤러 클래스입니다." alt="" coords="5,123,226,1173"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="60,5,172,75"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,89,118,123,113,123,113,89"/>
 </map>

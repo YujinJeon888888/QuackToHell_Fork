@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.13.2"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>QuackToHell: AQPlayerController::ConverseProcess</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+  $(function() { init_search(); });
+/* @license-end */
+</script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">QuackToHell<span id="projectnumber">&#160;0.0.1</span>
+   </div>
+  </td>
+    <td>        <div id="MSearchBox" class="MSearchBoxInactive">
+        <span class="left">
+          <span id="MSearchSelect"                onmouseover="return searchBox.OnSearchSelectShow()"                onmouseout="return searchBox.OnSearchSelectHide()">&#160;</span>
+          <input type="text" id="MSearchField" value="" placeholder="검색" accesskey="S"
+               onfocus="searchBox.OnSearchFieldFocus(true)" 
+               onblur="searchBox.OnSearchFieldFocus(false)" 
+               onkeyup="searchBox.OnSearchFieldChange(event)"/>
+          </span><span class="right">
+            <a id="MSearchClose" href="javascript:searchBox.CloseResultsWindow()"><img id="MSearchCloseImg" border="0" src="search/close.svg" alt=""/></a>
+          </span>
+        </div>
+</td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- 다음에 의해 생성됨 :  Doxygen 1.13.2 -->
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+/* @license-end */
+</script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function() { codefold.init(0); });
+/* @license-end */
+</script>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
+$(function(){initNavTree('class_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7.html',''); initResizable(true); });
+/* @license-end */
+</script>
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">로딩중...</div>
+<div class="SRStatus" id="Searching">검색중...</div>
+<div class="SRStatus" id="NoMatches">일치하는것 없음</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="contents">
+<a id="a66b375b04abb56ba1134e69a8ddb66b7" name="a66b375b04abb56ba1134e69a8ddb66b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66b375b04abb56ba1134e69a8ddb66b7">&#9670;&#160;</a></span>ConverseProcess()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void ConverseProcess </td>
+          <td>(</td>
+          <td class="paramtype">TObjectPtr&lt; class <a class="el" href="class_a_q_n_p_c.html">AQNPC</a> &gt;</td>          <td class="paramname"><span class="paramname"><em>NPC</em></span></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel private">private</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>대화중일때의 처리를 구현합니다. </p>
+<ol type="1">
+<li>몸 멈추기 2. 대화상태로 전환하기 </li>
+</ol>
+
+<p class="definition"><a class="el" href="_q_player_controller_8cpp_source.html">QPlayerController.cpp</a> 파일의 <a class="el" href="_q_player_controller_8cpp_source.html#l00137">137</a> 번째 라인에서 정의되었습니다.</p>
+<div class="fragment"><div class="line"><span class="lineno">  138</span>{</div>
+<div class="line"><span class="lineno">  139</span>    <span class="comment">//1. 몸 멈추기</span></div>
+<div class="line"><span class="lineno">  140</span>    <a class="code hl_function" href="class_a_q_player_controller_a47d70e05956f914b4d9e8949fc200efe.html#a47d70e05956f914b4d9e8949fc200efe">FreezePawn</a>();</div>
+<div class="line"><span class="lineno">  141</span>    <span class="comment">//2. 대화상태로 전환</span></div>
+<div class="line"><span class="lineno">  142</span>    TObjectPtr&lt;AQPlayer&gt; _Player = Cast&lt;AQPlayer&gt;(this-&gt;GetPawn());</div>
+<div class="line"><span class="lineno">  143</span>    _Player-&gt;StartConversation(NPC);</div>
+<div class="line"><span class="lineno">  144</span>}</div>
+<div class="ttc" id="aclass_a_q_player_controller_a47d70e05956f914b4d9e8949fc200efe_html_a47d70e05956f914b4d9e8949fc200efe"><div class="ttname"><a href="class_a_q_player_controller_a47d70e05956f914b4d9e8949fc200efe.html#a47d70e05956f914b4d9e8949fc200efe">AQPlayerController::FreezePawn</a></div><div class="ttdeci">void FreezePawn()</div><div class="ttdoc">몸을 멈춥니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_player_controller_8cpp_source.html#l00129">QPlayerController.cpp:129</a></div></div>
+</div><!-- fragment --><div class="dynheader">
+이 함수 내부에서 호출하는 함수들에 대한 그래프입니다.:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7_a66b375b04abb56ba1134e69a8ddb66b7_cgraph.png" border="0" usemap="#aclass_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7_a66b375b04abb56ba1134e69a8ddb66b7_cgraph" alt=""/></div>
+<map name="aclass_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7_a66b375b04abb56ba1134e69a8ddb66b7_cgraph" id="aclass_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7_a66b375b04abb56ba1134e69a8ddb66b7_cgraph">
+<area shape="rect" title="대화중일때의 처리를 구현합니다." alt="" coords="5,5,131,32"/>
+<area shape="rect" href="class_a_q_player_controller_a47d70e05956f914b4d9e8949fc200efe.html#a47d70e05956f914b4d9e8949fc200efe" title="몸을 멈춥니다." alt="" coords="179,5,273,32"/>
+<area shape="poly" title=" " alt="" coords="131,16,163,16,163,21,131,21"/>
+</map>
+</div>
+<div class="dynheader">
+이 함수를 호출하는 함수들에 대한 그래프입니다.:</div>
+<div class="dyncontent">
+<div class="center"><img src="class_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7_a66b375b04abb56ba1134e69a8ddb66b7_icgraph.png" border="0" usemap="#aclass_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7_a66b375b04abb56ba1134e69a8ddb66b7_icgraph" alt=""/></div>
+<map name="aclass_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7_a66b375b04abb56ba1134e69a8ddb66b7_icgraph" id="aclass_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7_a66b375b04abb56ba1134e69a8ddb66b7_icgraph">
+<area shape="rect" title="대화중일때의 처리를 구현합니다." alt="" coords="299,5,424,32"/>
+<area shape="rect" href="class_a_q_player_controller_a38a79cd4e9b65be6b4a77bd2e960171f.html#a38a79cd4e9b65be6b4a77bd2e960171f" title="대화를 시작합니다." alt="" coords="165,5,251,32"/>
+<area shape="poly" title=" " alt="" coords="283,21,251,21,251,16,283,16"/>
+<area shape="rect" href="class_a_q_player_controller_a4dae5f3cb5e36be8060e06d4609445bf.html#a4dae5f3cb5e36be8060e06d4609445bf" title="상호작용 입력 처리 함수입니다." alt="" coords="5,5,117,32"/>
+<area shape="poly" title=" " alt="" coords="149,21,117,21,117,16,149,16"/>
+</map>
+</div>
+
+</div>
+</div>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a class="el" href="class_a_q_player_controller.html">AQPlayerController</a></li>
+    <li class="footer">다음에 의해 생성됨 :  <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+  </ul>
+</div>
+</body>
+</html>

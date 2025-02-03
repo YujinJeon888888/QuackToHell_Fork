@@ -1,0 +1,5 @@
+<map id="UQSpeechBubbleWidgetComponent" name="UQSpeechBubbleWidgetComponent">
+<area shape="rect" id="Node000001" title="캐릭터의 머리 위에 뜨는 말풍선 UI 컴포넌트입니다. ." alt="" coords="5,123,228,251"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="52,5,181,75"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,89,119,123,114,123,114,89"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="IsGerneratingResponse" name="IsGerneratingResponse">
+<area shape="rect" id="Node000001" title="NPC가 응답생성중인지 체크" alt="" coords="208,5,366,32"/>
+<area shape="rect" id="Node000002" href="$class_u_q_p2_n_widget_a17a475cd707db22984696f1438a074ce.html#a17a475cd707db22984696f1438a074ce" title="종료버튼 눌렸을때의 처리;" alt="" coords="5,5,160,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="192,21,160,21,160,16,192,16"/>
+</map>

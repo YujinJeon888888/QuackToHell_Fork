@@ -126,44 +126,26 @@ $(function(){initNavTree('class_a_q_player_controller_aef2adbe624a4ffabbfcd45759
 </div><div class="memdoc">
 
 <p>대화중단 입력 처리 함수입니다. </p>
+<p>. (버튼 없을 때 테스트위한 임시)</p>
 <dl class="params"><dt>매개변수</dt><dd>
   <table class="params">
     <tr><td class="paramname">InputValue</td><td>입력 값 </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">할일</a></b></dt><dd>상호작용 유형별로 나누기 </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">할일</a></b></dt><dd>상호작용 유형별로 나누기 </dd></dl>
 
-<p class="definition"><a class="el" href="_q_player_controller_8cpp_source.html">QPlayerController.cpp</a> 파일의 <a class="el" href="_q_player_controller_8cpp_source.html#l00065">65</a> 번째 라인에서 정의되었습니다.</p>
-<div class="fragment"><div class="line"><span class="lineno">   66</span>{</div>
-<div class="line"><span class="lineno">   67</span>    <span class="comment">//bEnableConversingQuit이 true일때만 상호작용이 가능하다.</span></div>
-<div class="line"><span class="lineno">   68</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_a_q_player_controller_a54a6255396dff36c09189eba9dbf4d1a.html#a54a6255396dff36c09189eba9dbf4d1a">bEnableConversingQuit</a>) {</div>
-<div class="line"><span class="lineno">   70</span>        <span class="comment">//대화중단해라</span></div>
-<div class="line"><span class="lineno">   71</span>        <span class="comment">//상태조건: 내가 대화중일 때.</span></div>
-<div class="line"><span class="lineno">   72</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_a_q_player_controller_a8adcc53252ca187a3a744a7786ff130b.html#a8adcc53252ca187a3a744a7786ff130b">PlayerState</a>-&gt;HasStateTag(<a class="code hl_function" href="class_q_gameplay_tags_a734f3aed5faac5429e4a1883d87348bd.html#a734f3aed5faac5429e4a1883d87348bd">QGameplayTags::GetTag</a>(<a class="code hl_enumvalue" href="_q_gameplay_tags_8h_a7efa1e73a049a3cd1a71fa548410a0dc.html#a7efa1e73a049a3cd1a71fa548410a0dcab1597d1c2c894fc54c9e272ebf8f577e">EQGameplayTags::Conversing</a>))) {</div>
-<div class="line"><span class="lineno">   73</span>            this-&gt;<a class="code hl_function" href="class_a_q_player_controller_afd156935d4f1dc9acab4e7095922240d.html#afd156935d4f1dc9acab4e7095922240d">EndDialog</a>();</div>
-<div class="line"><span class="lineno">   74</span>        }</div>
-<div class="line"><span class="lineno">   75</span>    }</div>
-<div class="line"><span class="lineno">   76</span>}</div>
-<div class="ttc" id="a_q_gameplay_tags_8h_a7efa1e73a049a3cd1a71fa548410a0dc_html_a7efa1e73a049a3cd1a71fa548410a0dcab1597d1c2c894fc54c9e272ebf8f577e"><div class="ttname"><a href="_q_gameplay_tags_8h_a7efa1e73a049a3cd1a71fa548410a0dc.html#a7efa1e73a049a3cd1a71fa548410a0dcab1597d1c2c894fc54c9e272ebf8f577e">EQGameplayTags::Conversing</a></div><div class="ttdeci">@ Conversing</div><div class="ttdef"><b>Definition</b> <a href="_q_gameplay_tags_8h_source.html#l00023">QGameplayTags.h:23</a></div></div>
-<div class="ttc" id="aclass_a_q_player_controller_a54a6255396dff36c09189eba9dbf4d1a_html_a54a6255396dff36c09189eba9dbf4d1a"><div class="ttname"><a href="class_a_q_player_controller_a54a6255396dff36c09189eba9dbf4d1a.html#a54a6255396dff36c09189eba9dbf4d1a">AQPlayerController::bEnableConversingQuit</a></div><div class="ttdeci">bool bEnableConversingQuit</div><div class="ttdoc">대화중단 활성화 처리 함수함수에서 true가 들어올 시, 이 변수도 true됩니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_player_controller_8h_source.html#l00097">QPlayerController.h:97</a></div></div>
-<div class="ttc" id="aclass_a_q_player_controller_a8adcc53252ca187a3a744a7786ff130b_html_a8adcc53252ca187a3a744a7786ff130b"><div class="ttname"><a href="class_a_q_player_controller_a8adcc53252ca187a3a744a7786ff130b.html#a8adcc53252ca187a3a744a7786ff130b">AQPlayerController::PlayerState</a></div><div class="ttdeci">TObjectPtr&lt; class AQPlayerState &gt; PlayerState</div><div class="ttdoc">플레이어 상태를 들고 있습니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_player_controller_8h_source.html#l00109">QPlayerController.h:109</a></div></div>
-<div class="ttc" id="aclass_a_q_player_controller_afd156935d4f1dc9acab4e7095922240d_html_afd156935d4f1dc9acab4e7095922240d"><div class="ttname"><a href="class_a_q_player_controller_afd156935d4f1dc9acab4e7095922240d.html#afd156935d4f1dc9acab4e7095922240d">AQPlayerController::EndDialog</a></div><div class="ttdeci">void EndDialog()</div><div class="ttdoc">대화를 중단합니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_player_controller_8cpp_source.html#l00100">QPlayerController.cpp:100</a></div></div>
-<div class="ttc" id="aclass_q_gameplay_tags_a734f3aed5faac5429e4a1883d87348bd_html_a734f3aed5faac5429e4a1883d87348bd"><div class="ttname"><a href="class_q_gameplay_tags_a734f3aed5faac5429e4a1883d87348bd.html#a734f3aed5faac5429e4a1883d87348bd">QGameplayTags::GetTag</a></div><div class="ttdeci">static const FGameplayTag GetTag(EQGameplayTags EnumValue)</div><div class="ttdoc">열거형 이름에 맞는 태그를 리턴합니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_gameplay_tags_8cpp_source.html#l00014">QGameplayTags.cpp:14</a></div></div>
-</div><!-- fragment --><div class="dynheader">
-이 함수 내부에서 호출하는 함수들에 대한 그래프입니다.:</div>
-<div class="dyncontent">
-<div class="center"><img src="class_a_q_player_controller_aef2adbe624a4ffabbfcd457596ec0670_aef2adbe624a4ffabbfcd457596ec0670_cgraph.png" border="0" usemap="#aclass_a_q_player_controller_aef2adbe624a4ffabbfcd457596ec0670_aef2adbe624a4ffabbfcd457596ec0670_cgraph" alt=""/></div>
-<map name="aclass_a_q_player_controller_aef2adbe624a4ffabbfcd457596ec0670_aef2adbe624a4ffabbfcd457596ec0670_cgraph" id="aclass_a_q_player_controller_aef2adbe624a4ffabbfcd457596ec0670_aef2adbe624a4ffabbfcd457596ec0670_cgraph">
-<area shape="rect" title="대화중단 입력 처리 함수입니다." alt="" coords="5,31,146,57"/>
-<area shape="rect" href="class_a_q_player_controller_afd156935d4f1dc9acab4e7095922240d.html#afd156935d4f1dc9acab4e7095922240d" title="대화를 중단합니다." alt="" coords="194,5,275,32"/>
-<area shape="poly" title=" " alt="" coords="146,30,178,25,179,30,147,35"/>
-<area shape="rect" href="class_q_gameplay_tags_a734f3aed5faac5429e4a1883d87348bd.html#a734f3aed5faac5429e4a1883d87348bd" title="열거형 이름에 맞는 태그를 리턴합니다." alt="" coords="323,31,491,57"/>
-<area shape="poly" title=" " alt="" coords="146,41,308,41,308,47,146,47"/>
-<area shape="poly" title=" " alt="" coords="276,22,308,27,307,32,275,27"/>
-</map>
-</div>
-
+<p class="definition"><a class="el" href="_q_player_controller_8cpp_source.html">QPlayerController.cpp</a> 파일의 <a class="el" href="_q_player_controller_8cpp_source.html#l00066">66</a> 번째 라인에서 정의되었습니다.</p>
+<div class="fragment"><div class="line"><span class="lineno">   67</span>{</div>
+<div class="line"><span class="lineno">   68</span>    <span class="comment">//bEnableConversingQuit이 true일때만 상호작용이 가능하다.</span></div>
+<div class="line"><span class="lineno">   69</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_a_q_player_controller_a54a6255396dff36c09189eba9dbf4d1a.html#a54a6255396dff36c09189eba9dbf4d1a">bEnableConversingQuit</a>) {</div>
+<div class="line"><span class="lineno">   71</span>        <span class="comment">//대화중단해라</span></div>
+<div class="line"><span class="lineno">   72</span>        <span class="comment">//상태조건: 내가 대화중일 때.</span></div>
+<div class="line"><span class="lineno">   73</span>        </div>
+<div class="line"><span class="lineno">   74</span>    }</div>
+<div class="line"><span class="lineno">   75</span>}</div>
+<div class="ttc" id="aclass_a_q_player_controller_a54a6255396dff36c09189eba9dbf4d1a_html_a54a6255396dff36c09189eba9dbf4d1a"><div class="ttname"><a href="class_a_q_player_controller_a54a6255396dff36c09189eba9dbf4d1a.html#a54a6255396dff36c09189eba9dbf4d1a">AQPlayerController::bEnableConversingQuit</a></div><div class="ttdeci">bool bEnableConversingQuit</div><div class="ttdoc">대화중단 활성화 처리 함수함수에서 true가 들어올 시, 이 변수도 true됩니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_player_controller_8h_source.html#l00104">QPlayerController.h:104</a></div></div>
+</div><!-- fragment -->
 </div>
 </div>
 </div><!-- contents -->

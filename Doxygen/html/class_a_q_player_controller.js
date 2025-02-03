@@ -1,7 +1,10 @@
 var class_a_q_player_controller =
 [
     [ "BeginPlay", "class_a_q_player_controller_a4b591a51a5b9f4036c6ac0f825a0d24c.html#a4b591a51a5b9f4036c6ac0f825a0d24c", null ],
+    [ "ConverseEndProcess", "class_a_q_player_controller_a3512477240b5e824397cb5f5b70c2318.html#a3512477240b5e824397cb5f5b70c2318", null ],
+    [ "ConverseProcess", "class_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7.html#a66b375b04abb56ba1134e69a8ddb66b7", null ],
     [ "EndDialog", "class_a_q_player_controller_afd156935d4f1dc9acab4e7095922240d.html#afd156935d4f1dc9acab4e7095922240d", null ],
+    [ "FreezePawn", "class_a_q_player_controller_a47d70e05956f914b4d9e8949fc200efe.html#a47d70e05956f914b4d9e8949fc200efe", null ],
     [ "InputConversingQuit", "class_a_q_player_controller_aef2adbe624a4ffabbfcd457596ec0670.html#aef2adbe624a4ffabbfcd457596ec0670", null ],
     [ "InputEnableConversingQuit", "class_a_q_player_controller_adc491512768fa3b1a3a75c337c617f45.html#adc491512768fa3b1a3a75c337c617f45", null ],
     [ "InputEnableInteracton", "class_a_q_player_controller_afb840e7db199f40ec4841e7f6bf52e6f.html#afb840e7db199f40ec4841e7f6bf52e6f", null ],
@@ -11,6 +14,9 @@ var class_a_q_player_controller =
     [ "InputTurn", "class_a_q_player_controller_a84b8939369b790136a27dcbba3f37b81.html#a84b8939369b790136a27dcbba3f37b81", null ],
     [ "SetupInputComponent", "class_a_q_player_controller_af658bc16067a6ecda0dcccaf068b289b.html#af658bc16067a6ecda0dcccaf068b289b", null ],
     [ "StartDialog", "class_a_q_player_controller_a38a79cd4e9b65be6b4a77bd2e960171f.html#a38a79cd4e9b65be6b4a77bd2e960171f", null ],
+    [ "TurnOffPlayer2NSpeechBubble", "class_a_q_player_controller_affa3878cfc26fef5a00e42e4154addaf.html#affa3878cfc26fef5a00e42e4154addaf", null ],
+    [ "TurnOnPlayer2NSpeechBubble", "class_a_q_player_controller_a2e11880b1cc0465b4135726e615b432d.html#a2e11880b1cc0465b4135726e615b432d", null ],
+    [ "UnFreezePawn", "class_a_q_player_controller_ae24647d27206cc5415d6fda947b03089.html#ae24647d27206cc5415d6fda947b03089", null ],
     [ "bEnableConversingQuit", "class_a_q_player_controller_a54a6255396dff36c09189eba9dbf4d1a.html#a54a6255396dff36c09189eba9dbf4d1a", null ],
     [ "bEnableInteraction", "class_a_q_player_controller_a7adbbc8602a6d8b7b397f1ea37705f0a.html#a7adbbc8602a6d8b7b397f1ea37705f0a", null ],
     [ "bEnableTurn", "class_a_q_player_controller_a094a487c4606b622375dbe7759271a39.html#a094a487c4606b622375dbe7759271a39", null ],
@@ -19,6 +25,6 @@ var class_a_q_player_controller =
     [ "InputMappingContext", "class_a_q_player_controller_a4e1956959b4f8cdf1908458186c613c3.html#a4e1956959b4f8cdf1908458186c613c3", null ],
     [ "InteractionAction", "class_a_q_player_controller_a627e20ed43ab1f07c7a7bdf24d35b7d4.html#a627e20ed43ab1f07c7a7bdf24d35b7d4", null ],
     [ "MoveAction", "class_a_q_player_controller_a98e68158c209abb5188b4874e5125287.html#a98e68158c209abb5188b4874e5125287", null ],
-    [ "PlayerState", "class_a_q_player_controller_a8adcc53252ca187a3a744a7786ff130b.html#a8adcc53252ca187a3a744a7786ff130b", null ],
-    [ "TurnAction", "class_a_q_player_controller_afd63116ea00e6a043e05c65df783faaa.html#afd63116ea00e6a043e05c65df783faaa", null ]
+    [ "TurnAction", "class_a_q_player_controller_afd63116ea00e6a043e05c65df783faaa.html#afd63116ea00e6a043e05c65df783faaa", null ],
+    [ "VillageUIManager", "class_a_q_player_controller_a0c63f34b8d931e6a72aea024036e7b13.html#a0c63f34b8d931e6a72aea024036e7b13", null ]
 ];

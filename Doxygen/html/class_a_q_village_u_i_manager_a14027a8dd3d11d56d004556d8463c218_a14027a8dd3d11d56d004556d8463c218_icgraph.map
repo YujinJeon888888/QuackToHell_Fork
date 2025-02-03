@@ -1,0 +1,7 @@
+<map id="GetInstance" name="GetInstance">
+<area shape="rect" id="Node000001" title="싱글톤 인스턴스 반환." alt="" coords="242,47,334,73"/>
+<area shape="rect" id="Node000002" href="$class_a_q_player_controller_a4b591a51a5b9f4036c6ac0f825a0d24c.html#a4b591a51a5b9f4036c6ac0f825a0d24c" title=" " alt="" coords="33,5,166,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="226,52,166,41,167,36,227,47"/>
+<area shape="rect" id="Node000003" href="$class_u_q_p2_n_widget_a17a475cd707db22984696f1438a074ce.html#a17a475cd707db22984696f1438a074ce" title="종료버튼 눌렸을때의 처리;" alt="" coords="5,72,194,115"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="227,73,195,79,194,74,226,68"/>
+</map>

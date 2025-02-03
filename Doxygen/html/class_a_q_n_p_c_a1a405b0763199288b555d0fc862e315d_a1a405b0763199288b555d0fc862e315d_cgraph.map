@@ -1,0 +1,5 @@
+<map id="GetCanFinishConversN2N" name="GetCanFinishConversN2N">
+<area shape="rect" id="Node000001" title="NPC와의 대화를 마칠 수 있는지에 대한 Getter" alt="" coords="5,5,183,32"/>
+<area shape="rect" id="Node000002" href="$class_a_q_n_p_c_ae113cdefbb1c4e15c7cd250aff0f7bf4.html#ae113cdefbb1c4e15c7cd250aff0f7bf4" title=" " alt="" coords="231,5,300,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="183,16,215,16,215,21,183,21"/>
+</map>

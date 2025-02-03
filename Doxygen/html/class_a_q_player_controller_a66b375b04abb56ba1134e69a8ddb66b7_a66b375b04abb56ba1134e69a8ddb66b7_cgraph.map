@@ -1,0 +1,5 @@
+<map id="ConverseProcess" name="ConverseProcess">
+<area shape="rect" id="Node000001" title="대화중일때의 처리를 구현합니다." alt="" coords="5,5,131,32"/>
+<area shape="rect" id="Node000002" href="$class_a_q_player_controller_a47d70e05956f914b4d9e8949fc200efe.html#a47d70e05956f914b4d9e8949fc200efe" title="몸을 멈춥니다." alt="" coords="179,5,273,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="131,16,163,16,163,21,131,21"/>
+</map>

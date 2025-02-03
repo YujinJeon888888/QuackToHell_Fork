@@ -105,6 +105,8 @@ $(function(){initNavTree('class_a_q_character.html',''); initResizable(true); })
   <div class="summary">
 <a href="#pub-methods">Public 멤버 함수</a> &#124;
 <a href="#pro-methods">Protected 멤버 함수</a> &#124;
+<a href="#pro-attribs">Protected 속성</a> &#124;
+<a href="#pri-attribs">Private 속성</a> &#124;
 <a href="class_a_q_character-members.html">모든 멤버 목록</a>  </div>
   <div class="headertitle"><div class="title">AQCharacter 클래스 참조</div></div>
 </div><!--header-->
@@ -116,13 +118,17 @@ AQCharacter에 대한 상속 다이어그램 : </div>
 <div class="dyncontent">
 <div class="center"><img src="class_a_q_character__inherit__graph.png" border="0" usemap="#a_a_q_character_inherit__map" alt="Inheritance graph"/></div>
 <map name="a_a_q_character_inherit__map" id="a_a_q_character_inherit__map">
-<area shape="rect" title=" " alt="" coords="14,123,279,320"/>
-<area shape="rect" href="class_a_q_n_p_c.html" title="NPC 캐릭터 클래스입니다." alt="" coords="5,581,85,651"/>
-<area shape="poly" title=" " alt="" coords="110,335,100,369,72,486,54,582,48,581,67,485,95,367,105,333"/>
-<area shape="rect" href="class_a_q_player.html" title="플레이어 캐릭터 클래스입니다." alt="" coords="110,368,386,864"/>
-<area shape="poly" title=" " alt="" coords="178,334,187,368,182,369,173,335"/>
-<area shape="rect" title=" " alt="" coords="108,5,185,75"/>
-<area shape="poly" title=" " alt="" coords="149,90,149,123,144,123,144,90"/>
+<area shape="rect" title=" " alt="" coords="134,123,399,469"/>
+<area shape="rect" href="class_a_q_n_p_c.html" title="NPC 캐릭터 클래스입니다." alt="" coords="5,779,245,1200"/>
+<area shape="poly" title=" " alt="" coords="231,484,171,780,165,779,226,483"/>
+<area shape="rect" href="class_a_q_player.html" title="플레이어 캐릭터 클래스입니다." alt="" coords="270,517,546,1461"/>
+<area shape="poly" title=" " alt="" coords="307,483,314,517,309,518,302,484"/>
+<area shape="rect" title=" " alt="" coords="228,5,305,75"/>
+<area shape="poly" title=" " alt="" coords="269,89,269,123,264,123,264,89"/>
+<area shape="rect" href="class_a_q_laywer.html" title="Laywer 캐릭터 클래스" alt="" coords="319,1509,390,1579"/>
+<area shape="poly" title=" " alt="" coords="364,1477,361,1510,355,1509,358,1476"/>
+<area shape="rect" href="class_a_q_prosecutor.html" title="Prosecutor 캐릭터 클래스" alt="" coords="415,1509,508,1579"/>
+<area shape="poly" title=" " alt="" coords="458,1476,461,1509,455,1510,452,1477"/>
 </map>
 </div>
 <div class="dynheader">
@@ -130,9 +136,9 @@ AQCharacter에 대한 협력 다이어그램:</div>
 <div class="dyncontent">
 <div class="center"><img src="class_a_q_character__coll__graph.png" border="0" usemap="#a_a_q_character_coll__map" alt="Collaboration graph"/></div>
 <map name="a_a_q_character_coll__map" id="a_a_q_character_coll__map">
-<area shape="rect" title=" " alt="" coords="5,123,270,320"/>
+<area shape="rect" title=" " alt="" coords="5,123,270,469"/>
 <area shape="rect" title=" " alt="" coords="100,5,176,75"/>
-<area shape="poly" title=" " alt="" coords="140,90,140,123,135,123,135,90"/>
+<area shape="poly" title=" " alt="" coords="140,89,140,123,135,123,135,89"/>
 </map>
 </div>
 <table class="memberdecls">
@@ -149,6 +155,27 @@ Public 멤버 함수</h2></td></tr>
 Protected 멤버 함수</h2></td></tr>
 <tr class="memitem:a4b591a51a5b9f4036c6ac0f825a0d24c" id="r_a4b591a51a5b9f4036c6ac0f825a0d24c"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_a_q_character_a4b591a51a5b9f4036c6ac0f825a0d24c.html#a4b591a51a5b9f4036c6ac0f825a0d24c">BeginPlay</a> () override</td></tr>
 <tr class="separator:a4b591a51a5b9f4036c6ac0f825a0d24c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30bc0ffc017a2491b154bad6ef8970dd" id="r_a30bc0ffc017a2491b154bad6ef8970dd"><td class="memItemLeft" align="right" valign="top">const FString &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_a_q_character_a30bc0ffc017a2491b154bad6ef8970dd.html#a30bc0ffc017a2491b154bad6ef8970dd">GetCharacterName</a> () const</td></tr>
+<tr class="memdesc:a30bc0ffc017a2491b154bad6ef8970dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">이름 리턴 함수  <br /></td></tr>
+<tr class="separator:a30bc0ffc017a2491b154bad6ef8970dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad23255f7ed065b9dc3becd27b68d5812" id="r_ad23255f7ed065b9dc3becd27b68d5812"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_a_q_character_ad23255f7ed065b9dc3becd27b68d5812.html#ad23255f7ed065b9dc3becd27b68d5812">SetCharacterName</a> (FString &amp;Name)</td></tr>
+<tr class="memdesc:ad23255f7ed065b9dc3becd27b68d5812"><td class="mdescLeft">&#160;</td><td class="mdescRight">이름 설정 함수  <br /></td></tr>
+<tr class="separator:ad23255f7ed065b9dc3becd27b68d5812"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
+Protected 속성</h2></td></tr>
+<tr class="memitem:a5837ca7b4afbb568c2ada653b588e713" id="r_a5837ca7b4afbb568c2ada653b588e713"><td class="memItemLeft" align="right" valign="top">TObjectPtr&lt; class <a class="el" href="class_u_q_name_widget.html">UQNameWidget</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_a_q_character_a5837ca7b4afbb568c2ada653b588e713.html#a5837ca7b4afbb568c2ada653b588e713">NameWidget</a></td></tr>
+<tr class="memdesc:a5837ca7b4afbb568c2ada653b588e713"><td class="mdescLeft">&#160;</td><td class="mdescRight">네임위젯 클래스 정보를 담습니다.  <br /></td></tr>
+<tr class="separator:a5837ca7b4afbb568c2ada653b588e713"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05115d25cc41b4c2ea3aa700fa808dea" id="r_a05115d25cc41b4c2ea3aa700fa808dea"><td class="memItemLeft" align="right" valign="top">TObjectPtr&lt; class UWidgetComponent &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_a_q_character_a05115d25cc41b4c2ea3aa700fa808dea.html#a05115d25cc41b4c2ea3aa700fa808dea">WidgetComponent</a></td></tr>
+<tr class="memdesc:a05115d25cc41b4c2ea3aa700fa808dea"><td class="mdescLeft">&#160;</td><td class="mdescRight">UI 컴포넌트입니다.  <br /></td></tr>
+<tr class="separator:a05115d25cc41b4c2ea3aa700fa808dea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pri-attribs" name="pri-attribs"></a>
+Private 속성</h2></td></tr>
+<tr class="memitem:a0b9ffc000f54d0618c123ff0f0628e32" id="r_a0b9ffc000f54d0618c123ff0f0628e32"><td class="memItemLeft" align="right" valign="top">FString&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_a_q_character_a0b9ffc000f54d0618c123ff0f0628e32.html#a0b9ffc000f54d0618c123ff0f0628e32">CharacterName</a></td></tr>
+<tr class="memdesc:a0b9ffc000f54d0618c123ff0f0628e32"><td class="mdescLeft">&#160;</td><td class="mdescRight">네임위젯에 이름을 반영하는 함수를 오버라이드하도록 강제함  <br /></td></tr>
+<tr class="separator:a0b9ffc000f54d0618c123ff0f0628e32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">상세한 설명</h2>
 <div class="textblock">

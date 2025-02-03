@@ -109,49 +109,91 @@ $(function(){initNavTree('_q_character_8cpp_source.html',''); initResizable(true
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="_q_character_8h.html">Character/QCharacter.h</a>&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">// Sets default values</span></div>
-<div class="foldopen" id="foldopen00007" data-start="{" data-end="}">
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="class_a_q_character_a14145af5db8c1ae9a6e847cfe42e6c7c.html#a14145af5db8c1ae9a6e847cfe42e6c7c">    7</a></span><a class="code hl_function" href="class_a_q_character_a14145af5db8c1ae9a6e847cfe42e6c7c.html#a14145af5db8c1ae9a6e847cfe42e6c7c">AQCharacter::AQCharacter</a>()</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>{</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>    <span class="comment">// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don&#39;t need it.</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    PrimaryActorTick.bCanEverTick = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>}</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;Blueprint/UserWidget.h&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;UObject/SoftObjectPath.h&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="_q_name_widget_8h.html">UI/QNameWidget.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;Components/WidgetComponent.h&quot;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="comment">// Sets default values</span></div>
+<div class="foldopen" id="foldopen00011" data-start="{" data-end="}">
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="class_a_q_character_a14145af5db8c1ae9a6e847cfe42e6c7c.html#a14145af5db8c1ae9a6e847cfe42e6c7c">   11</a></span><a class="code hl_function" href="class_a_q_character_a14145af5db8c1ae9a6e847cfe42e6c7c.html#a14145af5db8c1ae9a6e847cfe42e6c7c">AQCharacter::AQCharacter</a>()</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="comment">// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don&#39;t need it.</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    PrimaryActorTick.bCanEverTick = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="comment">/*이름표 UI 컴포넌트*/</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    this-&gt;<a class="code hl_variable" href="class_a_q_character_a05115d25cc41b4c2ea3aa700fa808dea.html#a05115d25cc41b4c2ea3aa700fa808dea">WidgetComponent</a>= CreateDefaultSubobject&lt;UWidgetComponent&gt;(TEXT(<span class="stringliteral">&quot;NameWidget&quot;</span>));</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    EWidgetSpace WidgetSpace = EWidgetSpace::Screen;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    this-&gt;<a class="code hl_variable" href="class_a_q_character_a05115d25cc41b4c2ea3aa700fa808dea.html#a05115d25cc41b4c2ea3aa700fa808dea">WidgetComponent</a>-&gt;SetWidgetSpace(WidgetSpace);</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    this-&gt;<a class="code hl_variable" href="class_a_q_character_a05115d25cc41b4c2ea3aa700fa808dea.html#a05115d25cc41b4c2ea3aa700fa808dea">WidgetComponent</a>-&gt;SetDrawAtDesiredSize(<span class="keyword">true</span>);</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    this-&gt;<a class="code hl_variable" href="class_a_q_character_a05115d25cc41b4c2ea3aa700fa808dea.html#a05115d25cc41b4c2ea3aa700fa808dea">WidgetComponent</a>-&gt;SetupAttachment(RootComponent);</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    TSubclassOf&lt;UQNameWidget&gt; _NameWidget;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="comment">//QNameWidget을 상속한 클래스만 담을 수 있도록 강제한다.</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    this-&gt;<a class="code hl_variable" href="class_a_q_character_a05115d25cc41b4c2ea3aa700fa808dea.html#a05115d25cc41b4c2ea3aa700fa808dea">WidgetComponent</a>-&gt;SetWidgetClass(_NameWidget);</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>}</div>
 </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">// Called when the game starts or when spawned</span></div>
-<div class="foldopen" id="foldopen00015" data-start="{" data-end="}">
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="class_a_q_character_a4b591a51a5b9f4036c6ac0f825a0d24c.html#a4b591a51a5b9f4036c6ac0f825a0d24c">   15</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="class_a_q_character_a4b591a51a5b9f4036c6ac0f825a0d24c.html#a4b591a51a5b9f4036c6ac0f825a0d24c">AQCharacter::BeginPlay</a>()</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>{</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    Super::BeginPlay();</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>}</div>
-</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">// Called every frame</span></div>
-<div class="foldopen" id="foldopen00022" data-start="{" data-end="}">
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="class_a_q_character_a2fb3c0ec625280bd51ca1c64770ae425.html#a2fb3c0ec625280bd51ca1c64770ae425">   22</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="class_a_q_character_a2fb3c0ec625280bd51ca1c64770ae425.html#a2fb3c0ec625280bd51ca1c64770ae425">AQCharacter::Tick</a>(<span class="keywordtype">float</span> DeltaTime)</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>{</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    Super::Tick(DeltaTime);</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>}</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="comment">// Called when the game starts or when spawned</span></div>
+<div class="foldopen" id="foldopen00027" data-start="{" data-end="}">
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="class_a_q_character_a4b591a51a5b9f4036c6ac0f825a0d24c.html#a4b591a51a5b9f4036c6ac0f825a0d24c">   27</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="class_a_q_character_a4b591a51a5b9f4036c6ac0f825a0d24c.html#a4b591a51a5b9f4036c6ac0f825a0d24c">AQCharacter::BeginPlay</a>()</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>{</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    Super::BeginPlay();</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="class_a_q_character_a05115d25cc41b4c2ea3aa700fa808dea.html#a05115d25cc41b4c2ea3aa700fa808dea">WidgetComponent</a>)</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    {</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        UUserWidget* UserWidget = <a class="code hl_variable" href="class_a_q_character_a05115d25cc41b4c2ea3aa700fa808dea.html#a05115d25cc41b4c2ea3aa700fa808dea">WidgetComponent</a>-&gt;GetWidget();</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        <span class="keywordflow">if</span> (UserWidget)</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>            <a class="code hl_variable" href="class_a_q_character_a5837ca7b4afbb568c2ada653b588e713.html#a5837ca7b4afbb568c2ada653b588e713">NameWidget</a> = Cast&lt;UQNameWidget&gt;(UserWidget);</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        }</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    }</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>}</div>
 </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment">// Called to bind functionality to input</span></div>
-<div class="foldopen" id="foldopen00029" data-start="{" data-end="}">
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="class_a_q_character_aca0162ea2b04ddb06fc151337761c383.html#aca0162ea2b04ddb06fc151337761c383">   29</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="class_a_q_character_aca0162ea2b04ddb06fc151337761c383.html#aca0162ea2b04ddb06fc151337761c383">AQCharacter::SetupPlayerInputComponent</a>(UInputComponent* PlayerInputComponent)</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>{</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    Super::SetupPlayerInputComponent(PlayerInputComponent);</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>}</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
+<div class="foldopen" id="foldopen00041" data-start="{" data-end="}">
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="class_a_q_character_a30bc0ffc017a2491b154bad6ef8970dd.html#a30bc0ffc017a2491b154bad6ef8970dd">   41</a></span><span class="keyword">const</span> FString&amp; <a class="code hl_function" href="class_a_q_character_a30bc0ffc017a2491b154bad6ef8970dd.html#a30bc0ffc017a2491b154bad6ef8970dd">AQCharacter::GetCharacterName</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword"></span>{</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="class_a_q_character_a0b9ffc000f54d0618c123ff0f0628e32.html#a0b9ffc000f54d0618c123ff0f0628e32">CharacterName</a>;  </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>}</div>
 </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="foldopen" id="foldopen00046" data-start="{" data-end="}">
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="class_a_q_character_ad23255f7ed065b9dc3becd27b68d5812.html#ad23255f7ed065b9dc3becd27b68d5812">   46</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="class_a_q_character_ad23255f7ed065b9dc3becd27b68d5812.html#ad23255f7ed065b9dc3becd27b68d5812">AQCharacter::SetCharacterName</a>(FString&amp; Name)</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>{</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <a class="code hl_variable" href="class_a_q_character_a0b9ffc000f54d0618c123ff0f0628e32.html#a0b9ffc000f54d0618c123ff0f0628e32">CharacterName</a> = Name;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>}</div>
+</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="comment">// Called every frame</span></div>
+<div class="foldopen" id="foldopen00054" data-start="{" data-end="}">
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="class_a_q_character_a2fb3c0ec625280bd51ca1c64770ae425.html#a2fb3c0ec625280bd51ca1c64770ae425">   54</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="class_a_q_character_a2fb3c0ec625280bd51ca1c64770ae425.html#a2fb3c0ec625280bd51ca1c64770ae425">AQCharacter::Tick</a>(<span class="keywordtype">float</span> DeltaTime)</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>{</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    Super::Tick(DeltaTime);</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>}</div>
+</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="comment">// Called to bind functionality to input</span></div>
+<div class="foldopen" id="foldopen00061" data-start="{" data-end="}">
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="class_a_q_character_aca0162ea2b04ddb06fc151337761c383.html#aca0162ea2b04ddb06fc151337761c383">   61</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="class_a_q_character_aca0162ea2b04ddb06fc151337761c383.html#aca0162ea2b04ddb06fc151337761c383">AQCharacter::SetupPlayerInputComponent</a>(UInputComponent* PlayerInputComponent)</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>{</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    Super::SetupPlayerInputComponent(PlayerInputComponent);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>}</div>
+</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
 <div class="ttc" id="a_q_character_8h_html"><div class="ttname"><a href="_q_character_8h.html">QCharacter.h</a></div></div>
-<div class="ttc" id="aclass_a_q_character_a14145af5db8c1ae9a6e847cfe42e6c7c_html_a14145af5db8c1ae9a6e847cfe42e6c7c"><div class="ttname"><a href="class_a_q_character_a14145af5db8c1ae9a6e847cfe42e6c7c.html#a14145af5db8c1ae9a6e847cfe42e6c7c">AQCharacter::AQCharacter</a></div><div class="ttdeci">AQCharacter()</div><div class="ttdef"><b>Definition</b> <a href="#l00007">QCharacter.cpp:7</a></div></div>
-<div class="ttc" id="aclass_a_q_character_a2fb3c0ec625280bd51ca1c64770ae425_html_a2fb3c0ec625280bd51ca1c64770ae425"><div class="ttname"><a href="class_a_q_character_a2fb3c0ec625280bd51ca1c64770ae425.html#a2fb3c0ec625280bd51ca1c64770ae425">AQCharacter::Tick</a></div><div class="ttdeci">virtual void Tick(float DeltaTime) override</div><div class="ttdef"><b>Definition</b> <a href="#l00022">QCharacter.cpp:22</a></div></div>
-<div class="ttc" id="aclass_a_q_character_a4b591a51a5b9f4036c6ac0f825a0d24c_html_a4b591a51a5b9f4036c6ac0f825a0d24c"><div class="ttname"><a href="class_a_q_character_a4b591a51a5b9f4036c6ac0f825a0d24c.html#a4b591a51a5b9f4036c6ac0f825a0d24c">AQCharacter::BeginPlay</a></div><div class="ttdeci">virtual void BeginPlay() override</div><div class="ttdef"><b>Definition</b> <a href="#l00015">QCharacter.cpp:15</a></div></div>
-<div class="ttc" id="aclass_a_q_character_aca0162ea2b04ddb06fc151337761c383_html_aca0162ea2b04ddb06fc151337761c383"><div class="ttname"><a href="class_a_q_character_aca0162ea2b04ddb06fc151337761c383.html#aca0162ea2b04ddb06fc151337761c383">AQCharacter::SetupPlayerInputComponent</a></div><div class="ttdeci">virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override</div><div class="ttdef"><b>Definition</b> <a href="#l00029">QCharacter.cpp:29</a></div></div>
+<div class="ttc" id="a_q_name_widget_8h_html"><div class="ttname"><a href="_q_name_widget_8h.html">QNameWidget.h</a></div></div>
+<div class="ttc" id="aclass_a_q_character_a05115d25cc41b4c2ea3aa700fa808dea_html_a05115d25cc41b4c2ea3aa700fa808dea"><div class="ttname"><a href="class_a_q_character_a05115d25cc41b4c2ea3aa700fa808dea.html#a05115d25cc41b4c2ea3aa700fa808dea">AQCharacter::WidgetComponent</a></div><div class="ttdeci">TObjectPtr&lt; class UWidgetComponent &gt; WidgetComponent</div><div class="ttdoc">UI 컴포넌트입니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_character_8h_source.html#l00043">QCharacter.h:43</a></div></div>
+<div class="ttc" id="aclass_a_q_character_a0b9ffc000f54d0618c123ff0f0628e32_html_a0b9ffc000f54d0618c123ff0f0628e32"><div class="ttname"><a href="class_a_q_character_a0b9ffc000f54d0618c123ff0f0628e32.html#a0b9ffc000f54d0618c123ff0f0628e32">AQCharacter::CharacterName</a></div><div class="ttdeci">FString CharacterName</div><div class="ttdoc">네임위젯에 이름을 반영하는 함수를 오버라이드하도록 강제함</div><div class="ttdef"><b>Definition</b> <a href="_q_character_8h_source.html#l00054">QCharacter.h:48</a></div></div>
+<div class="ttc" id="aclass_a_q_character_a14145af5db8c1ae9a6e847cfe42e6c7c_html_a14145af5db8c1ae9a6e847cfe42e6c7c"><div class="ttname"><a href="class_a_q_character_a14145af5db8c1ae9a6e847cfe42e6c7c.html#a14145af5db8c1ae9a6e847cfe42e6c7c">AQCharacter::AQCharacter</a></div><div class="ttdeci">AQCharacter()</div><div class="ttdef"><b>Definition</b> <a href="#l00011">QCharacter.cpp:11</a></div></div>
+<div class="ttc" id="aclass_a_q_character_a2fb3c0ec625280bd51ca1c64770ae425_html_a2fb3c0ec625280bd51ca1c64770ae425"><div class="ttname"><a href="class_a_q_character_a2fb3c0ec625280bd51ca1c64770ae425.html#a2fb3c0ec625280bd51ca1c64770ae425">AQCharacter::Tick</a></div><div class="ttdeci">virtual void Tick(float DeltaTime) override</div><div class="ttdef"><b>Definition</b> <a href="#l00054">QCharacter.cpp:54</a></div></div>
+<div class="ttc" id="aclass_a_q_character_a30bc0ffc017a2491b154bad6ef8970dd_html_a30bc0ffc017a2491b154bad6ef8970dd"><div class="ttname"><a href="class_a_q_character_a30bc0ffc017a2491b154bad6ef8970dd.html#a30bc0ffc017a2491b154bad6ef8970dd">AQCharacter::GetCharacterName</a></div><div class="ttdeci">const FString &amp; GetCharacterName() const</div><div class="ttdoc">이름 리턴 함수</div><div class="ttdef"><b>Definition</b> <a href="#l00041">QCharacter.cpp:41</a></div></div>
+<div class="ttc" id="aclass_a_q_character_a4b591a51a5b9f4036c6ac0f825a0d24c_html_a4b591a51a5b9f4036c6ac0f825a0d24c"><div class="ttname"><a href="class_a_q_character_a4b591a51a5b9f4036c6ac0f825a0d24c.html#a4b591a51a5b9f4036c6ac0f825a0d24c">AQCharacter::BeginPlay</a></div><div class="ttdeci">virtual void BeginPlay() override</div><div class="ttdef"><b>Definition</b> <a href="#l00027">QCharacter.cpp:27</a></div></div>
+<div class="ttc" id="aclass_a_q_character_a5837ca7b4afbb568c2ada653b588e713_html_a5837ca7b4afbb568c2ada653b588e713"><div class="ttname"><a href="class_a_q_character_a5837ca7b4afbb568c2ada653b588e713.html#a5837ca7b4afbb568c2ada653b588e713">AQCharacter::NameWidget</a></div><div class="ttdeci">TObjectPtr&lt; class UQNameWidget &gt; NameWidget</div><div class="ttdoc">네임위젯 클래스 정보를 담습니다.</div><div class="ttdef"><b>Definition</b> <a href="_q_character_8h_source.html#l00046">QCharacter.h:46</a></div></div>
+<div class="ttc" id="aclass_a_q_character_aca0162ea2b04ddb06fc151337761c383_html_aca0162ea2b04ddb06fc151337761c383"><div class="ttname"><a href="class_a_q_character_aca0162ea2b04ddb06fc151337761c383.html#aca0162ea2b04ddb06fc151337761c383">AQCharacter::SetupPlayerInputComponent</a></div><div class="ttdeci">virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override</div><div class="ttdef"><b>Definition</b> <a href="#l00061">QCharacter.cpp:61</a></div></div>
+<div class="ttc" id="aclass_a_q_character_ad23255f7ed065b9dc3becd27b68d5812_html_ad23255f7ed065b9dc3becd27b68d5812"><div class="ttname"><a href="class_a_q_character_ad23255f7ed065b9dc3becd27b68d5812.html#ad23255f7ed065b9dc3becd27b68d5812">AQCharacter::SetCharacterName</a></div><div class="ttdeci">void SetCharacterName(FString &amp;Name)</div><div class="ttdoc">이름 설정 함수</div><div class="ttdef"><b>Definition</b> <a href="#l00046">QCharacter.cpp:46</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

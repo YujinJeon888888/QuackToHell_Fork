@@ -1,0 +1,5 @@
+<map id="GetCanStartConversN2N" name="GetCanStartConversN2N">
+<area shape="rect" id="Node000001" title="N2N 대화가 가능한지에 대한 Getter" alt="" coords="5,5,176,32"/>
+<area shape="rect" id="Node000002" href="$class_a_q_n_p_c_ae113cdefbb1c4e15c7cd250aff0f7bf4.html#ae113cdefbb1c4e15c7cd250aff0f7bf4" title=" " alt="" coords="224,5,293,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="176,16,208,16,208,21,176,21"/>
+</map>

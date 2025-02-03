@@ -1,0 +1,7 @@
+<map id="UpdateNPCText" name="UpdateNPCText">
+<area shape="rect" id="Node000001" title="대화상자의 글씨를 업데이트합니다." alt="" coords="204,31,321,57"/>
+<area shape="rect" id="Node000002" href="$class_u_q_p2_n_widget_a4443ff350fe14fe5a16bce2cbaf75b82.html#a4443ff350fe14fe5a16bce2cbaf75b82" title="엔터키 눌렸을때의 처리;" alt="" coords="5,5,156,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="188,36,155,32,156,26,189,31"/>
+<area shape="rect" id="Node000003" href="$class_u_q_p2_n_widget_aa789eda82398ff4f7349092f9e71df50.html#aa789eda82398ff4f7349092f9e71df50" title="대화중인 NPC정보를 세팅합니다." alt="" coords="12,56,149,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="189,57,149,63,148,57,188,52"/>
+</map>

@@ -2,13 +2,24 @@ var annotated_dup =
 [
     [ "AClientTestGameMode", "class_a_client_test_game_mode.html", null ],
     [ "AQCharacter", "class_a_q_character.html", "class_a_q_character" ],
+    [ "AQLaywer", "class_a_q_laywer.html", "class_a_q_laywer" ],
     [ "AQNPC", "class_a_q_n_p_c.html", "class_a_q_n_p_c" ],
     [ "AQNPCController", "class_a_q_n_p_c_controller.html", "class_a_q_n_p_c_controller" ],
     [ "AQPlayer", "class_a_q_player.html", "class_a_q_player" ],
     [ "AQPlayerController", "class_a_q_player_controller.html", "class_a_q_player_controller" ],
     [ "AQPlayerState", "class_a_q_player_state.html", "class_a_q_player_state" ],
+    [ "AQProsecutor", "class_a_q_prosecutor.html", "class_a_q_prosecutor" ],
+    [ "AQVillageUIManager", "class_a_q_village_u_i_manager.html", "class_a_q_village_u_i_manager" ],
+    [ "FOpenAIRequest", "struct_f_open_a_i_request.html", "struct_f_open_a_i_request" ],
+    [ "FOpenAIResponse", "struct_f_open_a_i_response.html", "struct_f_open_a_i_response" ],
     [ "QGameplayTags", "class_q_gameplay_tags.html", "class_q_gameplay_tags" ],
     [ "QuackToHell", "class_quack_to_hell.html", "class_quack_to_hell" ],
+    [ "UGodFunction", "class_u_god_function.html", "class_u_god_function" ],
     [ "UQBTTFindPatrolPos", "class_u_q_b_t_t_find_patrol_pos.html", "class_u_q_b_t_t_find_patrol_pos" ],
-    [ "UQPlayerAnimInstance", "class_u_q_player_anim_instance.html", "class_u_q_player_anim_instance" ]
+    [ "UQNameWidget", "class_u_q_name_widget.html", "class_u_q_name_widget" ],
+    [ "UQP2NWidget", "class_u_q_p2_n_widget.html", "class_u_q_p2_n_widget" ],
+    [ "UQPlayer2NSpeechBubbleWidget", "class_u_q_player2_n_speech_bubble_widget.html", "class_u_q_player2_n_speech_bubble_widget" ],
+    [ "UQPlayerAnimInstance", "class_u_q_player_anim_instance.html", "class_u_q_player_anim_instance" ],
+    [ "UQSpeechBubbleWidget", "class_u_q_speech_bubble_widget.html", null ],
+    [ "UQSpeechBubbleWidgetComponent", "class_u_q_speech_bubble_widget_component.html", "class_u_q_speech_bubble_widget_component" ]
 ];

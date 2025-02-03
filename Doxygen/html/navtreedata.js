@@ -41,6 +41,7 @@ var NAVTREE =
       [ "파일 멤버", "globals.html", [
         [ "모두", "globals.html", null ],
         [ "함수", "globals_func.html", null ],
+        [ "변수", "globals_vars.html", null ],
         [ "열거형 타입", "globals_enum.html", null ]
       ] ]
     ] ]
@@ -49,7 +50,8 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"_client_test_game_mode_8cpp.html"
+"_client_test_game_mode_8cpp.html",
+"class_a_q_prosecutor.html"
 ];
 
 var SYNCONMSG = '패널 동기화를 비활성화하기 위해 클릭하십시오';

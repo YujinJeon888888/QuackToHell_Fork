@@ -1,5 +1,7 @@
 <map id="StartDialog" name="StartDialog">
 <area shape="rect" id="Node000001" title="대화를 시작합니다." alt="" coords="5,5,92,32"/>
-<area shape="rect" id="Node000002" href="$class_q_gameplay_tags_a734f3aed5faac5429e4a1883d87348bd.html#a734f3aed5faac5429e4a1883d87348bd" title="열거형 이름에 맞는 태그를 리턴합니다." alt="" coords="140,5,308,32"/>
+<area shape="rect" id="Node000002" href="$class_a_q_player_controller_a66b375b04abb56ba1134e69a8ddb66b7.html#a66b375b04abb56ba1134e69a8ddb66b7" title="대화중일때의 처리를 구현합니다." alt="" coords="140,5,265,32"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,16,124,16,124,21,92,21"/>
+<area shape="rect" id="Node000003" href="$class_a_q_player_controller_a47d70e05956f914b4d9e8949fc200efe.html#a47d70e05956f914b4d9e8949fc200efe" title="몸을 멈춥니다." alt="" coords="313,5,407,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="265,16,298,16,298,21,265,21"/>
 </map>
