@@ -4,6 +4,9 @@
 #include "UI/QP2NWidget.h"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
 #include "Components/EditableTextBox.h"
 #include "NPC/QNPCController.h"
 #include "QLogCategories.h"
@@ -17,6 +20,7 @@
 void UQP2NWidget::UpdatePlayerText(const FString& Text)
 {
 	PlayerText->SetText(FText::FromString(Text));
+<<<<<<< HEAD
 =======
 #include "Components/TextBlock.h"
 =======
@@ -34,6 +38,8 @@ void UQP2NWidget::UpdatePlayerText(const FString& Text)
 void UQP2NWidget::UpdatePlayerText(const FString& Text)
 {
 	PlayerText->SetText(FText::FromString(Text));
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
 }
 
 void UQP2NWidget::UpdatePlayerText(const FText& Text)
@@ -46,6 +52,7 @@ void UQP2NWidget::UpdatePlayerText(const FText& Text)
 void UQP2NWidget::UpdateNPCText(const FString& Text)
 {
 	NPCText->SetText(FText::FromString(Text));
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
 }
@@ -68,6 +75,11 @@ void UQP2NWidget::UpdateNPCText(const FString& Text)
 }
 
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+
+}
+
+>>>>>>> origin/SCRUM-432_C_P2N
 void UQP2NWidget::UpdateNPCText(const FText& Text)
 {
 	NPCText->SetText(Text);

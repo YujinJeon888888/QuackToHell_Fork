@@ -22,6 +22,7 @@ public:
 	 */
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	void UpdatePlayerText(const FString& Text);
 =======
 	void UpdatePlayerText(FString& Text);
@@ -29,14 +30,20 @@ public:
 =======
 	void UpdatePlayerText(const FString& Text);
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+	void UpdatePlayerText(const FString& Text);
+>>>>>>> origin/SCRUM-432_C_P2N
 	/**
 	 * @brief 대화상자의 글씨를 업데이트합니다.
 	 * @param 새로 띄울 텍스트를 인자로 넣습니다.
 	 */
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
 	UFUNCTION(BlueprintCallable)
 	void UpdatePlayerText(const FText& Text);
 	/**
@@ -70,11 +77,14 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void HandleEnterEndButton();
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	void UpdateNPCText(FString& Text);
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
 =======
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
 private:
 	/**
 	 * @brie PlayerText 컴포넌트 바인드
@@ -88,8 +98,11 @@ private:
 	TObjectPtr<class UTextBlock> NPCText;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
 	/**
 	 * @brie inputBox 컴포넌트 바인드
 	 */
@@ -107,10 +120,13 @@ private:
 	const FString WhenGenerateResponseText = "음...";
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
 =======
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
 };
 
 

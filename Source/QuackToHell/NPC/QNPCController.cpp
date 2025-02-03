@@ -26,6 +26,7 @@ void AQNPCController::StartDialog()
     NPCComponent->OnNPCResponseReceived.AddDynamic(this, &AQNPCController::OnNPCResponseReceived);
     //내 정보 넘겨주기
     Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->SetConversingNPC(this);
+<<<<<<< HEAD
 =======
     //TODO: 첫 멘트를 저장
     /*Response = NPCComponent->;*/
@@ -45,6 +46,8 @@ void AQNPCController::StartDialog()
     //내 정보 넘겨주기
     Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->SetConversingNPC(this);
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
 }
 
 void AQNPCController::EndDialog()
@@ -60,18 +63,24 @@ void AQNPCController::Response(FString& Text)
 {
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
     //1. 응답 요청
     NPCComponent->StartConversation(Text);
     //2. 콜백함수등록(응답시처리)
     UE_LOG(LogLogic, Log, TEXT("응답요청함수 들어옴: NPCController"));
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
 =======
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
 }
 
 void AQNPCController::BeginPlay()

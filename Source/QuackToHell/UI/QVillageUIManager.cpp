@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
 
@@ -15,6 +16,11 @@
 #include "QLogCategories.h"
 
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
+=======
+
+#include "QLogCategories.h"
+
+>>>>>>> origin/SCRUM-432_C_P2N
 TObjectPtr<AQVillageUIManager> AQVillageUIManager::Instance = nullptr;
 
 // Sets default values
@@ -92,6 +98,7 @@ void AQVillageUIManager::OnMapLoad()
 	FString CurrentMap = UGameplayStatics::GetCurrentLevelName(this);
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	//TODO: 마을맵으로바꾸기  / 마을맵이면 기본으로 활성화 할 것들
 =======
 	//마을맵이면 기본으로 활성화 할 것들
@@ -99,6 +106,9 @@ void AQVillageUIManager::OnMapLoad()
 =======
 	//TODO: 마을맵으로바꾸기  / 마을맵이면 기본으로 활성화 할 것들
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+	//TODO: 마을맵으로바꾸기  / 마을맵이면 기본으로 활성화 할 것들
+>>>>>>> origin/SCRUM-432_C_P2N
 	if (CurrentMap == "ClinetTestMap") {
 		//TODO: 기본 마을 UI들 띄운다 (초기화작업)
 		TurnOnUI(EVillageUIType::P2N);
@@ -126,11 +136,14 @@ void AQVillageUIManager::TurnOnUI(EVillageUIType UIType)
 		ActiveWidgets[UIType]->SetVisibility(ESlateVisibility::Visible);
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 		
 >>>>>>> 0ef06a8 (feat: P2N UI 생성)
 =======
 >>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
 		return;
 	}
 	if (!UIWidgetClasses[UIType]) {

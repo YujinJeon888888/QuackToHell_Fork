@@ -342,8 +342,11 @@ void UNPCComponent::SendNPCResponseToServer_Implementation(const FString& NPCRes
 {
 	if (!NPCResponse.IsEmpty() && NPCResponse != TEXT("죄송합니다, 답변할 수 없습니다."))
 	{
+<<<<<<< HEAD
 
 		FString PlayerName = TEXT("Unknown Player");  // 기본값 설정
+=======
+>>>>>>> origin/SCRUM-432_C_P2N
 		UE_LOG(LogTemp, Log, TEXT("Sending NPC response to server: %s"), *NPCResponse);
 
 		// 클라이언트에게도 응답을 전송
