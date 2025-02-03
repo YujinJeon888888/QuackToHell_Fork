@@ -177,6 +177,8 @@ void UNPCComponent::RequestGreetingFromAI()
 	RequestOpenAIResponse(AIRequest, [this](FOpenAIResponse AIResponse)
 		{
 			UE_LOG(LogTemp, Log, TEXT("NPC Greeting Response: %s"), *AIResponse.ResponseText);
+
+			// 서버 & 클라이언트 브로드캐스트
 			SendNPCResponseToServer(AIResponse.ResponseText);
 		});
 }
@@ -203,6 +205,8 @@ void UNPCComponent::RequestAIResponse(const FString& PlayerInput)
 		{
 			ResponseCache.Add(PlayerInput, AIResponse.ResponseText);
 			UE_LOG(LogTemp, Log, TEXT("OpenAI Response: %s"), *AIResponse.ResponseText);
+
+			// 서버 & 클라이언트 브로드캐스트
 			SendNPCResponseToServer(AIResponse.ResponseText);
 		});
 }
@@ -307,19 +311,46 @@ void UNPCComponent::PerformNPCMonologue()
 
 }
 
+FString UNPCComponent::GetLastDialogue() const
+{
+	if (LastDialogue.IsEmpty())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No dialogue available in NPCComponent."));
+		return TEXT("...");
+	}
+
+	return LastDialogue;
+}
+
+void UNPCComponent::ClientReceiveNPCResponse_Implementation(const FString& NPCResponse)
+{
+	UE_LOG(LogTemp, Log, TEXT("Client received NPC response: %s"), *NPCResponse);
+
+	// UI에서 NPC 응답을 표시할 수 있도록 브로드캐스트
+	OnNPCResponseReceived.Broadcast(NPCResponse);
+}
+
+
 // 서버로 NPC의 응답을 보내는 RPC 함수
 void UNPCComponent::SendNPCResponseToServer_Implementation(const FString& NPCResponse)
 {
 	if (!NPCResponse.IsEmpty() && NPCResponse != TEXT("죄송합니다, 답변할 수 없습니다."))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Sending NPC response to server: %s"), *NPCResponse);
+
+		// 클라이언트에게도 응답을 전송
+		ClientReceiveNPCResponse(NPCResponse);
+
+		// 델리게이트를 활용하여 브로드캐스트 (서버 & 클라이언트에 전달)
+		OnNPCResponseReceived.Broadcast(NPCResponse);
 	}
 }
 
 bool UNPCComponent::SendNPCResponseToServer_Validate(const FString& NPCResponse)
 {
-	return true; // 기본적으로 항상 유효한 메시지라고 가정
+	return true;
 }
+
 
 // Called every frame
 void UNPCComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

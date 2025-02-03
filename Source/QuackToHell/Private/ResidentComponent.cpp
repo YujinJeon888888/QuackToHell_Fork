@@ -52,3 +52,11 @@ void UResidentComponent::PerformNPCLogic()
         }
     }
 }
+
+void UResidentComponent::AskResidentQuestion(const FString& PlayerInput)
+{
+    UE_LOG(LogTemp, Log, TEXT("Player asked the Resident: %s"), *PlayerInput);
+
+    // NPCComponent를 통한 OpenAI 요청
+    StartConversation(PlayerInput);
+}

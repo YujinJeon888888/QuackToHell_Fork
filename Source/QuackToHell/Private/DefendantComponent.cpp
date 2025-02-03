@@ -50,3 +50,11 @@ void UDefendantComponent::PerformNPCLogic()
     }
 
 }
+
+void UDefendantComponent::AskDefendantQuestion(const FString& PlayerInput)
+{
+    UE_LOG(LogTemp, Log, TEXT("Player asked the Defendant: %s"), *PlayerInput);
+
+    // NPCComponent를 통한 OpenAI 요청
+    StartConversation(PlayerInput);
+}
