@@ -2,14 +2,106 @@
 
 
 #include "UI/QP2NWidget.h"
-#include "Components/TextBlock.h"
+#include "Components/EditableTextBox.h"
+#include "NPC/QNPCController.h"
+#include "QLogCategories.h"
 
-void UQP2NWidget::UpdatePlayerText(FString& Text)
+#include "Player/QPlayerController.h"
+#include "Character/QPlayer.h"
+#include "Components/TextBlock.h"
+#include "NPCComponent.h"
+#include "UI/QVillageUIManager.h"
+
+void UQP2NWidget::UpdatePlayerText(const FString& Text)
 {
 	PlayerText->SetText(FText::FromString(Text));
 }
 
-void UQP2NWidget::UpdateNPCText(FString& Text)
+void UQP2NWidget::UpdatePlayerText(const FText& Text)
+{
+	PlayerText->SetText(Text);
+    FString _PlayerText = PlayerText->GetText().ToString();
+    UE_LOG(LogLogic, Log, TEXT("PlayerText: %s"), *_PlayerText); // FString의 TCHAR* 캐스팅
+}
+
+void UQP2NWidget::UpdateNPCText(const FString& Text)
 {
 	NPCText->SetText(FText::FromString(Text));
+
 }
+
+void UQP2NWidget::UpdateNPCText(const FText& Text)
+{
+	NPCText->SetText(Text);
+
+}
+
+void UQP2NWidget::SetConversingNPC(const TObjectPtr<class AQNPCController> NPC)
+{
+	ConversingNPC = NPC;
+    //브로드캐스트 등록
+    TObjectPtr<AQNPC> _NPC = Cast<AQNPC>(ConversingNPC->GetPawn());
+    TObjectPtr<UNPCComponent> NPCComponent = _NPC->GetComponentByClass<UNPCComponent>();
+    NPCComponent->OnNPCResponseReceived.AddDynamic(this, &UQP2NWidget::UpdateNPCText);
+}
+
+
+void UQP2NWidget::SetConversingPlayer(const TObjectPtr<class AQPlayerController> Player)
+{
+    ConversingPlayer = Player;
+}
+
+void UQP2NWidget::HandleEnterKeyPress()
+{
+    /*예외처리*/
+    //공백문자열이면 무시한다. 
+    if (inputBox->GetText().ToString() == TEXT("")) {
+        UE_LOG(LogLogic, Log, TEXT("공백문자열을 input했습니다. 리턴합니다."));
+        return;
+    }
+    ////////////////////////////////////////////////////
+    //1 .플레이어 텍스트를 inputbox에 있던거로 업뎃한다.  
+    UpdatePlayerText(inputBox->GetText());
+    FString PlayerInput = inputBox->GetText().ToString();
+
+    //2. inputbox는 공란으로 만든다.
+    inputBox->SetText(FText::FromString(TEXT("")));
+    //3. NPC Text는 음.. 으로 바꾼다.
+    UpdateNPCText(FText::FromString(WhenGenerateResponseText));
+    //4. NPC에게 응답을 요청한다.
+    ConversingNPC->Response(PlayerInput);
+}
+
+void UQP2NWidget::HandleEnterEndButton()
+{
+    //대화마치기 가능 조건
+    //1. 응답생성중이면 안 됨
+    //   음... 상태이면 응답생성중이다. 
+    bool bGeneratingResponse = IsGerneratingResponse();
+    //2. 서버로부터 대화마치기 가능하다고 리턴받아야됨
+    TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(ConversingPlayer->GetPawn());
+    TObjectPtr<AQNPC> _NPC = Cast<AQNPC>(ConversingNPC->GetPawn());
+    bool bCanFinishConversing = _Player->GetCanFinishConversP2N(_NPC);
+    
+    //대화마칠 수 있으면
+    //임시주석(풀어야됨): if (!bGeneratingResponse && bCanFinishConversing) {
+    {
+        //1. UI 끈다.
+        AQVillageUIManager::GetInstance(GetWorld())->TurnOffUI(EVillageUIType::P2N);
+        //2. 대화 끝 처리한다.
+        //플레이어
+        ConversingPlayer->ConverseEndProcess(Cast<AQNPC>(ConversingNPC->GetPawn()));
+        //NPC
+        ConversingNPC->EndDialog();
+    }
+}
+
+bool UQP2NWidget::IsGerneratingResponse()
+{
+    if (NPCText->GetText().ToString() == WhenGenerateResponseText) {
+        return true;
+    }
+    return false;
+}
+
+

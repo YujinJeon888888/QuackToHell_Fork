@@ -5,6 +5,8 @@
 #include "QLogCategories.h"
 #include "InputAction.h"
 #include "EnhancedInputSubsystems.h"
+#include "UI/QVillageUIManager.h"
+#include "UI/QP2NWidget.h"
 #include "EnhancedInputComponent.h"
 #include "Character/QPlayer.h"
 #include "Character/QNPC.h"
@@ -26,11 +28,10 @@ void AQPlayerController::BeginPlay()
 		SubSystem->AddMappingContext(InputMappingContext, 0);
 	}
 
-	//Player State를 가져온다.
-	PlayerState = this->GetPlayerState<AQPlayerState>();
-	if (PlayerState == nullptr) {
-		UE_LOG(LogLogic, Error, TEXT("플레이어 스테이트를 지정하세요!!"));
-	}
+	//villagemanager를 가져온다
+	VillageUIManager = AQVillageUIManager::GetInstance(GetWorld());
+
+
 }
 
 void AQPlayerController::SetupInputComponent()
@@ -85,7 +86,8 @@ void AQPlayerController::StartDialog()
 	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
 	TObjectPtr<AQNPC> NPC = Cast<AQNPC>(_Player->GetClosestNPC());
 	//1. 대화 가능한지 check
-	if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
+	//임시 지우고 주석풀기 : if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
+	//임시
 	{
 		//2. 상대방 NPC의 컨트롤러를 불러옴
 		TObjectPtr<AQNPCController> NPCController = Cast<AQNPCController>(NPC->GetController());
@@ -95,6 +97,11 @@ void AQPlayerController::StartDialog()
 
 		//4. 플레이어를 대화처리한다.
 		this->ConverseProcess(NPC);
+
+		//5. P2N Widget에게 자신의 정보를 넘긴다.
+		//내 정보 넘겨주기
+		Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->SetConversingPlayer(this);
+
 	}
 
 
@@ -139,6 +146,14 @@ void AQPlayerController::ConverseProcess(TObjectPtr<AQNPC> NPC)
 	_Player->StartConversation(NPC);
 }
 
+void AQPlayerController::ConverseEndProcess(TObjectPtr<class AQNPC> NPC)
+{
+	//1. 얼음땡
+	UnFreeze();
+	//2. 상태전환
+	Cast<AQPlayer>(GetPawn())->FinishConversation(NPC);
+}
+
 void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
 {
 	bEnableTurn = InputValue.Get<bool>() ? true : false;
@@ -151,7 +166,7 @@ void AQPlayerController::InputInteraction(const FInputActionValue& InputValue)
 		/** @todo 상호작용 유형별로 나누기 */
 		//대화시작해라
 		//상태조건: 내가 대화중이 아닐 때.
-		
+		StartDialog();
 	}
 }
 
