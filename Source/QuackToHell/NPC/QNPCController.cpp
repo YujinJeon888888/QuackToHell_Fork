@@ -14,14 +14,16 @@
 
 void AQNPCController::StartDialog()
 {
+    //TODO: 몸멈추기
+    
     //TODO: 첫 멘트를 저장 (콜백함수등록)
     //첫멘트 줘 (응답은 브로드캐스트로 옴)
     NPCComponent->StartConversation("");
     //임시코드(원래서버에서킴)
     VillageUIManager->TurnOnUI(EVillageUIType::P2N);
     //텍스트세팅
-    //텍스트세팅하는 줄 콜백등록해야함
-    Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->UpdateNPCText(NewResponse);
+    //TODO: 텍스트세팅하는 줄 콜백등록해야함
+    NPCComponent->OnNPCResponseReceived.AddDynamic(this, &AQNPCController::OnNPCResponseReceived);
     //내 정보 넘겨주기
     Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->SetConversingNPC(this);
 }
@@ -30,7 +32,7 @@ void AQNPCController::EndDialog()
 {
     /**
      * @todo 구현해야함
-     * 
+     * : 얼음땡
      */
     UE_LOG(LogLogic, Log, TEXT("구현 미완입니다."));
 }
@@ -63,6 +65,11 @@ void AQNPCController::BeginPlay()
     VillageUIManager= AQVillageUIManager::GetInstance(GetWorld());
     //TEST
     StartDialog();
+}
+
+void AQNPCController::OnNPCResponseReceived(const FString& Text)
+{
+    Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->UpdateNPCText(Text);
 }
 
 //void AQNPCController::Tick(float DeltaTime)

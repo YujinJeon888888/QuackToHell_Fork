@@ -16,11 +16,11 @@
 UCLASS()
 class QUACKTOHELL_API AQNPCController : public AAIController
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
     /**
      * @brief NPC와의 대화시작 요청을 처리하는 함수입니다. npc-npc, player-npc 대화시스템에 활용됩니다.
-     * 
+     *
      */
     void StartDialog();
     /**
@@ -38,7 +38,7 @@ public:
     //FResponseDelegate OnResponseFinished;
 protected:
     virtual void BeginPlay() override;
-  /*  virtual void Tick(float DeltaTime) override;*/
+    /*  virtual void Tick(float DeltaTime) override;*/
 protected:
     /** @brief behavior tree를 지정합니다. */
     UPROPERTY(EditAnyWhere, Category = "NPCBehavior")
@@ -50,12 +50,11 @@ protected:
     /** @brief NPCComponent를 멤버변수로 가집니다 */
     TObjectPtr<class UNPCComponent> NPCComponent;
 private:
-    /** @brief 새로운 응답내용을 저장합니다. */
-    FString NewResponse="바보";
-    /** @brief 이전 응답내용입니다. */
-    FString CachedResponse = "";
     /** @brief VillageUIManager정보를 갖습니다. */
     TObjectPtr<class AQVillageUIManager> VillageUIManager;
+    /** @brief OnNPCResponseReceived의 콜백함수 */
+    UFUNCTION()
+    void OnNPCResponseReceived(const FString& Text);
 };
 
 
