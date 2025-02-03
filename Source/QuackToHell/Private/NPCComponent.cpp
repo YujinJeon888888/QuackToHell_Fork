@@ -342,11 +342,9 @@ void UNPCComponent::SendNPCResponseToServer_Implementation(const FString& NPCRes
 {
 	if (!NPCResponse.IsEmpty() && NPCResponse != TEXT("죄송합니다, 답변할 수 없습니다."))
 	{
-<<<<<<< HEAD
 
 		FString PlayerName = TEXT("Unknown Player");  // 기본값 설정
-=======
->>>>>>> origin/SCRUM-432_C_P2N
+
 		UE_LOG(LogTemp, Log, TEXT("Sending NPC response to server: %s"), *NPCResponse);
 
 		// 클라이언트에게도 응답을 전송
@@ -374,12 +372,12 @@ void UNPCComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 // -------------------------------------------------------------------------------------- //
 
-void UNPCComponent::ClientRPCReceiveNPCResponse_Implementation(const FString& NPCResponse)
-{
-	UE_LOG(LogTemp, Log, TEXT("Client received NPC response: %s"), *NPCResponse);
-
-	// 여기서 UI 업데이트하거나 NPC 대사를 표시하는 로직 추가 가능함.!
-}
+//void UNPCComponent::ClientRPCReceiveNPCResponse_Implementation(const FString& NPCResponse)
+//{
+//	UE_LOG(LogTemp, Log, TEXT("Client received NPC response: %s"), *NPCResponse);
+//
+//	// 여기서 UI 업데이트하거나 NPC 대사를 표시하는 로직 추가 가능함.!
+//}
 
 void UNPCComponent::ServerRPCGetGreeting_Implementation(const FString& NPCID)
 {

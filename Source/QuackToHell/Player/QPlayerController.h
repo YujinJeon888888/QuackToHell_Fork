@@ -131,22 +131,10 @@ private:
 	 * @brief 대화중일때의 처리를 구현합니다. 1. 몸 멈추기 2. 대화상태로 전환하기
 	 */
 	void ConverseProcess(TObjectPtr<class AQNPC> NPC);
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-	/** @brief VillageUIManager정보를 갖습니다. */
-	TObjectPtr<class AQVillageUIManager> VillageUIManager;
-=======
 
->>>>>>> 0ef06a8 (feat: P2N UI 생성)
-=======
 	/** @brief VillageUIManager정보를 갖습니다. */
 	TObjectPtr<class AQVillageUIManager> VillageUIManager;
->>>>>>> 0eca387 ([SCRUM-432] feat: 논리 연결 완료)
-=======
-	/** @brief VillageUIManager정보를 갖습니다. */
-	TObjectPtr<class AQVillageUIManager> VillageUIManager;
->>>>>>> origin/SCRUM-432_C_P2N
+
 };
 
 

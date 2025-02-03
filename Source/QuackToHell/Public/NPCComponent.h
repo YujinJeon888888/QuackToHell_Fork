@@ -309,8 +309,9 @@ public:
 protected:
 	// Client RPC 함수
 	/** @brief 클라이언트가 NPC의 응답을 받는 함수 (서버에서 호출됨) */
-	UFUNCTION(Client, Reliable)
-	void ClientRPCReceiveNPCResponse(const FString& PlayerName, const FString& NPCResponse);
+	//UFUNCTION(Client, Reliable)
+	//void ClientRPCReceiveNPCResponse(const FString& PlayerName, const FString& NPCResponse);
+
 	
 	// Server RPC 함수
 	/** @brief 서버에게 NPC의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
