@@ -3,9 +3,20 @@
 
 #include "Player/QPlayerState.h"
 #include "QLogCategories.h"
+#include "Blueprint/UserWidget.h"
 #include "Engine/Engine.h"
 #include "Engine/World.h"
 #include "Net/UnrealNetwork.h"
+#include "UObject/ConstructorHelpers.h"
+
+AQPlayerState::AQPlayerState()
+{
+	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetFinder(TEXT("/Game/Blueprints/UI/WBP_ConversationTest"));
+	if (WidgetFinder.Succeeded())
+	{
+		StartLevelWidget = WidgetFinder.Class;
+	}
+}
 
 void AQPlayerState::AddStateTag(FGameplayTag NewStateTag)
 {
@@ -28,7 +39,7 @@ void AQPlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& 
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AQPlayerState, ConversationRecords);
+	DOREPLIFETIME(AQPlayerState, ConversationRecordInHand);
 	DOREPLIFETIME(AQPlayerState, EvidenceInHand);
 }
 
@@ -37,7 +48,7 @@ const int32 AQPlayerState::AddConversationRecord(int32 ListenerID, int32 Speaker
 	AQGameModeVillage* GameModeVillage = Cast<AQGameModeVillage>(GetWorld()->GetAuthGameMode());
 	int32 ConversationID = GameModeVillage->ConversationIDCount++;
 	FConversationRecord NewConversationRecord(ConversationID, SpeakerID, ListenerID, Timestamp, Message);
-	ConversationRecords.AddConversation(NewConversationRecord);
+	ConversationRecordInHand.AddConversation(NewConversationRecord);
 
 	return ConversationID;
 }
@@ -64,12 +75,12 @@ void AQPlayerState::RemoveAllEvidence()
 
 const FConversationRecord* AQPlayerState::GetRecordWithConvID(int32 ConversationID) const
 {
-	return ConversationRecords.GetRecordWithConvID(ConversationID);
+	return ConversationRecordInHand.GetRecordWithConvID(ConversationID);
 }
 
-const TArray<const FConversationRecord*> AQPlayerState::GetRecordWithSpeaker(int32 SpeakerID) const
+const TArray<FConversationRecord>& AQPlayerState::GetAllRecord() const
 {
-	return ConversationRecords.GetRecordsWithSpeakerID(SpeakerID);
+	return ConversationRecordInHand.GetAllRecord();
 }
 
 const FEvidence* AQPlayerState::GetEvidenceWithID(int32 EvidenceID) const
@@ -82,7 +93,7 @@ const FEvidence* AQPlayerState::GetEvidenceWithName(FString EvidenceName) const
 	return EvidenceInHand.GetEvidenceWithName(EvidenceName);
 }
 
-EvidenceList AQPlayerState::GetAllEvidence() const
+const TArray<FEvidence>& AQPlayerState::GetAllEvidence() const
 {
 	return EvidenceInHand.GetAllEvidence();
 }
@@ -106,20 +117,20 @@ void AQPlayerState::PrintEvidence(int32 EvidenceID, FString EvidenceName) const
 
 void AQPlayerState::PrintAllEvidence() const
 {
-	EvidenceList PlayerEvidences = EvidenceInHand.GetAllEvidence();
+	const TArray<FEvidence>& PlayerEvidences = EvidenceInHand.GetAllEvidence();
 	if (GEngine)
 	{
 		for (const auto& Evidence : PlayerEvidences)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue,
-				FString::Printf(TEXT("Found All Evidence - Evidence Name: %s, EvidenceID: %d"), *Evidence->GetName(), Evidence->GetID()));
+				FString::Printf(TEXT("Found All Evidence - Evidence Name: %s, EvidenceID: %d"), *Evidence.GetName(), Evidence.GetID()));
 		}
 	}
 }
 
 void AQPlayerState::PrintConversation(int32 ConversationID) const
 {
-	const FConversationRecord* Record = ConversationRecords.GetRecordWithConvID(ConversationID);
+	const FConversationRecord* Record = ConversationRecordInHand.GetRecordWithConvID(ConversationID);
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue,
@@ -129,15 +140,30 @@ void AQPlayerState::PrintConversation(int32 ConversationID) const
 
 void AQPlayerState::PrintAllConversation(int32 SpeakerID) const
 {
-	const TArray<const FConversationRecord*> Records = ConversationRecords.GetRecordsWithSpeakerID(SpeakerID);
+	const TArray<FConversationRecord> Records = ConversationRecordInHand.GetAllRecord();
 	if (GEngine)
 	{
 		for (const auto& Record : Records)
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue,
-			FString::Printf(TEXT("Found Conversation with Speaker - Speaker: %d, Listener: %d at %s\n Conversation message: %s"), Record->GetSpeakerID(), Record->GetListenerID(), *Record->GetTimestamp().ToString(),*Record->GetMessage()));
+			FString::Printf(TEXT("Found Conversation with Speaker - Speaker: %d, Listener: %d at %s\n Conversation message: %s"), Record.GetSpeakerID(), Record.GetListenerID(), *Record.GetTimestamp().ToString(),*Record.GetMessage()));
 		}
 	}
+}
+
+void AQPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// 이부분을 주석해제하면 테스트 결과 확인가능//
+	/*
+	UUserWidget* StartWidget = CreateWidget<UUserWidget>(GetWorld()->GetFirstPlayerController(), StartLevelWidget);
+	if (StartWidget)
+	{
+		// 위젯을 화면에 추가
+		StartWidget->AddToViewport();
+	}
+	*/
 }
 
 void AQPlayerState::TestAddConversation()

@@ -22,6 +22,7 @@ class QUACKTOHELL_API AQPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 public:
+	AQPlayerState();
 	/**
 	 * @brief 플레이어의 상태를 관리하는 GameplayTags.
 	 */
@@ -46,7 +47,7 @@ public:
 private:
 	/** @brief 플레이어가 나눈 모든 대화 정보에 접근할 수 있는 자료 구조입니다 */
 	UPROPERTY(Replicated)
-	FPlayerConversations ConversationRecords;
+	FPlayerConversations ConversationRecordInHand;
 	/**  @breif 플레이어가 소지한 증거 정보에 접근할 수 있는 자료구조입니다. */
 	UPROPERTY(Replicated)
 	FPlayerEvidences EvidenceInHand;
@@ -54,6 +55,15 @@ private:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
+	FPlayerConversations GetConversationRecordInHand() const
+	{
+		return ConversationRecordInHand;
+	}
+	FPlayerEvidences GetEvidenceInHand() const
+	{
+		return EvidenceInHand;
+	}
+	
 	// 추가된 증거/대화기록의 ID를 반환
 	const int32 AddConversationRecord(int32 ListenerID, int32 SpeakerID, FDateTime Timestamp, const FString& Message);
 	const int32 AddEvidence(FString EvidenceName, FString EvidenceDescription, FString EvidenceImagePath);
@@ -61,10 +71,10 @@ public:
 	void RemoveAllEvidence();
 	
 	const FConversationRecord* GetRecordWithConvID(int32 ConversationID) const;
-	const TArray<const FConversationRecord*> GetRecordWithSpeaker(int32 SpeakerID) const;
+	const TArray<FConversationRecord>& GetAllRecord() const;
 	const FEvidence* GetEvidenceWithID(int32 EvidenceID) const;
 	const FEvidence* GetEvidenceWithName(FString EvidenceName) const;
-	EvidenceList GetAllEvidence() const;
+	const TArray<FEvidence>& GetAllEvidence() const;
 
 	// for testing conversation & evidence system
 	void PrintEvidence(int32 EvidenceID, FString EvidenceName) const;
@@ -72,7 +82,11 @@ public:
 	void PrintConversation(int32 ConversationID) const;
 	void PrintAllConversation(int32 SpeakerID) const;
 
+	virtual void BeginPlay() override;
+	TSubclassOf<UUserWidget> StartLevelWidget;
+	UFUNCTION(BlueprintCallable)
 	void TestAddConversation();
+	UFUNCTION(BlueprintCallable)
 	void TestAddEvidence();
 };
 

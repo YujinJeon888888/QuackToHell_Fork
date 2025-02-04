@@ -42,8 +42,15 @@ private:
 	FString Message;
 
 public:
+	FConversationRecord(){}
+	
 	FConversationRecord(int32& ConversationID, int32& SpeakerID, int32& ListenerID, FDateTime& Timestamp, const FString& Message)
 		: ConversationID(ConversationID), ListenerID(ListenerID), SpeakerID(SpeakerID), Timestamp(Timestamp), Message(Message){}
+
+	bool operator==(const FConversationRecord& Other) const
+	{
+		return ConversationID == Other.ConversationID;
+	}
 	
 	int32 GetConversationID() const {return ConversationID;}
 	int32 GetListenerID() const {return ListenerID;}
@@ -64,55 +71,32 @@ USTRUCT()
 struct FPlayerConversations
 {
 	GENERATED_BODY()
-private:
-	// key: SpeakerID value: ConversationID array
-	UPROPERTY()
-	TMap<int32, FConversationIDWrapper> ConversationIDMap;
-	// key : ConversationID value : FConversationRecord
-	UPROPERTY()
-	TMap<int32, FConversationRecord> ConversationMap;
+private:UPROPERTY()
+	TArray<FConversationRecord> ConversationList;
 public:
 	void AddConversation(const FConversationRecord& ConversationRecord)
 	{
-		// 저장할 Record의 ConversationID를 키로 검색했을때 이미 value가 존재한다면 return;
-		if (ConversationMap.Find(ConversationRecord.GetConversationID()) != nullptr) return;
+		if (ConversationList.Contains(ConversationRecord)) return;
 
-		// Speaker와 대화한 기록이 있다면, ConversationIDMap에 Speaker 키를 추가한다.
-		// 이후 ConversationIDMap에는 SpeakerID를 Key로 하는 ConversationID array에 새로운 Record의 ConversationID를 추가한 뒤,
-		// ConversationMap에는 ConversationID를 키로, 새로운 Record를 Value로 추가한다.
-		if (ConversationIDMap.Find(ConversationRecord.GetSpeakerID()) == nullptr)
-		{
-			FConversationIDWrapper ConversationIDWrapper;
-			ConversationIDMap.Add(ConversationRecord.GetSpeakerID(), ConversationIDWrapper);
-		}
-		ConversationIDMap[ConversationRecord.GetSpeakerID()].IDs.Add(ConversationRecord.GetConversationID());
-		ConversationMap.Add(ConversationRecord.GetConversationID(), ConversationRecord);
+		ConversationList.Add(ConversationRecord);
 	}
 
-	// ConversationID에 해당하는 ConversationRecord를 포인터 형태로 반환
+	// ConversationID에 해당하는 ConversationRecord를 반환
 	const FConversationRecord* GetRecordWithConvID(const int32& ConversationID) const
 	{
-		if (ConversationMap.Find(ConversationID) == nullptr) return nullptr;
-
-		return &ConversationMap[ConversationID];
-	}
-
-	// Speaker와 나눈 모든 ConversationRecord를 array 형태로 반환
-	const TArray<const FConversationRecord*> GetRecordsWithSpeakerID(const int32& SpeakerID) const
-	{
-		TArray<const FConversationRecord*> ReturnArray;
-		const FConversationIDWrapper* ConversationIDs = ConversationIDMap.Find(SpeakerID);
-		if (ConversationIDs == nullptr) return ReturnArray;
-		if (ConversationIDs->IDs.IsEmpty()) return ReturnArray;
-
-		for (int32 ConversationID : ConversationIDs->IDs)
+		for (const auto& ConversationRecord : ConversationList)
 		{
-			if (const FConversationRecord* Found = ConversationMap.Find(ConversationID))
+			if (ConversationRecord.GetConversationID() == ConversationID)
 			{
-				ReturnArray.Add(Found);
+				return &ConversationRecord;
 			}
 		}
-		return ReturnArray;
+		return nullptr;
+	}
+
+	const TArray<FConversationRecord>& GetAllRecord() const
+	{
+		return ConversationList;
 	}
 };
 

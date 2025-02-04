@@ -9,7 +9,7 @@
  * @author 유서현
  * @brief 증거 데이터 저장을 위한 자료구조 및 열거형이 정의되어있는 헤더파일입니다.
  */
-typedef const TArray<const FEvidence*> EvidenceList;
+typedef const TArray<const FEvidence*> FoundEvidenceList;
 
 USTRUCT(BlueprintType)
 struct FEvidence
@@ -29,12 +29,12 @@ private:
 	UPROPERTY()
 	FString ImagePath;
 
+public:
 	FEvidence(int32& EvidenceID, FString& EvidenceName, FString& EvidenceDescription, FString& EvidenceImagePath)
 		: ID(EvidenceID), Name(EvidenceName), Description(EvidenceDescription), ImagePath(EvidenceImagePath){}
 
 	FEvidence() : ID(-1), Name(""), Description(""), ImagePath(""){}
-
-public:
+	
 	int32 GetID() const  { return ID; }
 	FString GetName() const { return Name; }
 	FString GetDescription() const { return Description; }
@@ -47,65 +47,57 @@ struct FPlayerEvidences
 	GENERATED_BODY()
 private:
 	UPROPERTY()
-	TMap<int32, FEvidence> Evidences;
-	TMap<FString, int32> EvidenceIDs;
+	TArray<FEvidence> EvidenceList;
 
 public:
 	// 증거Map에 새로운 증거 추가
-	void AddEvidence(const FEvidence& NewEvidence)
+	void AddEvidence(FEvidence& NewEvidence)
 	{
-		Evidences.Add(NewEvidence.GetID(), NewEvidence);
-		EvidenceIDs.Add(NewEvidence.GetName(), NewEvidence.GetID());
+		EvidenceList.Add(NewEvidence);
 	}
 
 	void RemoveEvidence(const int32& EvidenceID)
 	{
-		if (!Evidences.Contains(EvidenceID)) return;
-
-		FEvidence* Target = Evidences.Find(EvidenceID);
-		EvidenceIDs.Remove(Target->GetName());
-		Evidences.Remove(EvidenceID);
+		for (int32 i = 0; i < EvidenceList.Num(); ++i)
+		{
+			if (EvidenceList[i].GetID() == EvidenceID)
+			{
+				EvidenceList.RemoveAt(i);
+				break; // 첫 번째로 찾은 요소만 삭제 (중복된 ID가 없을 경우)
+			}
+		}
 	}
 
 	void RemoveAllEvidence()
 	{
-		if (Evidences.IsEmpty()) return;
+		if (EvidenceList.IsEmpty()) return;
 
-		Evidences.Empty();
+		EvidenceList.Empty();
 	}
 
-	// ID로 증거 검색 (const 버전)
+	// ID로 증거 검색 
 	const FEvidence* GetEvidenceWithID(const int32& EvidenceID) const
 	{
-		if (const FEvidence* FoundEvidence = Evidences.Find(EvidenceID))
+		for (const auto& Target : EvidenceList)
 		{
-			return FoundEvidence;
+			if (Target.GetID() == EvidenceID) return &Target;
 		}
-		UE_LOG(LogTemp, Warning, TEXT("GetEvidenceWithID: Evidence with ID %d not found"), EvidenceID);
 		return nullptr;
 	}
 
-	// 이름으로 증거 검색 (const 버전)
+	// 이름으로 증거 검색
 	const FEvidence* GetEvidenceWithName(const FString& EvidenceName) const
 	{
-		const int32 FoundID = *EvidenceIDs.Find(EvidenceName);
-		if (const FEvidence* FoundEvidence = Evidences.Find(FoundID))
+		for (const auto& Target : EvidenceList)
 		{
-			return FoundEvidence;
+			if (Target.GetName() == EvidenceName) return &Target;
 		}
-		UE_LOG(LogTemp, Warning, TEXT("GetEvidenceWithName: Evidence with name '%s' not found"), *EvidenceName);
 		return nullptr;
 	}
 
-	EvidenceList GetAllEvidence() const
+	const TArray<FEvidence>& GetAllEvidence() const
 	{
-		TArray<const FEvidence*> FoundEvidences;
-		for (const auto& Evidence : Evidences)
-		{
-			const FEvidence* E = &Evidence.Value;
-			FoundEvidences.Add(E);
-		}
-		return FoundEvidences;
+		return EvidenceList;
 	}
 };
 
