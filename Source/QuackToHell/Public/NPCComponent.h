@@ -12,6 +12,17 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNPCResponseReceived, const FString&, ResponseText);
 
 /**
+ * @brief 대화 유형을 나타내는 Enum
+ */
+UENUM(BlueprintType)
+enum class EConversationType : uint8
+{
+	P2N UMETA(DisplayName = "P2N"),  // 플레이어 ↔ NPC 대화
+	N2N UMETA(DisplayName = "N2N"),    // NPC ↔ NPC 대화
+	NMonologue UMETA(DisplayName = "NMonologue") // NPC 혼잣말
+};
+
+/**
  * @auther 박시언
  * @brief OpenAI API 요청을 위한 구조체
  */
@@ -23,8 +34,8 @@ struct FOpenAIRequest
 	FString Prompt;
 	int32 MaxTokens = 150;
 	FString SpeakerID; 
-	FString ListenerID; 
-	FString ConversationType; // 대화 유형 구분을 위해 추가함
+	FString ListenerID;
+	EConversationType ConversationType;
 
 	// ToJson()은 public임
 	FString ToJson() const
@@ -34,13 +45,25 @@ struct FOpenAIRequest
 		JsonObject->SetNumberField("max_tokens", MaxTokens);
 		JsonObject->SetStringField("speaker_id", SpeakerID);
 		JsonObject->SetStringField("listener_id", ListenerID);
-		JsonObject->SetStringField("conversation_type", ConversationType);
+		JsonObject->SetStringField("conversation_type", ConversationTypeToString(ConversationType));
 
 		FString OutputString;
 		TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&OutputString);
 		FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
 
 		return OutputString;
+	}
+
+private:
+	FString ConversationTypeToString(EConversationType Type) const
+	{
+		switch (Type)
+		{
+		case EConversationType::P2N: return TEXT("P2N");
+		case EConversationType::N2N: return TEXT("N2N");
+		case EConversationType::NMonologue: return TEXT("NMonologue");
+		default: return TEXT("Unknown");
+		}
 	}
 };
 
