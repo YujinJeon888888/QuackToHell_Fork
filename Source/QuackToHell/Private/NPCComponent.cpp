@@ -6,7 +6,6 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Templates/Function.h"
-#include "EngineUtils.h"  // 
 
 // Sets default values for this component's properties
 UNPCComponent::UNPCComponent()
@@ -21,14 +20,20 @@ void UNPCComponent::BeginPlay()
 	Super::BeginPlay();
 	LoadPrompt();
 
+
+}
+
+void UNPCComponent::PerformNPCLogic()
+{
+	UE_LOG(LogTemp, Log, TEXT("Default NPC Logic"));
 }
 
 // NPC의 프롬프트 파일 로드
 void UNPCComponent::LoadPrompt()
 {
-	if (FFileHelper::LoadFileToString(PromptContent, *PromptFilePath))
+	if (FFileHelper::LoadFileToString(PromptFilePath, *PromptFilePath))
 	{
-		UE_LOG(LogTemp, Log, TEXT("Prompt loaded for NPC: %s"), *PromptContent);
+		UE_LOG(LogTemp, Log, TEXT("Prompt loaded for NPC: %s"), *PromptFilePath);
 	}
 	else
 	{
@@ -39,54 +44,15 @@ void UNPCComponent::LoadPrompt()
 /**
  * NPC 성격 Get/Set.
  */
-FString UNPCComponent::GetNPCPersonality() const
-{
-	return NPCPersonality;
-}
+ //FString UNPCComponent::GetNPCPersonality() const
+ //{
+ //	return NPCPersonality;
+ //}
 
-void UNPCComponent::SetNPCPersonality(const FString& NewPersonality)
-{
-	NPCPersonality = NewPersonality;
-}
-
-/**
- * NPC 대화 기록 Get/Set
- */
-const TArray<FString>& UNPCComponent::GetNPCDialogueHistory() const
-{
-	return NPCDialogueHistory;
-}
-
-void UNPCComponent::AddToDialogueHistory(const FString& Dialogue)
-{
-	const int32 MaxHistorySize = 10;
-	if (NPCDialogueHistory.Num() >= MaxHistorySize)
-	{
-		NPCDialogueHistory.RemoveAt(0); // 가장 오래된 대화 삭제
-	}
-	NPCDialogueHistory.Add(Dialogue);
-}
-
-/**
- * NPC 마지막 AI 응답 Get/Set
- */
- // NPC의 마지막 AI 응답 가져오기
-FString UNPCComponent::GetLastAIResponse() const
-{
-	return LastAIResponse;
-}
-
-// NPC의 마지막 AI 응답 설정하기
-void UNPCComponent::SetLastAIResponse(const FString& AIResponse)
-{
-	LastAIResponse = AIResponse;
-}
-
-// NPC 논리 실행 (자식 클래스에서 오버라이드 가능)
-void UNPCComponent::PerformNPCLogic()
-{
-	// Base logic for NPCs (override this in child classes)
-}
+ //void UNPCComponent::SetNPCPersonality(const FString& NewPersonality)
+ //{
+ //	NPCPersonality = NewPersonality;
+ //}
 
 // OpenAI API 키 불러오기
 FString UNPCComponent::GetAPIKey()
@@ -122,32 +88,162 @@ FString UNPCComponent::GetNPCName() const
 	return TEXT("Unknown NPC");
 }
 
-// 플레이어가 NPC와 대화 시작
+// 현재 AI에게 요청을 보낼 수 있는지 없는지 판단
+bool UNPCComponent::CanSendOpenAIRequest() const
+{
+	return !bIsRequestInProgress;
+}
+
+// P2N 대화 시작
 void UNPCComponent::StartConversation(const FString& PlayerInput)
 {
+	FString NPCID = GetOwner()->GetName();
 	UE_LOG(LogTemp, Log, TEXT("Player started conversation: %s"), *PlayerInput);
 
-	// OpenAI API에 요청 보내기
-	if (bIsFirstConversation)
+	FOpenAIRequest AIRequest;
+
+	// 첫 대사인지 확인 (플레이어와의 P2N 대화 기록이 없는 경우!)
+	bool bIsFirstGreeting = !P2NDialogueHistory.Contains(NPCID) || P2NDialogueHistory[NPCID].DialogueLines.Num() == 0;
+
+	if (bIsFirstGreeting && PlayerInput.IsEmpty())
 	{
-		// 첫 대화일 경우, OpenAI에게 NPC의 첫 인사 요청
-		RequestGreetingFromAI();
-		bIsFirstConversation = false;
+		// 첫 대사 생성 (기존 RequestGreetingFromAI() 기능을 이거로 대체함)
+		AIRequest.Prompt = FString::Printf(TEXT(
+			"'%s' 성격을 가진 NPC가 플레이어를 처음 만났을 때 하는 첫 인사를 생성하세요. 반드시 NPC 개인의 설정을 반영한 인사여야 합니다. 첫 문장을 생성하세요."), *NPCPersonality);
 	}
 	else
 	{
-		// 일반적인 대화 진행
-		RequestAIResponse(PlayerInput);
+		// 시작 멘트 제외한 일반적인 P2N 대화 처리
+		AIRequest.Prompt = FString::Printf(TEXT(
+			"'%s' 성격을 가진 NPC가 플레이어 '%s'의 질문에 답변합니다.\n플레이어: \"%s\"\nNPC:"), *NPCPersonality, *NPCID, *PlayerInput);
 	}
+
+	AIRequest.MaxTokens = 150;
+	AIRequest.SpeakerID = "Player";
+	AIRequest.ListenerID = NPCID;
+	AIRequest.ConversationType = "P2N";
+
+	RequestOpenAIResponse(AIRequest, [this, PlayerInput, NPCID](FOpenAIResponse AIResponse)
+		{
+			ResponseCache.Add(PlayerInput, AIResponse.ResponseText);
+			UE_LOG(LogTemp, Log, TEXT("OpenAI Response: %s"), *AIResponse.ResponseText);
+			SendNPCResponseToServer(AIResponse.ResponseText);
+
+			// 대화 기록 저장
+			SaveP2NDialogue(NPCID, PlayerInput, AIResponse.ResponseText);
+		});
 }
+
+// N2N 대화 시작
+void UNPCComponent::StartNPCToNPCDialog(const FString& SpeakerNPCID, const FString& ListenerNPCID)
+{
+	UE_LOG(LogTemp, Log, TEXT("Starting dialog between %s and %s"), *SpeakerNPCID, *ListenerNPCID);
+
+	// 해당 NPC가 플레이어와 나눈 대화 기록을 가져오기
+	FString PlayerDialogueSummary = TEXT("(플레이어와의 대화 기록 없음)");
+	if (P2NDialogueHistory.Contains(SpeakerNPCID) && P2NDialogueHistory[SpeakerNPCID].DialogueLines.Num() > 0)
+	{
+		TArray<FString>& DialogueLines = P2NDialogueHistory[SpeakerNPCID].DialogueLines;
+		int32 NumLines = DialogueLines.Num();
+
+		// 최근 3개의 대사를 가져오기
+		FString RecentLines;
+		int32 StartIndex = FMath::Max(0, NumLines - 3);
+		for (int32 i = StartIndex; i < NumLines; i++)
+		{
+			RecentLines += DialogueLines[i] + TEXT(" ");
+		}
+
+		PlayerDialogueSummary = RecentLines.TrimEnd();  // 문자열 끝에 발생하는 공백 제거용
+	}
+
+	FOpenAIRequest AIRequest;
+	AIRequest.Prompt = FString::Printf(TEXT("NPC '%s'가 NPC '%s'와의 대화를 시작합니다. (플레이어와 나눈 대화: %s) 내용을 언급하며 대화를 시작하세요."), *SpeakerNPCID, *ListenerNPCID, *PlayerDialogueSummary);
+	AIRequest.MaxTokens = 150;
+	AIRequest.SpeakerID = SpeakerNPCID;
+	AIRequest.ListenerID = ListenerNPCID;
+	AIRequest.ConversationType = "N2N";
+
+	RequestOpenAIResponse(AIRequest, [this, SpeakerNPCID, ListenerNPCID](FOpenAIResponse AIResponse)
+		{
+			ContinueNPCToNPCDialog(ListenerNPCID, SpeakerNPCID, AIResponse.ResponseText, 4);
+		});
+}
+
+// N2N 대화 이어나감
+void UNPCComponent::ContinueNPCToNPCDialog(const FString& SpeakerNPCID, const FString& ListenerNPCID, const FString& ReceivedMessage, int RemainingTurns)
+{
+	if (RemainingTurns <= 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("N2N 대화가 종료되었습니다."));
+		return;
+	}
+
+	// 최근 ㄷㅐ화 내역에 받은 메시지를 추가해야 함
+	FOpenAIRequest AIRequest;
+	AIRequest.Prompt = FString::Printf(TEXT(
+		"NPC '%s'가 NPC '%s'의 말에 대답합니다. 이때 자연스럽고 일관성 있는 대화를 이어가세요. NPC '%s'가 방금 한 말: \"%s\""),
+		*SpeakerNPCID, *ListenerNPCID, *SpeakerNPCID, *ReceivedMessage);
+
+	AIRequest.MaxTokens = 150;
+	AIRequest.SpeakerID = SpeakerNPCID;
+	AIRequest.ListenerID = ListenerNPCID;
+	AIRequest.ConversationType = "N2N";
+
+	// OpenAI API 호출 후, 대화 이어나가기 (남은 턴 수가 감소함요)
+	RequestOpenAIResponse(AIRequest, [this, SpeakerNPCID, ListenerNPCID, RemainingTurns](FOpenAIResponse AIResponse)
+		{
+			ContinueNPCToNPCDialog(ListenerNPCID, SpeakerNPCID, AIResponse.ResponseText, RemainingTurns - 1);
+		});
+}
+
+// N혼잣말 생성
+void UNPCComponent::PerformNPCMonologue()
+{
+	FString NPCID = GetOwner()->GetName(); // 현재 NPC의 ID
+	FString Context;
+
+	// P2N 대화 기록이 존재하는 경우에만!! 해당 NPC의 대화 기록을 기반으로 혼잣말 생성
+	if (P2NDialogueHistory.Contains(NPCID) && P2NDialogueHistory[NPCID].DialogueLines.Num() > 0)
+	{
+		Context = FString::Join(P2NDialogueHistory[NPCID].DialogueLines, TEXT("\n"));
+	}
+	else
+	{
+		Context = TEXT("플레이어와 대화를 나누 적이 없는 NPC입니다.");
+	}
+
+	FOpenAIRequest AIRequest;
+	AIRequest.Prompt = TEXT("플레이어와의 최근 대화 기록을 바탕으로 NPC의 혼잣말을 생성합니다.");
+	AIRequest.MaxTokens = 100;
+	AIRequest.SpeakerID = NPCID;
+	AIRequest.ListenerID = TEXT("Self");
+	AIRequest.ConversationType = "NMonologue";
+
+	RequestOpenAIResponse(AIRequest, [this](FOpenAIResponse AIResponse)
+		{
+			UE_LOG(LogTemp, Log, TEXT("Generated Monologue: %s"), *AIResponse.ResponseText);
+		});
+}
+
 
 // OpenAI API 요청 처리
 void UNPCComponent::RequestOpenAIResponse(const FOpenAIRequest& AIRequest, TFunction<void(FOpenAIResponse)> Callback)
 {
+	if (!CanSendOpenAIRequest())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OpenAI가 호출 중이기 때문에 새로운 요청을 보낼 수 없습니다."));
+		return;
+	}
+
+	// 새로운 요청 진행 가능이라면 true 상태로 변경
+	bIsRequestInProgress = true;
+
 	FString ApiKey = GetAPIKey();
 	if (ApiKey.IsEmpty())
 	{
 		UE_LOG(LogTemp, Error, TEXT("OpenAI API Key is missing!"));
+		bIsRequestInProgress = false;
 		return;
 	}
 
@@ -158,30 +254,17 @@ void UNPCComponent::RequestOpenAIResponse(const FOpenAIRequest& AIRequest, TFunc
 	Request->SetHeader("Content-Type", "application/json");
 	Request->SetContentAsString(AIRequest.ToJson());
 
-	Request->OnProcessRequestComplete().BindLambda([Callback](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
+	Request->OnProcessRequestComplete().BindLambda([this, Callback](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
 		{
+			// 요청 완료되면 진행 상태 해제하고 false로 변경
+			bIsRequestInProgress = false;
+
 			Callback(bWasSuccessful && Response.IsValid() && Response->GetResponseCode() == 200
 				? FOpenAIResponse::FromJson(Response->GetContentAsString())
-				: FOpenAIResponse{ TEXT("죄송합니다, 답변할 수 없습니다.") });
+				: FOpenAIResponse{ TEXT("콜백 함수 - 응답 불러오기에 실패했습니다.") });
 		});
 
 	Request->ProcessRequest();
-}
-
-// OpenAI API에 첫 인사 요청
-void UNPCComponent::RequestGreetingFromAI()
-{
-	FOpenAIRequest AIRequest;
-	AIRequest.Prompt = FString::Printf(TEXT("'%s' 성격을 가진 NPC가 첫 인사를 합니다. 첫 문장을 생성하세요."), *NPCPersonality);
-	AIRequest.MaxTokens = 100;
-
-	RequestOpenAIResponse(AIRequest, [this](FOpenAIResponse AIResponse)
-		{
-			UE_LOG(LogTemp, Log, TEXT("NPC Greeting Response: %s"), *AIResponse.ResponseText);
-
-			// 서버 & 클라이언트 브로드캐스트
-			SendNPCResponseToServer(AIResponse.ResponseText);
-		});
 }
 
 TMap<FString, FString> ResponseCache;
@@ -189,14 +272,18 @@ TMap<FString, FString> ResponseCache;
 // OpenAI API에 일반 대화 요청
 void UNPCComponent::RequestAIResponse(const FString& PlayerInput)
 {
+	// 캐싱된 응답이 있다면 API 호출 없이 반환
 	if (ResponseCache.Contains(PlayerInput))
 	{
 		FString CachedResponse = ResponseCache[PlayerInput];
 		UE_LOG(LogTemp, Log, TEXT("Using cached AI response: %s"), *CachedResponse);
 		SendNPCResponseToServer(CachedResponse);
+
+		OnNPCResponseReceived.Broadcast(CachedResponse);  // NPC 응답 브로드캐스트
 		return;
 	}
 
+	// OpenAI API 요청
 	FOpenAIRequest AIRequest;
 	AIRequest.Prompt = FString::Printf(TEXT("'%s' 성격을 가진 NPC가 플레이어의 질문에 답변합니다.\n 플레이어: \"%s\"\n NPC:"),
 		*NPCPersonality, *PlayerInput);
@@ -206,161 +293,55 @@ void UNPCComponent::RequestAIResponse(const FString& PlayerInput)
 		{
 			ResponseCache.Add(PlayerInput, AIResponse.ResponseText);
 			UE_LOG(LogTemp, Log, TEXT("OpenAI Response: %s"), *AIResponse.ResponseText);
-
-			// 서버 & 클라이언트 브로드캐스트
 			SendNPCResponseToServer(AIResponse.ResponseText);
+			OnNPCResponseReceived.Broadcast(AIResponse.ResponseText);
 		});
 }
 
-// NPC 간 대화 시작 (콜백 방식 적용)
-void UNPCComponent::StartNPCToNPCDialog(const FString& FirstNPCID, const FString& SecondNPCID)
+void UNPCComponent::SaveP2NDialogue(const FString& NPCID, const FString& PlayerInput, const FString& NPCResponse)
 {
-	UE_LOG(LogTemp, Log, TEXT("Starting dialog between %s and %s"), *FirstNPCID, *SecondNPCID);
-
-	// 프롬프트 생성
-	FString DialogPrompt = FString::Printf(
-		TEXT("NPC '%s'와 NPC '%s'가 서로 대화를 나눕니다. 자연스럽고 연속적인 대화를 생성하세요."),
-		*FirstNPCID, *SecondNPCID);
-
-	// OpenAI API 호출
-	FOpenAIRequest AIRequest;
-	AIRequest.Prompt = DialogPrompt;
-	AIRequest.MaxTokens = 150;  // 적절한 max_tokens을 설정할 것...!
-
-	RequestOpenAIResponse(AIRequest, [this, FirstNPCID, SecondNPCID](FOpenAIResponse AIResponse)
-		{
-			UE_LOG(LogTemp, Log, TEXT("NPC Dialog Response: %s"), *AIResponse.ResponseText);
-		});
-}
-
-// NPC 간 대화 응답 처리 (4턴)
-void UNPCComponent::ContinueNPCToNPCDialog(
-	const FString& SpeakerNPCID,
-	const FString& ListenerNPCID,
-	const FString& ReceivedMessage,  // 상대방 NPC가 방금 말한 내용
-	int RemainingTurns)
-{
-	if (RemainingTurns <= 0)
+	if (!P2NDialogueHistory.Contains(NPCID))
 	{
-		UE_LOG(LogTemp, Log, TEXT("대화 종료!"));
-		return;
+		P2NDialogueHistory.Add(NPCID, FDialogueHistory());
 	}
 
-	// 최신 대화 히스토리를 구성
-	FString DialogueHistory = "";
-	for (const FString& History : NPCDialogueHistory)
+	// 플레이어 입력이 있을 경우에만 저장해야 함(안 그러면 쓰레기 생김)
+	if (!PlayerInput.IsEmpty())
 	{
-		DialogueHistory += "- " + History + TEXT("\n");
+		P2NDialogueHistory[NPCID].DialogueLines.Add(FString::Printf(TEXT("Player: %s"), *PlayerInput));
 	}
 
-	FString Prompt = FString::Printf(
-		TEXT("NPC '%s'가 NPC '%s'의 말에 대답합니다.\n"
-			"NPC '%s'가 방금 한 말: \"%s\"\n"
-			"연속적인 대화를 자연스럽게 이어가세요.\n"
-			"현재 대화 기록:\n%s\n"),
-		*SpeakerNPCID, *ListenerNPCID, *SpeakerNPCID, *ReceivedMessage, *DialogueHistory);
+	// NPC 응답은 그냥 바로바로 저장
+	P2NDialogueHistory[NPCID].DialogueLines.Add(FString::Printf(TEXT("%s: %s"), *NPCID, *NPCResponse));
 
-	FOpenAIRequest AIRequest;
-	AIRequest.Prompt = Prompt;
-	AIRequest.MaxTokens = 150;  // 원하는 max_tokens 값 설정할 것!
-
-	RequestOpenAIResponse(AIRequest, [this, SpeakerNPCID, ListenerNPCID, ReceivedMessage, RemainingTurns](FOpenAIResponse AIResponse)
-		{
-			FString NPCResponse = AIResponse.ResponseText;
-
-			UE_LOG(LogTemp, Log, TEXT("%s: %s"), *SpeakerNPCID, *NPCResponse);
-
-			// 대화 히스토리에 추가
-			AddToDialogueHistory(FString::Printf(TEXT("%s: %s"), *SpeakerNPCID, *NPCResponse));
-
-			// 다음 턴 진행 (Speaker와 Listener 역할 교체)
-			ContinueNPCToNPCDialog(ListenerNPCID, SpeakerNPCID, NPCResponse, RemainingTurns - 1);
-		});
+	UE_LOG(LogTemp, Log, TEXT("P2N 대화 기록 저장 완료 - NPC: %s"), *NPCID);
 }
 
-// NPC가 플레이어와 대화한 내용을 저장
-void UNPCComponent::SaveNPCDialogue(const FString& NPCResponse)
+
+// GetP2NDialogueHistory("NPCID")를 호출하면 대화 기록을 가져올 수 있음
+TArray<FString> UNPCComponent::GetP2NDialogueHistory(const FString& NPCID)
 {
-	// 최대 저장 개수 제한 (예: 최근 5개 대화만 저장)
-	if (NPCDialogueHistory.Num() >= 5)
+	if (P2NDialogueHistory.Contains(NPCID))
 	{
-		NPCDialogueHistory.RemoveAt(0); // 가장 오래된 대화 삭제
+		return P2NDialogueHistory[NPCID].DialogueLines;
 	}
 
-	NPCDialogueHistory.Add(NPCResponse);
+	return TArray<FString>(); // 기록이 없으면 빈 배열 반환
 }
-
-// NPC 혼잣말을 실행하는 함수
-void UNPCComponent::PerformNPCMonologue()
-{
-	// 최근 대화 히스토리를 프롬프트에 추가
-	FString MonologuePrompt = TEXT("NPC는 이전 대화를 요약하고, 이에 대한 혼잣말을 생성합니다. "
-		"대화 기록:\n");
-
-	for (const FString& Dialogue : NPCDialogueHistory)
-	{
-		MonologuePrompt += "- " + Dialogue + TEXT("\n");
-	}
-
-	MonologuePrompt += TEXT("\nNPC의 혼잣말: ");
-
-	// OpenAI API 요청
-	FOpenAIRequest AIRequest;
-	AIRequest.Prompt = MonologuePrompt;
-	AIRequest.MaxTokens = 100;
-
-	RequestOpenAIResponse(AIRequest, [](FOpenAIResponse AIResponse)
-		{
-			UE_LOG(LogTemp, Log, TEXT("Generated Monologue: %s"), *AIResponse.ResponseText);
-		});
-
-
-}
-
-FString UNPCComponent::GetLastDialogue() const
-{
-	if (LastDialogue.IsEmpty())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No dialogue available in NPCComponent."));
-		return TEXT("...");
-	}
-
-	return LastDialogue;
-}
-
-void UNPCComponent::ClientReceiveNPCResponse_Implementation(const FString& NPCResponse)
-{
-	UE_LOG(LogTemp, Log, TEXT("Client received NPC response: %s"), *NPCResponse);
-
-	// UI에서 NPC 응답을 표시할 수 있도록 브로드캐스트
-	OnNPCResponseReceived.Broadcast(NPCResponse);
-}
-
 
 // 서버로 NPC의 응답을 보내는 RPC 함수
 void UNPCComponent::SendNPCResponseToServer_Implementation(const FString& NPCResponse)
 {
 	if (!NPCResponse.IsEmpty() && NPCResponse != TEXT("죄송합니다, 답변할 수 없습니다."))
 	{
-
-		FString PlayerName = TEXT("Unknown Player");  // 기본값 설정
-
 		UE_LOG(LogTemp, Log, TEXT("Sending NPC response to server: %s"), *NPCResponse);
-
-		// 클라이언트에게도 응답을 전송
-		ClientReceiveNPCResponse(NPCResponse);
-
-		// 델리게이트를 활용하여 브로드캐스트 (서버 & 클라이언트에 전달)
-		OnNPCResponseReceived.Broadcast(NPCResponse);
 	}
 }
 
-
 bool UNPCComponent::SendNPCResponseToServer_Validate(const FString& NPCResponse)
 {
-	return true;
+	return true; // 기본적으로 항상 유효한 메시지라고 가정
 }
-
 
 // Called every frame
 void UNPCComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -371,13 +352,6 @@ void UNPCComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 }
 
 // -------------------------------------------------------------------------------------- //
-
-//void UNPCComponent::ClientRPCReceiveNPCResponse_Implementation(const FString& NPCResponse)
-//{
-//	UE_LOG(LogTemp, Log, TEXT("Client received NPC response: %s"), *NPCResponse);
-//
-//	// 여기서 UI 업데이트하거나 NPC 대사를 표시하는 로직 추가 가능함.!
-//}
 
 void UNPCComponent::ServerRPCGetGreeting_Implementation(const FString& NPCID)
 {
