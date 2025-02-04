@@ -12,6 +12,8 @@
 FString UGodFunction::CallOpenAI(const FString& Prompt)
 {
     FString ApiKey;
+
+    // OpenAI API 키 불러오기
     GConfig->GetString(TEXT("OpenAI"), TEXT("ApiKey"), ApiKey, GGameIni);
 
     if (ApiKey.IsEmpty())
@@ -27,7 +29,7 @@ FString UGodFunction::CallOpenAI(const FString& Prompt)
     Request->SetHeader("Authorization", "Bearer " + ApiKey);
     Request->SetHeader("Content-Type", "application/json");
 
-    FString PostData = FString::Printf(TEXT("{ \"prompt\": \"%s\", \"max_tokens\": 1024 }"), *Prompt);
+    FString PostData = FString::Printf(TEXT("{ \"prompt\": \"%s\", \"max_tokens\": %d }"), *Prompt, 1024);
     Request->SetContentAsString(PostData);
 
     FString AIResponse = TEXT("");
@@ -84,11 +86,12 @@ void UGodFunction::GenerateNPCPrompts()
         FString Role = RolePrompt.Key;
         FString PromptTemplate = RolePrompt.Value;
 
+        // Defendant(1명), Jury(3명), Resident(5명)
         int NPCCount = (Role == "Defendant") ? 1 : (Role == "Jury" ? 3 : 5);
 
         for (int i = 1; i <= NPCCount; i++)
         {
-            FString FileName = (Role == "Defendant") ? RoleFileNames[Role] : FString::Printf(*RoleFileNames[Role], i);
+            FString FileName = (Role == "Defendant") ? RoleFileNames[Role] : FString::Printf(TEXT("%s%d"), *RoleFileNames[Role], i);
 
             UE_LOG(LogTemp, Log, TEXT("Requesting OpenAI for: %s"), *FileName);
 
