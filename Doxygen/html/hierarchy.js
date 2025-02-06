@@ -30,6 +30,10 @@ var hierarchy =
       [ "QuackToHell", "class_quack_to_hell.html", null ]
     ] ],
     [ "QGameplayTags", "class_q_gameplay_tags.html", null ],
+    [ "TargetRules", null, [
+      [ "QuackToHellEditorTarget", "class_quack_to_hell_editor_target.html", null ],
+      [ "QuackToHellTarget", "class_quack_to_hell_target.html", null ]
+    ] ],
     [ "UAnimInstance", null, [
       [ "UQPlayerAnimInstance", "class_u_q_player_anim_instance.html", null ]
     ] ],

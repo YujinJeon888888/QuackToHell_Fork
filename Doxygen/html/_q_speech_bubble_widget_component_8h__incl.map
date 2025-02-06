@@ -1,9 +1,9 @@
-<map id="C:/Users/swu/Documents/Unreal Projects/QuackToHell/Source/QuackToHell/UI/QSpeechBubbleWidgetComponent.h" name="C:/Users/swu/Documents/Unreal Projects/QuackToHell/Source/QuackToHell/UI/QSpeechBubbleWidgetComponent.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="113,5,374,80"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,128,111,155"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="174,83,97,123,95,118,172,78"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="134,128,352,155"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="246,80,246,112,241,112,241,80"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="377,128,672,155"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="351,78,474,120,473,125,350,83"/>
+<map id="QuackToHell/UI/QSpeechBubbleWidgetComponent.h" name="QuackToHell/UI/QSpeechBubbleWidgetComponent.h">
+<area shape="rect" id="Node000001" title=" " alt="" coords="137,5,350,48"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,96,111,123"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="197,51,102,92,100,87,195,46"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="134,96,352,123"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="246,49,246,80,241,80,241,49"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="377,96,672,123"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="317,46,466,89,465,94,315,51"/>
 </map>

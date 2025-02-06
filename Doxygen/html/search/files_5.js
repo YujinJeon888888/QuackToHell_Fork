@@ -37,6 +37,8 @@ var searchData=
   ['quacktohell_2ebuild_2ecs_34',['QuackToHell.Build.cs',['../_quack_to_hell_8_build_8cs.html',1,'']]],
   ['quacktohell_2ecpp_35',['QuackToHell.cpp',['../_quack_to_hell_8cpp.html',1,'']]],
   ['quacktohell_2eh_36',['QuackToHell.h',['../_quack_to_hell_8h.html',1,'']]],
-  ['qvillageuimanager_2ecpp_37',['QVillageUIManager.cpp',['../_q_village_u_i_manager_8cpp.html',1,'']]],
-  ['qvillageuimanager_2eh_38',['QVillageUIManager.h',['../_q_village_u_i_manager_8h.html',1,'']]]
+  ['quacktohell_2etarget_2ecs_37',['QuackToHell.Target.cs',['../_quack_to_hell_8_target_8cs.html',1,'']]],
+  ['quacktohelleditor_2etarget_2ecs_38',['QuackToHellEditor.Target.cs',['../_quack_to_hell_editor_8_target_8cs.html',1,'']]],
+  ['qvillageuimanager_2ecpp_39',['QVillageUIManager.cpp',['../_q_village_u_i_manager_8cpp.html',1,'']]],
+  ['qvillageuimanager_2eh_40',['QVillageUIManager.h',['../_q_village_u_i_manager_8h.html',1,'']]]
 ];

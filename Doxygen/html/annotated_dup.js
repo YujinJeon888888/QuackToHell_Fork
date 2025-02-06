@@ -14,6 +14,8 @@ var annotated_dup =
     [ "FOpenAIResponse", "struct_f_open_a_i_response.html", "struct_f_open_a_i_response" ],
     [ "QGameplayTags", "class_q_gameplay_tags.html", "class_q_gameplay_tags" ],
     [ "QuackToHell", "class_quack_to_hell.html", "class_quack_to_hell" ],
+    [ "QuackToHellEditorTarget", "class_quack_to_hell_editor_target.html", "class_quack_to_hell_editor_target" ],
+    [ "QuackToHellTarget", "class_quack_to_hell_target.html", "class_quack_to_hell_target" ],
     [ "UGodFunction", "class_u_god_function.html", "class_u_god_function" ],
     [ "UQBTTFindPatrolPos", "class_u_q_b_t_t_find_patrol_pos.html", "class_u_q_b_t_t_find_patrol_pos" ],
     [ "UQNameWidget", "class_u_q_name_widget.html", "class_u_q_name_widget" ],
