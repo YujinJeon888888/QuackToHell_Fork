@@ -10,6 +10,7 @@ var annotated_dup =
     [ "AQPlayerState", "class_a_q_player_state.html", "class_a_q_player_state" ],
     [ "AQProsecutor", "class_a_q_prosecutor.html", "class_a_q_prosecutor" ],
     [ "AQVillageUIManager", "class_a_q_village_u_i_manager.html", "class_a_q_village_u_i_manager" ],
+    [ "FDialogueHistory", "struct_f_dialogue_history.html", "struct_f_dialogue_history" ],
     [ "FOpenAIRequest", "struct_f_open_a_i_request.html", "struct_f_open_a_i_request" ],
     [ "FOpenAIResponse", "struct_f_open_a_i_response.html", "struct_f_open_a_i_response" ],
     [ "QGameplayTags", "class_q_gameplay_tags.html", "class_q_gameplay_tags" ],

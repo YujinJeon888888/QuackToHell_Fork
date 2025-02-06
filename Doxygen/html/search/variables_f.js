@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['whengenerateresponsetext_0',['WhenGenerateResponseText',['../class_u_q_p2_n_widget_a142e8a5800c027b8fadc79f5039a6fd8.html#a142e8a5800c027b8fadc79f5039a6fd8',1,'UQP2NWidget']]],
-  ['widgetcomponent_1',['WidgetComponent',['../class_a_q_character_a05115d25cc41b4c2ea3aa700fa808dea.html#a05115d25cc41b4c2ea3aa700fa808dea',1,'AQCharacter']]]
+  ['uiwidgetclasses_0',['UIWidgetClasses',['../class_a_q_village_u_i_manager_adc56ad48e1f8dc507e92f6f48619187f.html#adc56ad48e1f8dc507e92f6f48619187f',1,'AQVillageUIManager']]]
 ];

@@ -24,6 +24,7 @@ var hierarchy =
     [ "APlayerState", null, [
       [ "AQPlayerState", "class_a_q_player_state.html", null ]
     ] ],
+    [ "FDialogueHistory", "struct_f_dialogue_history.html", null ],
     [ "FOpenAIRequest", "struct_f_open_a_i_request.html", null ],
     [ "FOpenAIResponse", "struct_f_open_a_i_response.html", null ],
     [ "ModuleRules", null, [

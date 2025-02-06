@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['nametonamewidget_0',['NameToNameWidget',['../class_a_q_n_p_c_a88a365972aa4c47ec8892b5735529bbf.html#a88a365972aa4c47ec8892b5735529bbf',1,'AQNPC::NameToNameWidget()'],['../class_a_q_player_a88a365972aa4c47ec8892b5735529bbf.html#a88a365972aa4c47ec8892b5735529bbf',1,'AQPlayer::NameToNameWidget()']]],
-  ['nativeconstruct_1',['NativeConstruct',['../class_u_q_name_widget_aa9dbac3f49162faac6a1c92888c53bf1.html#aa9dbac3f49162faac6a1c92888c53bf1',1,'UQNameWidget']]],
-  ['nativeinitializeanimation_2',['NativeInitializeAnimation',['../class_u_q_player_anim_instance_a09f7ab9b38cadea8f93435114444081c.html#a09f7ab9b38cadea8f93435114444081c',1,'UQPlayerAnimInstance']]],
-  ['nativeupdateanimation_3',['NativeUpdateAnimation',['../class_u_q_player_anim_instance_a7e95123f6d110a16865c4c89bcee18f7.html#a7e95123f6d110a16865c4c89bcee18f7',1,'UQPlayerAnimInstance']]]
+  ['onmapload_0',['OnMapLoad',['../class_a_q_village_u_i_manager_a509d2bef33e8d17041d5920e9f16cb36.html#a509d2bef33e8d17041d5920e9f16cb36',1,'AQVillageUIManager']]],
+  ['onmapunload_1',['OnMapUnLoad',['../class_a_q_village_u_i_manager_a6db2ea598eec7a6b9ce3fb227f6fa2b2.html#a6db2ea598eec7a6b9ce3fb227f6fa2b2',1,'AQVillageUIManager']]],
+  ['onnpcresponsereceived_2',['OnNPCResponseReceived',['../class_a_q_n_p_c_controller_aef2757b91b1c8fa65aaa714a685858ee.html#aef2757b91b1c8fa65aaa714a685858ee',1,'AQNPCController']]],
+  ['onoverlapbegin_3',['OnOverlapBegin',['../class_a_q_player_ada416e6078a5a9a8f91d0672407df623.html#ada416e6078a5a9a8f91d0672407df623',1,'AQPlayer']]],
+  ['onoverlapend_4',['OnOverlapEnd',['../class_a_q_player_ae98e2a23cd88516b11f37866295857fc.html#ae98e2a23cd88516b11f37866295857fc',1,'AQPlayer']]]
 ];

@@ -129,29 +129,22 @@ $(function(){initNavTree('_god_call_8cpp_source.html',''); initResizable(true); 
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keywordtype">void</span> UGodCall::StartGodProcess()</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>{</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    FString PromptData = <a class="code hl_function" href="class_u_god_function_af0a52ee54ccf4563aa4f365451c360c6.html#af0a52ee54ccf4563aa4f365451c360c6">UGodFunction::LoadPromptData</a>();</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keywordflow">if</span> (!PromptData.Contains(TEXT(<span class="stringliteral">&quot;Error&quot;</span>)))</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    {</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        <a class="code hl_function" href="class_u_god_function_af6f43983677ca4f0858bf71617eed81a.html#af6f43983677ca4f0858bf71617eed81a">UGodFunction::GenerateNPCDataFromOpenAI</a>();</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        UE_LOG(LogTemp, Log, TEXT(<span class="stringliteral">&quot;God process started. Generating NPC data...&quot;</span>));</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    }</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    {</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        UE_LOG(LogTemp, Error, TEXT(<span class="stringliteral">&quot;Failed to start God process: Could not load PromptToGod.json&quot;</span>));</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    }</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>}</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="comment">// Called every frame</span></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keywordtype">void</span> UGodCall::TickComponent(<span class="keywordtype">float</span> DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>{</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>}</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    UE_LOG(LogTemp, Log, TEXT(<span class="stringliteral">&quot;God process started. Generating NPC Prompts...&quot;</span>));</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="comment">// 새롭게 업데이트된 `GenerateNPCPrompts()` 호출</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <a class="code hl_function" href="class_u_god_function_afb0ef0a9c5a1f6a21ce333ea6a3df0de.html#afb0ef0a9c5a1f6a21ce333ea6a3df0de">UGodFunction::GenerateNPCPrompts</a>();</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    UE_LOG(LogTemp, Log, TEXT(<span class="stringliteral">&quot;God process finished NPC generation.&quot;</span>));</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>}</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keywordtype">void</span> UGodCall::TickComponent(<span class="keywordtype">float</span> DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>{</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>}</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
 <div class="ttc" id="a_god_call_8h_html"><div class="ttname"><a href="_god_call_8h.html">GodCall.h</a></div></div>
 <div class="ttc" id="a_god_function_8h_html"><div class="ttname"><a href="_god_function_8h.html">GodFunction.h</a></div></div>
-<div class="ttc" id="aclass_u_god_function_af0a52ee54ccf4563aa4f365451c360c6_html_af0a52ee54ccf4563aa4f365451c360c6"><div class="ttname"><a href="class_u_god_function_af0a52ee54ccf4563aa4f365451c360c6.html#af0a52ee54ccf4563aa4f365451c360c6">UGodFunction::LoadPromptData</a></div><div class="ttdeci">static FString LoadPromptData()</div><div class="ttdef"><b>Definition</b> <a href="_god_function_8cpp_source.html#l00011">GodFunction.cpp:11</a></div></div>
-<div class="ttc" id="aclass_u_god_function_af6f43983677ca4f0858bf71617eed81a_html_af6f43983677ca4f0858bf71617eed81a"><div class="ttname"><a href="class_u_god_function_af6f43983677ca4f0858bf71617eed81a.html#af6f43983677ca4f0858bf71617eed81a">UGodFunction::GenerateNPCDataFromOpenAI</a></div><div class="ttdeci">static void GenerateNPCDataFromOpenAI()</div><div class="ttdef"><b>Definition</b> <a href="_god_function_8cpp_source.html#l00025">GodFunction.cpp:25</a></div></div>
+<div class="ttc" id="aclass_u_god_function_afb0ef0a9c5a1f6a21ce333ea6a3df0de_html_afb0ef0a9c5a1f6a21ce333ea6a3df0de"><div class="ttname"><a href="class_u_god_function_afb0ef0a9c5a1f6a21ce333ea6a3df0de.html#afb0ef0a9c5a1f6a21ce333ea6a3df0de">UGodFunction::GenerateNPCPrompts</a></div><div class="ttdeci">static void GenerateNPCPrompts()</div><div class="ttdef"><b>Definition</b> <a href="_god_function_8cpp_source.html#l00067">GodFunction.cpp:67</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
