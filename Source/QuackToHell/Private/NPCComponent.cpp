@@ -121,7 +121,7 @@ void UNPCComponent::StartConversation(const FString& PlayerInput)
 	AIRequest.MaxTokens = 150;
 	AIRequest.SpeakerID = "Player";
 	AIRequest.ListenerID = NPCID;
-	AIRequest.ConversationType = "P2N";
+	AIRequest.ConversationType = EConversationType::P2N;
 
 	RequestOpenAIResponse(AIRequest, [this, PlayerInput, NPCID](FOpenAIResponse AIResponse)
 		{
@@ -162,7 +162,7 @@ void UNPCComponent::StartNPCToNPCDialog(const FString& SpeakerNPCID, const FStri
 	AIRequest.MaxTokens = 150;
 	AIRequest.SpeakerID = SpeakerNPCID;
 	AIRequest.ListenerID = ListenerNPCID;
-	AIRequest.ConversationType = "N2N";
+	AIRequest.ConversationType = EConversationType::N2N;
 
 	RequestOpenAIResponse(AIRequest, [this, SpeakerNPCID, ListenerNPCID](FOpenAIResponse AIResponse)
 		{
@@ -188,7 +188,7 @@ void UNPCComponent::ContinueNPCToNPCDialog(const FString& SpeakerNPCID, const FS
 	AIRequest.MaxTokens = 150;
 	AIRequest.SpeakerID = SpeakerNPCID;
 	AIRequest.ListenerID = ListenerNPCID;
-	AIRequest.ConversationType = "N2N";
+	AIRequest.ConversationType = EConversationType::N2N;
 
 	// OpenAI API 호출 후, 대화 이어나가기 (남은 턴 수가 감소함요)
 	RequestOpenAIResponse(AIRequest, [this, SpeakerNPCID, ListenerNPCID, RemainingTurns](FOpenAIResponse AIResponse)
@@ -218,7 +218,7 @@ void UNPCComponent::PerformNPCMonologue()
 	AIRequest.MaxTokens = 100;
 	AIRequest.SpeakerID = NPCID;
 	AIRequest.ListenerID = TEXT("Self");
-	AIRequest.ConversationType = "NMonologue";
+	AIRequest.ConversationType = EConversationType::NMonologue;
 
 	RequestOpenAIResponse(AIRequest, [this](FOpenAIResponse AIResponse)
 		{
