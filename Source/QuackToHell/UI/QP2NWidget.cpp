@@ -62,6 +62,14 @@ void UQP2NWidget::HandleEnterKeyPress()
     ConversingNPC->Response(PlayerInput);
 }
 
+bool UQP2NWidget::IsGerneratingResponse()
+{
+    if (NPCText->GetText().ToString() == WhenGenerateResponseText) {
+        return true;
+    }
+    return false;
+}
+
 void UQP2NWidget::HandleEnterEndButton()
 {
     //대화마치기 가능 조건
@@ -74,7 +82,7 @@ void UQP2NWidget::HandleEnterEndButton()
     bool bCanFinishConversing = _Player->GetCanFinishConversP2N(_NPC);
     
     //대화마칠 수 있으면
-    //임시주석(풀어야됨): if (!bGeneratingResponse && bCanFinishConversing) {
+    if (!bGeneratingResponse && bCanFinishConversing) {
     {
         //1. UI 끈다.
         AQVillageUIManager::GetInstance(GetWorld())->TurnOffUI(EVillageUIType::P2N);
@@ -86,12 +94,6 @@ void UQP2NWidget::HandleEnterEndButton()
     }
 }
 
-bool UQP2NWidget::IsGerneratingResponse()
-{
-    if (NPCText->GetText().ToString() == WhenGenerateResponseText) {
-        return true;
-    }
-    return false;
-}
+
 
 

@@ -7,39 +7,71 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"       // Behavior Tree 컴포넌트
 #include "QLogCategories.h"
 #include "NPCComponent.h"
+#include "Kismet/KismetMathLibrary.h"
+#include "TimerManager.h"
 #include "UI/QP2NWidget.h"
+#include "Character/QPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "UI/QVillageUIManager.h"
 #include "Character/QNPC.h"
 
 
-void AQNPCController::StartDialog()
+void AQNPCController::StartDialog(TObjectPtr<APawn> _OpponentPawn)
 {
-    //TODO: 몸멈추기
-    
-    //TODO: 첫 멘트를 저장 (콜백함수등록)
+    //몸멈추기 & 상대방을 향해 회전하기
+    FreezePawn();
+    RotateToOpponent(_OpponentPawn);
     //첫멘트 줘 (응답은 브로드캐스트로 옴)
     NPCComponent->StartConversation("");
-    //임시코드(원래서버에서킴)
-    VillageUIManager->TurnOnUI(EVillageUIType::P2N);
-    //텍스트세팅
-    //TODO: 텍스트세팅하는 줄 콜백등록해야함
+    //첫멘트 응답완료 시 출력 콜백
     NPCComponent->OnNPCResponseReceived.AddDynamic(this, &AQNPCController::OnNPCResponseReceived);
-    //내 정보 넘겨주기
-    Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->SetConversingNPC(this);
+    //P2N Widget에게 자신의 정보를 넘긴다: 내 정보 넘겨주기
+    TMap<EVillageUIType, TObjectPtr<UUserWidget>> VillageWidgets = VillageUIManager->GetVillageWidgets();
+    TObjectPtr<UQP2NWidget> P2NWidget = Cast<UQP2NWidget>(VillageWidgets[EVillageUIType::P2N]);
+    P2NWidget->SetConversingNPC(this);
 }
+
+void AQNPCController::FreezePawn()
+{
+    //폰 정보 가져오기
+    TObjectPtr<APawn> ControlledPawn = this->GetPawn();
+    if (!ControlledPawn) {
+        return;
+    }
+
+    //movement component 가져오기
+    TObjectPtr<UCharacterMovementComponent> MovementComponent = ControlledPawn->FindComponentByClass<UCharacterMovementComponent>();
+    if (MovementComponent) {
+        MovementComponent->StopMovementImmediately();//즉시멈춤
+        MovementComponent->SetComponentTickEnabled(false);//틱 비활성화
+        MovementComponent->Deactivate();//이동 비활성화
+    }
+
+    UE_LOG(LogLogic, Log, TEXT("NPC 멈춤."));
+}
+
+void AQNPCController::RotateToOpponent(const TObjectPtr<APawn> InputOpponentPawn) {
+    if (!InputOpponentPawn) {
+        UE_LOG(LogLogic, Log, TEXT("AQNPCController: StartDialog에서 유효한 Pawn정보를 넘겨주지 않았습니다."));
+        return;
+    }
+
+    //회전 업데이트 시작
+    OpponentPawn = InputOpponentPawn;
+    bIsRotating = true;
+    SetActorTickEnabled(true);
+}
+
+
 
 void AQNPCController::EndDialog()
 {
-    /**
-     * @todo 구현해야함
-     * : 얼음땡
-     */
-    UE_LOG(LogLogic, Log, TEXT("구현 미완입니다."));
+
+    UnFreezePawn();
 }
 
 void AQNPCController::Response(FString& Text)
 {
-
     //1. 응답 요청
     NPCComponent->StartConversation(Text);
     //2. 콜백함수등록(응답시처리)
@@ -64,20 +96,70 @@ void AQNPCController::BeginPlay()
     NPCComponent = Cast<AQNPC>(GetPawn())->FindComponentByClass<UNPCComponent>();
     //VillageManager 대입하기
     VillageUIManager= AQVillageUIManager::GetInstance(GetWorld());
-    //TEST
-    StartDialog();
+    
+}
+
+void AQNPCController::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    //회전 업데이트 처리
+    if (bIsRotating) {
+        UpdateRotation();
+    }
 }
 
 void AQNPCController::OnNPCResponseReceived(const FString& Text)
 {
-    Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->UpdateNPCText(Text);
+    Cast<UQP2NWidget>((VillageUIManager->GetVillageWidgets())[EVillageUIType::P2N])->UpdateNPCText(Text);
 }
 
-//void AQNPCController::Tick(float DeltaTime)
-//{
-//    if (CachedResponse != NewResponse) {
-//        CachedResponse = NewResponse;
-//        //TODO: broadcast - 응답 왔어 !
-//        OnResponseFinished.Broadcast(NewResponse);
-//    }
-//}
+void AQNPCController::UpdateRotation()
+{
+    
+    //현재 NPC 위치
+    FVector NPCPosition = GetPawn()->GetActorLocation();
+
+    //상대방의 위치
+    FVector OpponentPosition = OpponentPawn->GetActorLocation();
+
+    //목표 방향으로 회전 계산
+    FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(NPCPosition, OpponentPosition);
+
+    //현재 Rotation 가져오기
+    FRotator CurrentRotation = GetPawn()->GetActorRotation();
+
+    //부드러운 회전 적용 (보간)
+    FRotator NewRotation = FMath::RInterpTo(CurrentRotation, LookAtRotation, GetWorld()->GetDeltaSeconds(), 5.0f);
+    NewRotation = FRotator(CurrentRotation.Pitch, NewRotation.Yaw, CurrentRotation.Roll);
+
+    //회전 적용
+    GetPawn()->SetActorRotation(NewRotation);
+
+    UE_LOG(LogLogic, Log, TEXT("현재회전값: %f"), NewRotation.Yaw);
+
+    if (FMath::Abs(CurrentRotation.Yaw - LookAtRotation.Yaw) < 1.0f) {
+        SetActorTickEnabled(false);
+        bIsRotating = false;
+        OpponentPawn = nullptr;
+    }
+}
+
+void AQNPCController::UnFreezePawn()
+{
+    //폰 정보 가져오기
+    TObjectPtr<APawn> ControlledPawn = this->GetPawn();
+    if (!ControlledPawn) {
+        return;
+    }
+
+    //movement component 가져오기
+    TObjectPtr<UCharacterMovementComponent> MovementComponent = ControlledPawn->FindComponentByClass<UCharacterMovementComponent>();
+    if (MovementComponent) {
+        MovementComponent->SetComponentTickEnabled(true);//틱 활성화
+        MovementComponent->Activate(true);//이동 활성화
+    }
+
+    UE_LOG(LogLogic, Log, TEXT("NPC 이동 재개."));
+}
+

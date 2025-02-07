@@ -74,7 +74,7 @@ private:
 	/** @brief NPC가 응답생성중인지 체크 */
 	bool IsGerneratingResponse();
 	/** @brief 응답생성중일때의 멘트 */
-	const FString WhenGenerateResponseText = "음...";
+	const FString WhenGenerateResponseText = TEXT("음...");
 };
 
 

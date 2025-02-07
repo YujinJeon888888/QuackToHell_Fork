@@ -20,9 +20,13 @@ class QUACKTOHELL_API AQNPCController : public AAIController
 public:
     /**
      * @brief NPC와의 대화시작 요청을 처리하는 함수입니다. npc-npc, player-npc 대화시스템에 활용됩니다.
-     *
+     * @param 대화거는 주체의 폰 정보를 넘깁니다.
      */
-    void StartDialog();
+    void StartDialog(TObjectPtr<APawn> MyPawn);
+    /** @brief NPC의 몸을 멈춥니다. */
+    void FreezePawn();
+    /** @brief 상대방을 향해 고개를 회전합니다. */
+    void RotateToOpponent(const TObjectPtr<APawn> MyPawn);
     /**
     * @brief NPC와의 대화중단 요청을 처리하는 함수입니다. npc-npc, player-npc 대화시스템에 활용됩니다.
     *
@@ -38,7 +42,7 @@ public:
     //FResponseDelegate OnResponseFinished;
 protected:
     virtual void BeginPlay() override;
-    /*  virtual void Tick(float DeltaTime) override;*/
+    virtual void Tick(float DeltaTime) override;
 protected:
     /** @brief behavior tree를 지정합니다. */
     UPROPERTY(EditAnyWhere, Category = "NPCBehavior")
@@ -50,11 +54,31 @@ protected:
     /** @brief NPCComponent를 멤버변수로 가집니다 */
     TObjectPtr<class UNPCComponent> NPCComponent;
 private:
+    
     /** @brief VillageUIManager정보를 갖습니다. */
     TObjectPtr<class AQVillageUIManager> VillageUIManager;
     /** @brief OnNPCResponseReceived의 콜백함수 */
     UFUNCTION()
     void OnNPCResponseReceived(const FString& Text);
+   
+    /**
+     * @brief 상대방 정보.
+     */
+    TObjectPtr<APawn> OpponentPawn;
+    /**
+     * @brief 회전시작 시 on, 회전 끝날 시 off.
+     */
+    bool bIsRotating = false;
+    /**
+     * @brief 상대방을 향해 회전량 업데이트 함수.
+     * @param 상대방의 pawn
+     */
+    void UpdateRotation();
+    /**
+     * @brief. 얼음땡
+     */
+    void UnFreezePawn();
+
 };
 
 
