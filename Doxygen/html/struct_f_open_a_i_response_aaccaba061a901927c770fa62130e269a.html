@@ -125,29 +125,29 @@ $(function(){initNavTree('struct_f_open_a_i_response_aaccaba061a901927c770fa6213
 </table>
 </div><div class="memdoc">
 
-<p class="definition"><a class="el" href="_n_p_c_component_8h_source.html">NPCComponent.h</a> 파일의 <a class="el" href="_n_p_c_component_8h_source.html#l00045">45</a> 번째 라인에서 정의되었습니다.</p>
-<div class="fragment"><div class="line"><span class="lineno">   46</span>    {</div>
-<div class="line"><span class="lineno">   47</span>        FOpenAIResponse Response;</div>
-<div class="line"><span class="lineno">   48</span>        TSharedPtr&lt;FJsonObject&gt; JsonObject;</div>
-<div class="line"><span class="lineno">   49</span>        TSharedRef&lt;TJsonReader&lt;&gt;&gt; Reader = TJsonReaderFactory&lt;&gt;::Create(JsonContent);</div>
-<div class="line"><span class="lineno">   50</span> </div>
-<div class="line"><span class="lineno">   51</span>        <span class="keywordflow">if</span> (FJsonSerializer::Deserialize(Reader, JsonObject) &amp;&amp; JsonObject.IsValid())</div>
-<div class="line"><span class="lineno">   52</span>        {</div>
-<div class="line"><span class="lineno">   53</span>            <span class="keyword">const</span> TArray&lt;TSharedPtr&lt;FJsonValue&gt;&gt;* ChoicesArray;</div>
-<div class="line"><span class="lineno">   54</span>            <span class="keywordflow">if</span> (JsonObject-&gt;TryGetArrayField(<span class="stringliteral">&quot;choices&quot;</span>, ChoicesArray) &amp;&amp; ChoicesArray-&gt;Num() &gt; 0)</div>
-<div class="line"><span class="lineno">   55</span>            {</div>
-<div class="line"><span class="lineno">   56</span>                Response.<a class="code hl_variable" href="struct_f_open_a_i_response_a16cf72aa683a2f4221d4c04c597f059e.html#a16cf72aa683a2f4221d4c04c597f059e">ResponseText</a> = (*ChoicesArray)[0]-&gt;AsString();</div>
-<div class="line"><span class="lineno">   57</span>            }</div>
-<div class="line"><span class="lineno">   58</span>        }</div>
-<div class="line"><span class="lineno">   59</span> </div>
-<div class="line"><span class="lineno">   60</span>        <span class="keywordflow">if</span> (Response.<a class="code hl_variable" href="struct_f_open_a_i_response_a16cf72aa683a2f4221d4c04c597f059e.html#a16cf72aa683a2f4221d4c04c597f059e">ResponseText</a>.IsEmpty())</div>
-<div class="line"><span class="lineno">   61</span>        {</div>
-<div class="line"><span class="lineno">   62</span>            Response.<a class="code hl_variable" href="struct_f_open_a_i_response_a16cf72aa683a2f4221d4c04c597f059e.html#a16cf72aa683a2f4221d4c04c597f059e">ResponseText</a> = TEXT(<span class="stringliteral">&quot;죄송합니다, 답변할 수 없습니다.&quot;</span>);</div>
-<div class="line"><span class="lineno">   63</span>        }</div>
+<p class="definition"><a class="el" href="_n_p_c_component_8h_source.html">NPCComponent.h</a> 파일의 <a class="el" href="_n_p_c_component_8h_source.html#l00059">59</a> 번째 라인에서 정의되었습니다.</p>
+<div class="fragment"><div class="line"><span class="lineno">   60</span>    {</div>
+<div class="line"><span class="lineno">   61</span>        FOpenAIResponse Response;</div>
+<div class="line"><span class="lineno">   62</span>        TSharedPtr&lt;FJsonObject&gt; JsonObject;</div>
+<div class="line"><span class="lineno">   63</span>        TSharedRef&lt;TJsonReader&lt;&gt;&gt; Reader = TJsonReaderFactory&lt;&gt;::Create(JsonContent);</div>
 <div class="line"><span class="lineno">   64</span> </div>
-<div class="line"><span class="lineno">   65</span>        <span class="keywordflow">return</span> Response;</div>
-<div class="line"><span class="lineno">   66</span>    }</div>
-<div class="ttc" id="astruct_f_open_a_i_response_a16cf72aa683a2f4221d4c04c597f059e_html_a16cf72aa683a2f4221d4c04c597f059e"><div class="ttname"><a href="struct_f_open_a_i_response_a16cf72aa683a2f4221d4c04c597f059e.html#a16cf72aa683a2f4221d4c04c597f059e">FOpenAIResponse::ResponseText</a></div><div class="ttdeci">FString ResponseText</div><div class="ttdef"><b>Definition</b> <a href="_n_p_c_component_8h_source.html#l00043">NPCComponent.h:43</a></div></div>
+<div class="line"><span class="lineno">   65</span>        <span class="keywordflow">if</span> (FJsonSerializer::Deserialize(Reader, JsonObject) &amp;&amp; JsonObject.IsValid())</div>
+<div class="line"><span class="lineno">   66</span>        {</div>
+<div class="line"><span class="lineno">   67</span>            <span class="keyword">const</span> TArray&lt;TSharedPtr&lt;FJsonValue&gt;&gt;* ChoicesArray;</div>
+<div class="line"><span class="lineno">   68</span>            <span class="keywordflow">if</span> (JsonObject-&gt;TryGetArrayField(<span class="stringliteral">&quot;choices&quot;</span>, ChoicesArray) &amp;&amp; ChoicesArray-&gt;Num() &gt; 0)</div>
+<div class="line"><span class="lineno">   69</span>            {</div>
+<div class="line"><span class="lineno">   70</span>                Response.<a class="code hl_variable" href="struct_f_open_a_i_response_a16cf72aa683a2f4221d4c04c597f059e.html#a16cf72aa683a2f4221d4c04c597f059e">ResponseText</a> = (*ChoicesArray)[0]-&gt;AsString();</div>
+<div class="line"><span class="lineno">   71</span>            }</div>
+<div class="line"><span class="lineno">   72</span>        }</div>
+<div class="line"><span class="lineno">   73</span> </div>
+<div class="line"><span class="lineno">   74</span>        <span class="keywordflow">if</span> (Response.<a class="code hl_variable" href="struct_f_open_a_i_response_a16cf72aa683a2f4221d4c04c597f059e.html#a16cf72aa683a2f4221d4c04c597f059e">ResponseText</a>.IsEmpty())</div>
+<div class="line"><span class="lineno">   75</span>        {</div>
+<div class="line"><span class="lineno">   76</span>            Response.<a class="code hl_variable" href="struct_f_open_a_i_response_a16cf72aa683a2f4221d4c04c597f059e.html#a16cf72aa683a2f4221d4c04c597f059e">ResponseText</a> = TEXT(<span class="stringliteral">&quot;죄송합니다, 답변할 수 없습니다.&quot;</span>);</div>
+<div class="line"><span class="lineno">   77</span>        }</div>
+<div class="line"><span class="lineno">   78</span> </div>
+<div class="line"><span class="lineno">   79</span>        <span class="keywordflow">return</span> Response;</div>
+<div class="line"><span class="lineno">   80</span>    }</div>
+<div class="ttc" id="astruct_f_open_a_i_response_a16cf72aa683a2f4221d4c04c597f059e_html_a16cf72aa683a2f4221d4c04c597f059e"><div class="ttname"><a href="struct_f_open_a_i_response_a16cf72aa683a2f4221d4c04c597f059e.html#a16cf72aa683a2f4221d4c04c597f059e">FOpenAIResponse::ResponseText</a></div><div class="ttdeci">FString ResponseText</div><div class="ttdef"><b>Definition</b> <a href="_n_p_c_component_8h_source.html#l00057">NPCComponent.h:57</a></div></div>
 </div><!-- fragment --><div class="dynheader">
 이 함수 내부에서 호출하는 함수들에 대한 그래프입니다.:</div>
 <div class="dyncontent">

@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['generatenpcdatafromopenai_0',['GenerateNPCDataFromOpenAI',['../class_u_god_function_af6f43983677ca4f0858bf71617eed81a.html#af6f43983677ca4f0858bf71617eed81a',1,'UGodFunction']]],
+  ['generatenpcprompts_0',['GenerateNPCPrompts',['../class_u_god_function_afb0ef0a9c5a1f6a21ce333ea6a3df0de.html#afb0ef0a9c5a1f6a21ce333ea6a3df0de',1,'UGodFunction']]],
   ['getactivewidgets_1',['GetActiveWidgets',['../class_a_q_village_u_i_manager_a438dc46be8b3ce5972f70bfb414385ba.html#a438dc46be8b3ce5972f70bfb414385ba',1,'AQVillageUIManager']]],
   ['getcanfinishconversn2n_2',['GetCanFinishConversN2N',['../class_a_q_n_p_c_a1a405b0763199288b555d0fc862e315d.html#a1a405b0763199288b555d0fc862e315d',1,'AQNPC']]],
   ['getcanfinishconversp2n_3',['GetCanFinishConversP2N',['../class_a_q_player_a64f314784e70b52fec2b447962c36b40.html#a64f314784e70b52fec2b447962c36b40',1,'AQPlayer']]],

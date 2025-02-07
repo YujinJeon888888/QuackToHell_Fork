@@ -39,6 +39,10 @@ var searchData=
   ['quacktohell_2ebuild_2ecs_36',['QuackToHell.Build.cs',['../_quack_to_hell_8_build_8cs.html',1,'']]],
   ['quacktohell_2ecpp_37',['QuackToHell.cpp',['../_quack_to_hell_8cpp.html',1,'']]],
   ['quacktohell_2eh_38',['QuackToHell.h',['../_quack_to_hell_8h.html',1,'']]],
-  ['qvillageuimanager_2ecpp_39',['QVillageUIManager.cpp',['../_q_village_u_i_manager_8cpp.html',1,'']]],
-  ['qvillageuimanager_2eh_40',['QVillageUIManager.h',['../_q_village_u_i_manager_8h.html',1,'']]]
+  ['quacktohell_2etarget_2ecs_39',['QuackToHell.Target.cs',['../_quack_to_hell_8_target_8cs.html',1,'']]],
+  ['quacktohelleditor_2etarget_2ecs_40',['QuackToHellEditor.Target.cs',['../_quack_to_hell_editor_8_target_8cs.html',1,'']]],
+  ['quacktohelleditortarget_41',['QuackToHellEditorTarget',['../class_quack_to_hell_editor_target.html',1,'QuackToHellEditorTarget'],['../class_quack_to_hell_editor_target_a40fbebf54c49330c094494737e1dd301.html#a40fbebf54c49330c094494737e1dd301',1,'QuackToHellEditorTarget.QuackToHellEditorTarget()']]],
+  ['quacktohelltarget_42',['QuackToHellTarget',['../class_quack_to_hell_target.html',1,'QuackToHellTarget'],['../class_quack_to_hell_target_a764cb5d31776dba73aef75fbabbea8bc.html#a764cb5d31776dba73aef75fbabbea8bc',1,'QuackToHellTarget.QuackToHellTarget()']]],
+  ['qvillageuimanager_2ecpp_43',['QVillageUIManager.cpp',['../_q_village_u_i_manager_8cpp.html',1,'']]],
+  ['qvillageuimanager_2eh_44',['QVillageUIManager.h',['../_q_village_u_i_manager_8h.html',1,'']]]
 ];

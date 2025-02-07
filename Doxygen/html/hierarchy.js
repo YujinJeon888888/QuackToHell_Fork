@@ -24,12 +24,17 @@ var hierarchy =
     [ "APlayerState", null, [
       [ "AQPlayerState", "class_a_q_player_state.html", null ]
     ] ],
+    [ "FDialogueHistory", "struct_f_dialogue_history.html", null ],
     [ "FOpenAIRequest", "struct_f_open_a_i_request.html", null ],
     [ "FOpenAIResponse", "struct_f_open_a_i_response.html", null ],
     [ "ModuleRules", null, [
       [ "QuackToHell", "class_quack_to_hell.html", null ]
     ] ],
     [ "QGameplayTags", "class_q_gameplay_tags.html", null ],
+    [ "TargetRules", null, [
+      [ "QuackToHellEditorTarget", "class_quack_to_hell_editor_target.html", null ],
+      [ "QuackToHellTarget", "class_quack_to_hell_target.html", null ]
+    ] ],
     [ "UAnimInstance", null, [
       [ "UQPlayerAnimInstance", "class_u_q_player_anim_instance.html", null ]
     ] ],
