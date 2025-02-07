@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "Character/QPlayer.h"
 #include "Character/QNPC.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "NPC/QNPCController.h"
 #include "Player/QPlayerState.h"
 #include "QGameplayTags.h"
@@ -85,22 +86,26 @@ void AQPlayerController::StartDialog()
 	//0. 상대방 NPC를 불러옴
 	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
 	TObjectPtr<AQNPC> NPC = Cast<AQNPC>(_Player->GetClosestNPC());
-	//1. 대화 가능한지 check
-	//임시 지우고 주석풀기 : if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
+	//1. 대화 가능한지 check (서버에게 질문)
+	if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
 	{
+		//1. UI를 킨다.
+		VillageUIManager->TurnOnUI(EVillageUIType::P2N);
+
 		//2. 상대방 NPC의 컨트롤러를 불러옴
 		TObjectPtr<AQNPCController> NPCController = Cast<AQNPCController>(NPC->GetController());
 
-		//3. 대화 시작하라고 명령한다.
-		NPCController->StartDialog();
+		//3. NPC에게 대화 시작하라고 명령한다.
+		NPCController->StartDialog(GetPawn());
 
-		//4. 플레이어를 대화처리한다.
-		this->ConverseProcess(NPC);
+		//4. 플레이어를 대화처리한다. (클라이언트)
+		this->ConverseProcess();
+		//4.1 플레이어를 대화처리한다. (서버)
+		Cast<AQPlayer>(this->GetPawn())->StartConversation(NPC);
 
 		//5. P2N Widget에게 자신의 정보를 넘긴다.
 		//내 정보 넘겨주기
-		Cast<UQP2NWidget>((VillageUIManager->GetActiveWidgets())[EVillageUIType::P2N])->SetConversingPlayer(this);
-
+		Cast<UQP2NWidget>((VillageUIManager->GetVillageWidgets())[EVillageUIType::P2N])->SetConversingPlayer(this);
 	}
 }
 
@@ -128,25 +133,51 @@ void AQPlayerController::TurnOffPlayer2NSpeechBubble()
 
 void AQPlayerController::FreezePawn()
 {
+	//폰 정보 가져오기
+	TObjectPtr<APawn> ControlledPawn = this->GetPawn();
+	if (!ControlledPawn) {
+		return;
+	}
+
+	//movement component 가져오기
+	TObjectPtr<UCharacterMovementComponent> MovementComponent = ControlledPawn->FindComponentByClass<UCharacterMovementComponent>();
+	if (MovementComponent) {
+		MovementComponent->StopMovementImmediately();//즉시멈춤(속도를 0으로 만듦)
+		MovementComponent->SetComponentTickEnabled(false);//틱 비활성화
+		MovementComponent->Deactivate();//이동 비활성화
+	}
+
+	UE_LOG(LogLogic, Log, TEXT("플레이어 멈춤."));
 }
 
 void AQPlayerController::UnFreezePawn()
 {
+	//폰 정보 가져오기
+	TObjectPtr<APawn> ControlledPawn = this->GetPawn();
+	if (!ControlledPawn) {
+		return;
+	}
+
+	//movement component 가져오기
+	TObjectPtr<UCharacterMovementComponent> MovementComponent = ControlledPawn->FindComponentByClass<UCharacterMovementComponent>();
+	if (MovementComponent) {
+		MovementComponent->SetComponentTickEnabled(true);//틱 활성화
+		MovementComponent->Activate(true);//이동 활성화
+	}
+
+	UE_LOG(LogLogic, Log, TEXT("플레이어 이동 재개."));
 }
 
-void AQPlayerController::ConverseProcess(TObjectPtr<AQNPC> NPC)
+void AQPlayerController::ConverseProcess()
 {
 	//1. 몸 멈추기
 	FreezePawn();
-	//2. 대화상태로 전환
-	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
-	_Player->StartConversation(NPC);
 }
 
 void AQPlayerController::ConverseEndProcess(TObjectPtr<class AQNPC> NPC)
 {
 	//1. 얼음땡
-	UnFreeze();
+	UnFreezePawn();
 	//2. 상태전환
 	Cast<AQPlayer>(GetPawn())->FinishConversation(NPC);
 }
@@ -160,10 +191,10 @@ void AQPlayerController::InputInteraction(const FInputActionValue& InputValue)
 {
 	//bEnableInteraction이 true일때만 상호작용이 가능하다.
 	if (bEnableInteraction) {
-		/** @todo 상호작용 유형별로 나누기 */
+		/**
+		 * @TODO 상호작용 유형별로 나누기 .
+		 */
 		//대화시작해라
-		//상태조건: 내가 대화중이 아닐 때.
-
 		StartDialog();
 	}
 }
