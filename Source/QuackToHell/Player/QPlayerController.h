@@ -40,9 +40,9 @@ protected:
 	/** @brief Enable Turn IA 입니다. true일 경우에만 turn이 활성화됩니다. */
 	UPROPERTY(EditAnyWhere, Category = "Input")
 	TObjectPtr<class UInputAction> EnableTurnAction;
-	/** @brief ConversingQuit IA 입니다. true 시 대화가 중단됩니다. */
+	/** @brief TurnOnOff Map IA 입니다. true일 경우 지도가 활성화/비활성화 됩니다. */
 	UPROPERTY(EditAnyWhere, Category = "Input")
-	TObjectPtr<class UInputAction> ConversingQuitAction;
+	TObjectPtr<class UInputAction> TurnOnOffMapAction;
 private:
 	/**
 	 * @brief 이동 입력 처리 함수입니다..
@@ -68,40 +68,20 @@ private:
 	 * @param InputValue 입력 값
 	 */
 	void InputInteraction(const FInputActionValue& InputValue);
+	/**
+	 * @brief 맵 Turn On/Off 입력 처리 함수입니다. InputValue가 true면 끄거나 킵니다.
+	 *
+	 * @param InputValue 입력 값
+	 */
+	void InputTurnOnOffMap(const FInputActionValue& InputValue);
 
-	/**
-	 * @brief 상호작용 활성화 처리 함수입니다.
-	 *
-	 * @param InputValue 입력 값
-	 */
-	void InputEnableInteracton(const FInputActionValue& InputValue);
-	
-	/**
-	 * @brief 대화중단 입력 처리 함수입니다.. (버튼 없을 때 테스트위한 임시)
-	 *
-	 * @param InputValue 입력 값
-	 */
-	void InputConversingQuit(const FInputActionValue& InputValue);
-	/**
-	 * @brief 대화중단 활성화 처리 함수입니다.
-	 *
-	 * @param InputValue 입력 값
-	 */
-	void InputEnableConversingQuit(const FInputActionValue& InputValue);
 	
 	
 	/**
 	 * @brief 회전 활성화 처리 함수함수에서 true가 들어올 시, 이 변수도 true됩니다.
 	 */
 	bool bEnableTurn = false;
-	/**
-	 * @brief 상호작용 활성화 처리 함수함수에서 true가 들어올 시, 이 변수도 true됩니다.
-	 */
-	bool bEnableInteraction = false;
-	/**
-	 * @brief 대화중단 활성화 처리 함수함수에서 true가 들어올 시, 이 변수도 true됩니다.
-	 */
-	bool bEnableConversingQuit = false;
+
 	/**
 	 * @brief 대화를 시작합니다.
 	 */

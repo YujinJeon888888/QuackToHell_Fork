@@ -3,8 +3,9 @@
 
 #include "UI/QVillageUIManager.h"
 #include "UI/QP2NWidget.h"
+#include "UI/QDefaultVillageWidget.h"
 #include "Kismet/GameplayStatics.h"
-
+#include "UI/QMapWidget.h"
 #include "QLogCategories.h"
 
 //(이중포인터아님)클래스타입 재차 명시한 이유: 어떤 클래스의 정적 멤버인지 명확히 지정" 하기 위함(C++문법)
@@ -25,11 +26,22 @@ AQVillageUIManager::AQVillageUIManager()
 	 * @TODO: 마을 내 유아이들 전부 추가해주기
 	 */
 	static ConstructorHelpers::FClassFinder<UQP2NWidget> P2NWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_QP2NWidget.WBP_QP2NWidget_C'"));
+	static ConstructorHelpers::FClassFinder<UQDefaultVillageWidget> DefaultVillageWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_QDefailtVillageWidgets.WBP_QDefailtVillageWidgets_C'"));
+	static ConstructorHelpers::FClassFinder<UQMapWidget> MapWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_QMap.WBP_QMap_C'"));
+
 
 	// TSubclassOf 템플릿 클래스 객체에 블루프린트 클래스를 넣어준다
 	if (P2NWidgetAsset.Succeeded())
 	{
 		UIWidgetClasses.Add(EVillageUIType::P2N, P2NWidgetAsset.Class);
+	}
+	if (DefaultVillageWidgetAsset.Succeeded())
+	{
+		UIWidgetClasses.Add(EVillageUIType::DefaultVillageUI, DefaultVillageWidgetAsset.Class);
+	}
+	if (MapWidgetAsset.Succeeded())
+	{
+		UIWidgetClasses.Add(EVillageUIType::Map, MapWidgetAsset.Class);
 	}
 }
 
@@ -88,7 +100,7 @@ void AQVillageUIManager::OnMapLoad()
 	* @TODO: 기본 마을 UI들 띄운다(초기화작업).
 	* 
 	*/
-	
+	TurnOnUI(EVillageUIType::DefaultVillageUI);
 }
 
 bool AQVillageUIManager::IsVillageMap()
