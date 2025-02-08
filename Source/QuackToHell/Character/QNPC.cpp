@@ -55,6 +55,7 @@ bool AQNPC::GetCanFinishConversN2N(const AQNPC* NPC)
 	ServerRPCCanCanFinishConversN2N_Implementation(NPC);
 	return bCanFinishConversN2N;
 }
+// ---------------------------------------------------------------------------------- //
 
 void AQNPC::BeginPlay()
 {
@@ -62,11 +63,6 @@ void AQNPC::BeginPlay()
 	/*이름 세팅*/
 	FString _Name = NPCComponent->GetNPCName();
 	this->SetCharacterName(_Name);
-	NameToNameWidget();
-}
-
-void AQNPC::NameToNameWidget()
-{
-	Super::NameWidget->SetNameWidgetText(Super::GetCharacterName());
+	Super::GetNameWidget()->SetNameWidgetText(GetCharacterName());
 }
 

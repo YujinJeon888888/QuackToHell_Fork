@@ -25,8 +25,7 @@ public:
 	bool GetCanFinishConversN2N(const AQNPC* NPC);
 protected:
 	virtual void BeginPlay() override;
-	/** @brief 이름을 namewidget에 반영합니다. */
-	virtual void NameToNameWidget();
+
 	/** @brief NPCComponent를 멤버변수로 갖습니다 */
 	UPROPERTY()
 	TObjectPtr<class UNPCComponent> NPCComponent;

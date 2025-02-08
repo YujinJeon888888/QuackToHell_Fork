@@ -40,14 +40,20 @@ protected:
 	 * @brief UI 컴포넌트입니다.
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UWidgetComponent> WidgetComponent;
+	TObjectPtr<class UWidgetComponent> NameWidgetComponent;
+
+	/**
+	 * @brief 네임위젯을 리턴합니다..
+	 * 
+	 * @return namewidget 
+	 */
+	TObjectPtr<class UQNameWidget> GetNameWidget() const;
+
+private:
 	/** @brief 네임위젯 클래스 정보를 담습니다. */
 	UPROPERTY()
 	TObjectPtr<class UQNameWidget> NameWidget;
-	/** @brief 네임위젯에 이름을 반영하는 함수를 오버라이드하도록 강제함 */
-	virtual void NameToNameWidget() PURE_VIRTUAL(AQCharacter::NameToNameWidget, );
-
-private:
+	
 	/**
 	 * @brief 이름
 	 */

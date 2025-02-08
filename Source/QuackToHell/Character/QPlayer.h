@@ -37,8 +37,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	/** @brief 이름을 namewidget에 반영합니다. */
-	virtual void NameToNameWidget();
+
 	/**
 	 * @brief 스프링암 컴포넌트입니다.
 	 */
