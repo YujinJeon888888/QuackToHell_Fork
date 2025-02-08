@@ -21,14 +21,14 @@ void UQP2NWidget::UpdatePlayerText(const FString& Text)
 
 void UQP2NWidget::UpdateNPCText(const FString& Text)
 {
-	NPCText->SetText(FText::FromString(Text));
+    NPCText->SetText(FText::FromString(Text));
 }
 
 
 
 void UQP2NWidget::SetConversingNPC(const TObjectPtr<class AQNPCController> NPC)
 {
-	ConversingNPC = NPC;
+    ConversingNPC = NPC;
     //브로드캐스트 등록
     TObjectPtr<AQNPC> _NPC = Cast<AQNPC>(ConversingNPC->GetPawn());
     TObjectPtr<UNPCComponent> NPCComponent = _NPC->GetComponentByClass<UNPCComponent>();
@@ -62,6 +62,8 @@ void UQP2NWidget::HandleEnterKeyPress()
     ConversingNPC->Response(PlayerInput);
 }
 
+
+
 bool UQP2NWidget::IsGerneratingResponse()
 {
     if (NPCText->GetText().ToString() == WhenGenerateResponseText) {
@@ -80,20 +82,20 @@ void UQP2NWidget::HandleEnterEndButton()
     TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(ConversingPlayer->GetPawn());
     TObjectPtr<AQNPC> _NPC = Cast<AQNPC>(ConversingNPC->GetPawn());
     bool bCanFinishConversing = _Player->GetCanFinishConversP2N(_NPC);
-    
+
     //대화마칠 수 있으면
     if (!bGeneratingResponse && bCanFinishConversing) {
-    {
-        //1. UI 끈다.
-        AQVillageUIManager::GetInstance(GetWorld())->TurnOffUI(EVillageUIType::P2N);
-        //2. 대화 끝 처리한다.
-        //플레이어
-        ConversingPlayer->ConverseEndProcess(Cast<AQNPC>(ConversingNPC->GetPawn()));
-        //NPC
-        ConversingNPC->EndDialog();
+        {
+            //1. UI 끈다.
+            AQVillageUIManager::GetInstance(GetWorld())->TurnOffUI(EVillageUIType::P2N);
+            //2. 대화 끝 처리한다.
+            //플레이어
+            ConversingPlayer->ConverseEndProcess(Cast<AQNPC>(ConversingNPC->GetPawn()));
+            //NPC
+            ConversingNPC->EndDialog();
+        }
     }
 }
-
 
 
 
