@@ -17,7 +17,7 @@ class QUACKTOHELL_API UQSpeechBubbleWidgetComponent : public UWidgetComponent
 public:
 	/**
 	 * @brief 말풍선 UI 컴포넌트를 킵니다.
-	 * 
+	 *
 	 */
 	void TurnOnSpeechBubble();
 	/**

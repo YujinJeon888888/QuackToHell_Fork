@@ -8,7 +8,7 @@
 #include "QLogCategories.h"
 
 //(이중포인터아님)클래스타입 재차 명시한 이유: 어떤 클래스의 정적 멤버인지 명확히 지정" 하기 위함(C++문법)
- TObjectPtr<AQVillageUIManager> AQVillageUIManager::Instance = nullptr;
+TObjectPtr<AQVillageUIManager> AQVillageUIManager::Instance = nullptr;
 
 // Sets default values
 AQVillageUIManager::AQVillageUIManager()
