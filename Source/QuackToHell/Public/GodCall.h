@@ -23,7 +23,7 @@ protected:
 public:	
 	// GodFunction 호출
 	UFUNCTION(BlueprintCallable, Category = "God")
-	void StartGodProcess();
+	bool StartGodProcess();
 
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
