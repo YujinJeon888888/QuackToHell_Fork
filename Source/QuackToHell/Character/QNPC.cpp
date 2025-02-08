@@ -143,7 +143,7 @@ void AQNPC::BeginPlay()
 	this->SetCharacterName(_Name);
 	Super::GetNameWidget()->SetNameWidgetText(GetCharacterName());
 	/*말풍선 위젯 변수에 객체값 할당*/
-	if (SpeechBubbleWidget)
+	if (SpeechBubbleWidgetComponent)
 	{
 		UUserWidget* UserWidget = SpeechBubbleWidgetComponent->GetWidget();
 		if (UserWidget)
@@ -151,11 +151,12 @@ void AQNPC::BeginPlay()
 			SpeechBubbleWidget = Cast<UQSpeechBubbleWidget>(UserWidget);
 		}
 	}
+
 	/*말풍선 위젯 기본적으로 끈 채로 시작*/
 	//SpeechBubbleWidget->TurnOffSpeechBubble();
 	
 	/*Player2N말풍선 위젯 변수에 객체값 할당*/
-	if (Player2NSpeechBubbleWidget)
+	if (Player2NSpeechBubbleWidgetComponent)
 	{
 		UUserWidget* UserWidget = Player2NSpeechBubbleWidgetComponent->GetWidget();
 		if (UserWidget)
