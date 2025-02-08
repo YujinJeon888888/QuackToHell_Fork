@@ -6,6 +6,7 @@
 #include "InputAction.h"
 #include "EnhancedInputSubsystems.h"
 #include "UI/QVillageUIManager.h"
+#include "UI/QMapWidget.h"
 #include "UI/QP2NWidget.h"
 #include "EnhancedInputComponent.h"
 #include "Character/QPlayer.h"
@@ -45,40 +46,19 @@ void AQPlayerController::SetupInputComponent()
 		/*액션에 대해, 트리거 되면 콜백되는 함수를 바인딩한다.*/
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ThisClass::InputMove);
 		EnhancedInputComponent->BindAction(TurnAction, ETriggerEvent::Triggered, this, &ThisClass::InputTurn);
-		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Triggered, this, &ThisClass::InputInteraction);
-		EnhancedInputComponent->BindAction(ConversingQuitAction, ETriggerEvent::Triggered, this, &ThisClass::InputConversingQuit);
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &ThisClass::InputInteraction);
 		EnhancedInputComponent->BindAction(EnableTurnAction, ETriggerEvent::Started, this, &ThisClass::InputEnableTurn);
+		EnhancedInputComponent->BindAction(TurnOnOffMapAction, ETriggerEvent::Started, this, &ThisClass::InputTurnOnOffMap);
 		EnhancedInputComponent->BindAction(EnableTurnAction, ETriggerEvent::Completed, this, &ThisClass::InputEnableTurn);
-		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &ThisClass::InputEnableInteracton);
-		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Completed, this, &ThisClass::InputEnableInteracton);
-		EnhancedInputComponent->BindAction(ConversingQuitAction, ETriggerEvent::Started, this, &ThisClass::InputEnableConversingQuit);
-		EnhancedInputComponent->BindAction(ConversingQuitAction, ETriggerEvent::Completed, this, &ThisClass::InputEnableConversingQuit);
+
 
 	
 	}
 }
 
-void AQPlayerController::InputEnableInteracton(const FInputActionValue& InputValue)
-{
-	bEnableInteraction = InputValue.Get<bool>() ? true : false;
-	UE_LOG(LogLogic, Log, TEXT("%s"), InputValue.Get<bool>() ? TEXT("True") : TEXT("False"));
-}
 
-void AQPlayerController::InputConversingQuit(const FInputActionValue& InputValue)
-{
-	//bEnableConversingQuit이 true일때만 상호작용이 가능하다.
-	if (bEnableConversingQuit) {
-		/** @todo 상호작용 유형별로 나누기 */
-		//대화중단해라
-		//상태조건: 내가 대화중일 때.
-		
-	}
-}
 
-void AQPlayerController::InputEnableConversingQuit(const FInputActionValue& InputValue)
-{
-	bEnableConversingQuit = InputValue.Get<bool>() ? true : false;
-}
+
 
 void AQPlayerController::StartDialog()
 {
@@ -189,14 +169,37 @@ void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
 
 void AQPlayerController::InputInteraction(const FInputActionValue& InputValue)
 {
-	//bEnableInteraction이 true일때만 상호작용이 가능하다.
-	if (bEnableInteraction) {
-		/**
-		 * @TODO 상호작용 유형별로 나누기 .
-		 */
-		//대화시작해라
-		StartDialog();
+	
+	//대화시작해라
+	StartDialog();
+	UE_LOG(LogLogic, Log, TEXT("E버튼 누름!"));
+	
+}
+
+void AQPlayerController::InputTurnOnOffMap(const FInputActionValue& InputValue)
+{
+
+	
+
+	//지도가 켜져있는지, 꺼져있는지에 따라 켤지끌지가 결정됨.
+	//지도가 있는지부터 확인
+	if (VillageUIManager->GetVillageWidgets().Contains(EVillageUIType::Map)) {
+		TObjectPtr<UQMapWidget> MapWidget = Cast<UQMapWidget>((VillageUIManager->GetVillageWidgets())[EVillageUIType::Map]);
+
+		//보이는 상태가 아니면 켜기
+		if (MapWidget->GetVisibility() != ESlateVisibility::Visible) {
+			VillageUIManager->TurnOnUI(EVillageUIType::Map);
+		}
+		//보이면 끄기
+		else {
+			VillageUIManager->TurnOffUI(EVillageUIType::Map);
+		}
 	}
+	else {
+		//지도없으면 UI켜기(생성)
+		VillageUIManager->TurnOnUI(EVillageUIType::Map);
+	}
+	
 }
 
 void AQPlayerController::InputTurn(const FInputActionValue& InputValue)

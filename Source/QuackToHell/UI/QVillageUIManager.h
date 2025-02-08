@@ -10,6 +10,9 @@ UENUM()
 /** @brief 마을 내 존재해야하는 UI목록들 */
 enum class EVillageUIType :uint8 {
 	P2N= 0,
+	DefaultVillageUI,
+	Map,
+
 
 };
 UCLASS()
