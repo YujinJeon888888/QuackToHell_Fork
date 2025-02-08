@@ -18,6 +18,13 @@ class QUACKTOHELL_API AQNPC : public AQCharacter
 public:
 	AQNPC();
 public:
+	/**
+	 * @brief 스피치버블 위젯을 리턴합니다. NPCController에서 접근하기 위함입니다.
+	 *
+	 * @return speechbubblewidget
+	 */
+	TObjectPtr<class UQSpeechBubbleWidget> GetSpeechBubbleWidget() const;
+public:
 	// 공용 인터페이스
 	/** @brief N2N 대화가 가능한지에 대한 Getter*/
 	bool GetCanStartConversN2N(const AQNPC* NPC);
@@ -25,10 +32,23 @@ public:
 	bool GetCanFinishConversN2N(const AQNPC* NPC);
 protected:
 	virtual void BeginPlay() override;
-
+protected:
 	/** @brief NPCComponent를 멤버변수로 갖습니다 */
 	UPROPERTY()
 	TObjectPtr<class UNPCComponent> NPCComponent;
+protected:
+	/**
+	 * @brief SpeechBubble UI 컴포넌트입니다.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UWidgetComponent> SpeechBubbleWidgetComponent;
+protected:
+
+private:
+	/** @brief 스피치버블 위젯 클래스 정보를 담습니다. */
+	UPROPERTY()
+	TObjectPtr<class UQSpeechBubbleWidget> SpeechBubbleWidget;
+	
 private:
 	// NPC 대화
 	UPROPERTY(Replicated)

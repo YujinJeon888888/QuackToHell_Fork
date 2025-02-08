@@ -16,19 +16,31 @@
 #include "Character/QNPC.h"
 
 
-void AQNPCController::StartDialog(TObjectPtr<APawn> _OpponentPawn)
+void AQNPCController::StartDialog(TObjectPtr<APawn> _OpponentPawn, ENPCConversationType  ConversationType)
 {
-    //몸멈추기 & 상대방을 향해 회전하기
-    FreezePawn();
-    RotateToOpponent(_OpponentPawn);
-    //첫멘트 줘 (응답은 브로드캐스트로 옴)
-    NPCComponent->StartConversation("");
-    //첫멘트 응답완료 시 출력 콜백
-    NPCComponent->OnNPCResponseReceived.AddDynamic(this, &AQNPCController::OnNPCResponseReceived);
-    //P2N Widget에게 자신의 정보를 넘긴다: 내 정보 넘겨주기
-    TMap<EVillageUIType, TObjectPtr<UUserWidget>> VillageWidgets = VillageUIManager->GetVillageWidgets();
-    TObjectPtr<UQP2NWidget> P2NWidget = Cast<UQP2NWidget>(VillageWidgets[EVillageUIType::P2N]);
-    P2NWidget->SetConversingNPC(this);
+    //ConversationType에 따라 StartDialog다르게 처리
+    switch (ConversationType)
+    {
+    case ENPCConversationType::P2N:
+        {
+            //몸멈추기 & 상대방을 향해 회전하기
+            FreezePawn();
+            RotateToOpponent(_OpponentPawn);
+            //첫멘트 줘 (응답은 브로드캐스트로 옴)
+            NPCComponent->StartConversation("");
+            //첫멘트 응답완료 시 출력 콜백
+            NPCComponent->OnNPCResponseReceived.AddDynamic(this, &AQNPCController::OnNPCResponseReceived);
+            //P2N Widget에게 자신의 정보를 넘긴다: 내 정보 넘겨주기
+            TMap<EVillageUIType, TObjectPtr<UUserWidget>> VillageWidgets = VillageUIManager->GetVillageWidgets();
+            TObjectPtr<UQP2NWidget> P2NWidget = Cast<UQP2NWidget>(VillageWidgets[EVillageUIType::P2N]);
+            P2NWidget->SetConversingNPC(this);
+        }
+        break;
+    case ENPCConversationType::N2N:
+        break;
+    default:
+        break;
+    }
 }
 
 void AQNPCController::FreezePawn()

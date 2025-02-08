@@ -6,6 +6,7 @@
 #include "Components/WidgetComponent.h"
 #include "QLogCategories.h"
 #include "NPCComponent.h"
+#include "UI/QSpeechBubbleWidget.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/QNameWidget.h"
 
@@ -17,7 +18,15 @@ AQNPC::AQNPC()
 	this->GetCapsuleComponent()->InitCapsuleSize(50.0f, 60.0f);
 	/*NPC 컴포넌트*/
 	NPCComponent = CreateDefaultSubobject<UNPCComponent>(TEXT("NPCComponent"));
-
+	/*말풍선 UI 컴포넌트*/
+	this->SpeechBubbleWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("SpeechBubbleWidget"));
+	EWidgetSpace WidgetSpace = EWidgetSpace::Screen;
+	this->SpeechBubbleWidgetComponent->SetWidgetSpace(WidgetSpace);
+	this->SpeechBubbleWidgetComponent->SetDrawAtDesiredSize(true);
+	this->SpeechBubbleWidgetComponent->SetupAttachment(RootComponent);
+	TSubclassOf<UQSpeechBubbleWidget> _SpeechBubbleWidget;
+	//UQSpeechBubbleWidget을 상속한 클래스만 담을 수 있도록 강제한다.
+	this->SpeechBubbleWidgetComponent->SetWidgetClass(_SpeechBubbleWidget);
 }
 
 // ---------------------------------------------------------------------------------- //
@@ -44,6 +53,11 @@ void AQNPC::ServerRPCCanCanFinishConversN2N_Implementation(const AQNPC* NPC)
 
 // ---------------------------------------------------------------------------------- //
 
+TObjectPtr<class UQSpeechBubbleWidget> AQNPC::GetSpeechBubbleWidget() const
+{
+	return SpeechBubbleWidget;
+}
+
 bool AQNPC::GetCanStartConversN2N(const AQNPC* NPC)
 {
 	ServerRPCCanCanStartConversN2N_Implementation(NPC);
@@ -64,5 +78,14 @@ void AQNPC::BeginPlay()
 	FString _Name = NPCComponent->GetNPCName();
 	this->SetCharacterName(_Name);
 	Super::GetNameWidget()->SetNameWidgetText(GetCharacterName());
+	/*말풍선 위젯 변수에 객체값 할당*/
+	if (SpeechBubbleWidget)
+	{
+		UUserWidget* UserWidget = SpeechBubbleWidgetComponent->GetWidget();
+		if (UserWidget)
+		{
+			SpeechBubbleWidget = Cast<UQSpeechBubbleWidget>(UserWidget);
+		}
+	}
 }
 

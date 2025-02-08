@@ -37,7 +37,7 @@ protected:
 	void SetCharacterName(FString& Name);
 
 	/**
-	 * @brief UI 컴포넌트입니다.
+	 * @brief name UI 컴포넌트입니다.
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UWidgetComponent> NameWidgetComponent;
