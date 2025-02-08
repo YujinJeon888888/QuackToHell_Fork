@@ -17,7 +17,8 @@ public:
 	UGodCall();
 
 protected:
-	// Called when the game starts
+	virtual void PostInitProperties() override;
+
 	virtual void BeginPlay() override;
 
 public:	
