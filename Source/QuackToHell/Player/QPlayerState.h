@@ -7,6 +7,7 @@
 #include "Containers/Array.h"
 #include "Containers/Map.h"
 #include "GameplayTagContainer.h" // GameplayTagContainer 사용
+#include "Game/QVillageGameState.h"
 #include "GameData/QConversationData.h"
 #include "GameData/QEvidenceData.h"
 #include "QPlayerState.generated.h"
@@ -45,45 +46,45 @@ public:
 	bool HasStateTag(FGameplayTag StateTag) const;
 
 private:
-	/** @brief 플레이어가 나눈 모든 대화 정보에 접근할 수 있는 자료 구조입니다 */
+	UPROPERTY(VisibleAnywhere,Category = "GameplayTags")
+	AQVillageGameState* GameState;
+	
 	UPROPERTY(Replicated)
-	FPlayerConversations ConversationRecordInHand;
-	/**  @breif 플레이어가 소지한 증거 정보에 접근할 수 있는 자료구조입니다. */
+	FString PlayerName;
+	
+	/** @brief 플레이어의 대화 상태 */
 	UPROPERTY(Replicated)
-	FPlayerEvidences EvidenceInHand;
+	EConversationState PlayerConversationState = EConversationState::None;
+	
+	/**  @breif 플레이어가 소지한 증거 정보의 ID가 저장되어 있는 Array */
+	UPROPERTY(Replicated)
+	TArray<int32> EvidenceIDInHand;
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
-	FPlayerConversations GetConversationRecordInHand() const
+	TArray<int32> GetEvidenceIDInHand() const
 	{
-		return ConversationRecordInHand;
+		return EvidenceIDInHand;
 	}
-	FPlayerEvidences GetEvidenceInHand() const
-	{
-		return EvidenceInHand;
-	}
-	
-	// 추가된 증거/대화기록의 ID를 반환
-	const int32 AddConversationRecord(int32 ListenerID, int32 SpeakerID, FDateTime Timestamp, const FString& Message);
-	const int32 AddEvidence(FString EvidenceName, FString EvidenceDescription, FString EvidenceImagePath);
-	void RemoveEvidence(int32 EvidenceID);
-	void RemoveAllEvidence();
-	
-	const FConversationRecord* GetRecordWithConvID(int32 ConversationID) const;
-	const TArray<FConversationRecord>& GetAllRecord() const;
-	const FEvidence* GetEvidenceWithID(int32 EvidenceID) const;
-	const FEvidence* GetEvidenceWithName(FString EvidenceName) const;
-	const TArray<FEvidence>& GetAllEvidence() const;
 
-	// for testing conversation & evidence system
+	/** @brief 대화기록ID를 이용해 대화기록 조회. 처음 대화기록을 저장할 때 저장한 대화기록에 해당하는 ID를 반환해주므로 그것을 이용하면 됨.*/
+	const FConversationRecord* GetRecordWithConvID(int32 ConversationID) const;
+	/** @brief PlayerID를 이욯해 대화기록 조회. 로컬 Player가 Speaker와 Listener로 참여한 모든 대화기록을 배열 형태로 반환*/
+	const TArray<FConversationRecord> GetRecordWithPlayerID() const;
+	/** @brief 증거ID를 이용해 증거 조회. */
+	const FEvidence* GetEvidenceWithID(int32 EvidenceID) const;
+	/** @brief 증거 이름을 이용해 증거 조회*/
+	const FEvidence* GetEvidenceWithName(FString EvidenceName) const;
+	/** @brief 플레이어가 소유한 증거를 배열 형태로 반환 */
+	const TArray<FEvidence> GetEvidencesWithPlayerID() const;
+
+	// for testing conversation & evidence system -----------------------
 	void PrintEvidence(int32 EvidenceID, FString EvidenceName) const;
 	void PrintAllEvidence() const;
 	void PrintConversation(int32 ConversationID) const;
 	void PrintAllConversation(int32 SpeakerID) const;
 
-	virtual void BeginPlay() override;
-	TSubclassOf<UUserWidget> StartLevelWidget;
 	UFUNCTION(BlueprintCallable)
 	void TestAddConversation();
 	UFUNCTION(BlueprintCallable)

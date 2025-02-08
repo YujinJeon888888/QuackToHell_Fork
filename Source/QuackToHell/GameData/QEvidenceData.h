@@ -29,8 +29,11 @@ private:
 	UPROPERTY()
 	FString ImagePath;
 
+	UPROPERTY()
+	int32 OwnerID;
+
 public:
-	FEvidence(int32& EvidenceID, FString& EvidenceName, FString& EvidenceDescription, FString& EvidenceImagePath)
+	FEvidence(int32 EvidenceID, const FString& EvidenceName, const FString& EvidenceDescription, const FString& EvidenceImagePath)
 		: ID(EvidenceID), Name(EvidenceName), Description(EvidenceDescription), ImagePath(EvidenceImagePath){}
 
 	FEvidence() : ID(-1), Name(""), Description(""), ImagePath(""){}
@@ -39,10 +42,12 @@ public:
 	FString GetName() const { return Name; }
 	FString GetDescription() const { return Description; }
 	FString GetImagePath() const { return ImagePath; }
+	int32 GetOwnerID() const { return OwnerID;}
+	void SetOwnerID(int32 EvidenceOwnerID) { OwnerID = EvidenceOwnerID; }
 };
 
 USTRUCT(BlueprintType)
-struct FPlayerEvidences
+struct FEvidenceList
 {
 	GENERATED_BODY()
 private:
@@ -56,7 +61,7 @@ public:
 		EvidenceList.Add(NewEvidence);
 	}
 
-	void RemoveEvidence(const int32& EvidenceID)
+	void RemoveEvidence(int32 EvidenceID)
 	{
 		for (int32 i = 0; i < EvidenceList.Num(); ++i)
 		{
@@ -95,9 +100,10 @@ public:
 		return nullptr;
 	}
 
-	const TArray<FEvidence>& GetAllEvidence() const
+	// Player가 소유하고 있는 증거에 대한 정보만 반환
+	const TArray<FEvidence> GetEvidencesWithPlayerID(int32 PlayerID) const
 	{
-		return EvidenceList;
+		return EvidenceList.FilterByPredicate([PlayerID](const FEvidence& Target) { return Target.GetOwnerID() == PlayerID; });
 	}
 };
 

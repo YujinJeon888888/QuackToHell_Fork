@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Game/QGameModeVillage.h"
 #include "QConversationData.generated.h"
 
 /**
@@ -44,12 +43,25 @@ private:
 public:
 	FConversationRecord(){}
 	
-	FConversationRecord(int32& ConversationID, int32& SpeakerID, int32& ListenerID, FDateTime& Timestamp, const FString& Message)
+	FConversationRecord(int32 ConversationID, int32 SpeakerID, int32 ListenerID, FDateTime Timestamp, const FString& Message)
 		: ConversationID(ConversationID), ListenerID(ListenerID), SpeakerID(SpeakerID), Timestamp(Timestamp), Message(Message){}
 
 	bool operator==(const FConversationRecord& Other) const
 	{
 		return ConversationID == Other.ConversationID;
+	}
+
+	FConversationRecord& operator=(const FConversationRecord& Other)
+	{
+		if (this != &Other)
+		{
+			ConversationID = Other.ConversationID;
+			ListenerID = Other.ListenerID;
+			SpeakerID = Other.SpeakerID;
+			Timestamp = Other.Timestamp;
+			Message = Other.Message;
+		}
+		return *this;
 	}
 	
 	int32 GetConversationID() const {return ConversationID;}
@@ -68,7 +80,7 @@ public:
 };
 
 USTRUCT()
-struct FPlayerConversations
+struct FConversationList
 {
 	GENERATED_BODY()
 private:UPROPERTY()
@@ -80,9 +92,13 @@ public:
 
 		ConversationList.Add(ConversationRecord);
 	}
+	const TArray<FConversationRecord>& GetConversationList() const
+	{
+		return ConversationList;
+	}
 
 	// ConversationID에 해당하는 ConversationRecord를 반환
-	const FConversationRecord* GetRecordWithConvID(const int32& ConversationID) const
+	const FConversationRecord* GetRecordWithConvID(int32 ConversationID) const
 	{
 		for (const auto& ConversationRecord : ConversationList)
 		{
@@ -94,9 +110,13 @@ public:
 		return nullptr;
 	}
 
-	const TArray<FConversationRecord>& GetAllRecord() const
+	// Player가 소유하고 있는 대화기록에 대한 정보만 반환
+	const TArray<FConversationRecord> GetRecordWithPlayerID(int32 PlayerID) const
 	{
-		return ConversationList;
+		return ConversationList.FilterByPredicate([PlayerID](const FConversationRecord& Record)
+		{
+			return (Record.GetSpeakerID() == PlayerID || Record.GetListenerID() == PlayerID);
+		});
 	}
 };
 
