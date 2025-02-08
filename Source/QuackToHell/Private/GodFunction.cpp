@@ -1,28 +1,35 @@
 // Copyright_Team_AriAri
 
-
 #include "GodFunction.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
+#include "Json.h"
 #include "HttpModule.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
+
+// JSON 파일을 읽는 함수
+FString UGodFunction::ReadFileContent(const FString& FilePath)
+{
+    FString Content;
+    if (!FFileHelper::LoadFileToString(Content, *FilePath))
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to read file: %s"), *FilePath);
+    }
+    return Content;
+}
 
 // OpenAI API 호출 함수
 FString UGodFunction::CallOpenAI(const FString& Prompt)
 {
     FString ApiKey;
-
-    // OpenAI API 키 불러오기
     GConfig->GetString(TEXT("OpenAI"), TEXT("ApiKey"), ApiKey, GGameIni);
-
     if (ApiKey.IsEmpty())
     {
         UE_LOG(LogTemp, Error, TEXT("OpenAI API Key is missing! Check DefaultGame.ini"));
         return TEXT("");
     }
 
-    // API 요청 생성
     TSharedPtr<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
     Request->SetURL("https://api.openai.com/v1/completions");
     Request->SetVerb("POST");
@@ -33,8 +40,6 @@ FString UGodFunction::CallOpenAI(const FString& Prompt)
     Request->SetContentAsString(PostData);
 
     FString AIResponse = TEXT("");
-
-    // 비동기 요청을 동기적으로 처리하기 위한 람다 함수
     FEvent* CompletionEvent = FPlatformProcess::GetSynchEventFromPool(true);
     Request->OnProcessRequestComplete().BindLambda([&AIResponse, CompletionEvent](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
         {
@@ -50,9 +55,8 @@ FString UGodFunction::CallOpenAI(const FString& Prompt)
         });
 
     Request->ProcessRequest();
-    CompletionEvent->Wait();  // 요청 완료될 때까지 대기
+    CompletionEvent->Wait();
     FPlatformProcess::ReturnSynchEventToPool(CompletionEvent);
-
     return AIResponse;
 }
 
@@ -68,34 +72,32 @@ void UGodFunction::GenerateNPCPrompts()
 {
     UE_LOG(LogTemp, Log, TEXT("Generating NPC Prompts..."));
 
-    // 역할별 OpenAI 프롬프트 설정
-    TMap<FString, FString> RolePrompts;
-    RolePrompts.Add("Defendant", "Generate a detailed backstory for a defendant in a supernatural court trial.");
-    RolePrompts.Add("Jury", "Create a unique jury member with personality traits, background, and opinion on the case.");
-    RolePrompts.Add("Resident", "Generate a town resident who witnessed something unusual related to the case.");
+    // PromptToGod.json 및 PromptToNPC.json 읽기
+    FString PromptToGodPath = FPaths::ProjectContentDir() + TEXT("Prompt/PromptToGod.json");
+    FString PromptToNPCPath = FPaths::ProjectContentDir() + TEXT("Prompt/PromptToNPC.json");
 
-    // 파일 이름 패턴 정의
-    TMap<FString, FString> RoleFileNames;
-    RoleFileNames.Add("Defendant", "PromptToNPC.json");
-    RoleFileNames.Add("Jury", "PromptToJury%d.json");
-    RoleFileNames.Add("Resident", "PromptToResident%d.json");
+    FString PromptToGodContent = ReadFileContent(PromptToGodPath);
+    FString PromptToNPCContent = ReadFileContent(PromptToNPCPath);
 
-    // 역할별로 API 요청 생성 및 실행
-    for (const auto& RolePrompt : RolePrompts)
+    if (PromptToGodContent.IsEmpty() || PromptToNPCContent.IsEmpty())
     {
-        FString Role = RolePrompt.Key;
-        FString PromptTemplate = RolePrompt.Value;
+        UE_LOG(LogTemp, Error, TEXT("Missing required prompt files!"));
+        return;
+    }
 
-        // Defendant(1명), Jury(3명), Resident(5명)
-        int NPCCount = (Role == "Defendant") ? 1 : (Role == "Jury" ? 3 : 5);
+    // OpenAI API 호출 및 JSON 파일 생성
+    TMap<FString, int> RoleCounts;
+    RoleCounts.Add("Defendant", 1);
+    RoleCounts.Add("Jury", 3);
+    RoleCounts.Add("Resident", 5);
 
-        for (int i = 1; i <= NPCCount; i++)
+    for (const auto& Role : RoleCounts)
+    {
+        for (int i = 1; i <= Role.Value; i++)
         {
-            FString FileName = (Role == "Defendant") ? RoleFileNames[Role] : FString::Printf(TEXT("%s%d"), *RoleFileNames[Role], i);
-
-            UE_LOG(LogTemp, Log, TEXT("Requesting OpenAI for: %s"), *FileName);
-
-            FString AIResponse = CallOpenAI(PromptTemplate);
+            FString FileName = FString::Printf(TEXT("PromptTo%s%d.json"), *Role.Key, i);
+            FString Prompt = PromptToGodContent + "\n" + PromptToNPCContent;
+            FString AIResponse = CallOpenAI(Prompt);
 
             if (!AIResponse.IsEmpty())
             {
@@ -114,7 +116,5 @@ void UGodFunction::GenerateNPCPrompts()
             }
         }
     }
-
     UE_LOG(LogTemp, Log, TEXT("All NPC Prompts Generated!"));
 }
-
