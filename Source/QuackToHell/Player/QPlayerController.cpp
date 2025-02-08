@@ -96,7 +96,7 @@ void AQPlayerController::StartDialog()
 		TObjectPtr<AQNPCController> NPCController = Cast<AQNPCController>(NPC->GetController());
 
 		//3. NPC에게 대화 시작하라고 명령한다.
-		NPCController->StartDialog(GetPawn());
+		NPCController->StartDialog(GetPawn(), ENPCConversationType::P2N);
 
 		//4. 플레이어를 대화처리한다. (클라이언트)
 		this->ConverseProcess();

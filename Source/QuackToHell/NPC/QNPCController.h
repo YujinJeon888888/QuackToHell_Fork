@@ -7,7 +7,13 @@
 #include "QNPCController.generated.h"
 
 
-//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FResponseDelegate, const FString&, ResponseMessage);
+/** @brief 대화 유형 */
+UENUM()
+enum class ENPCConversationType :uint8 {
+    P2N = 0,
+    N2N,
+
+};
 
 /**
  * @author 전유진
@@ -22,7 +28,7 @@ public:
      * @brief NPC와의 대화시작 요청을 처리하는 함수입니다. npc-npc, player-npc 대화시스템에 활용됩니다.
      * @param 대화거는 주체의 폰 정보를 넘깁니다.
      */
-    void StartDialog(TObjectPtr<APawn> MyPawn);
+    void StartDialog(TObjectPtr<APawn> MyPawn, ENPCConversationType ConversationType);
     /** @brief NPC의 몸을 멈춥니다. */
     void FreezePawn();
     /** @brief 상대방을 향해 고개를 회전합니다. */
@@ -78,7 +84,8 @@ private:
      * @brief. 얼음땡
      */
     void UnFreezePawn();
-
+private:
+    TObjectPtr<class AQNPC> MyPawn;
 };
 
 

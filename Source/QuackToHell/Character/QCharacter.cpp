@@ -13,14 +13,14 @@ AQCharacter::AQCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	/*이름표 UI 컴포넌트*/
-	this->WidgetComponent= CreateDefaultSubobject<UWidgetComponent>(TEXT("NameWidget"));
+	this->NameWidgetComponent= CreateDefaultSubobject<UWidgetComponent>(TEXT("NameWidget"));
 	EWidgetSpace WidgetSpace = EWidgetSpace::Screen;
-	this->WidgetComponent->SetWidgetSpace(WidgetSpace);
-	this->WidgetComponent->SetDrawAtDesiredSize(true);
-	this->WidgetComponent->SetupAttachment(RootComponent);
+	this->NameWidgetComponent->SetWidgetSpace(WidgetSpace);
+	this->NameWidgetComponent->SetDrawAtDesiredSize(true);
+	this->NameWidgetComponent->SetupAttachment(RootComponent);
 	TSubclassOf<UQNameWidget> _NameWidget;
 	//QNameWidget을 상속한 클래스만 담을 수 있도록 강제한다.
-	this->WidgetComponent->SetWidgetClass(_NameWidget);
+	this->NameWidgetComponent->SetWidgetClass(_NameWidget);
 }
 
 // Called when the game starts or when spawned
@@ -28,9 +28,9 @@ void AQCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (WidgetComponent)
+	if (NameWidgetComponent)
 	{
-		UUserWidget* UserWidget = WidgetComponent->GetWidget();
+		UUserWidget* UserWidget = NameWidgetComponent->GetWidget();
 		if (UserWidget)
 		{
 			NameWidget = Cast<UQNameWidget>(UserWidget);
@@ -48,6 +48,11 @@ void AQCharacter::SetCharacterName(FString& Name)
 	CharacterName = Name;
 }
 
+TObjectPtr<class UQNameWidget> AQCharacter::GetNameWidget() const
+{
+	return NameWidget;
+}
+
 
 
 // Called every frame
@@ -63,4 +68,3 @@ void AQCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-

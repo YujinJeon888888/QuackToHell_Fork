@@ -5,6 +5,7 @@
 
 void UQPlayer2NSpeechBubbleWidget::TurnOnSpeechBubble()
 {
+	
 }
 
 void UQPlayer2NSpeechBubbleWidget::TurnOffSpeechBubble()
