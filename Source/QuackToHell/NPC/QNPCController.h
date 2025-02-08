@@ -84,7 +84,8 @@ private:
      * @brief. 얼음땡
      */
     void UnFreezePawn();
-
+private:
+    TObjectPtr<class AQNPC> MyPawn;
 };
 
 

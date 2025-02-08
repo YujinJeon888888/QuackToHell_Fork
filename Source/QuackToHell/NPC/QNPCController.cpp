@@ -7,6 +7,7 @@
 #include "BehaviorTree/BehaviorTreeComponent.h"       // Behavior Tree 컴포넌트
 #include "QLogCategories.h"
 #include "NPCComponent.h"
+#include "UI/QSpeechBubbleWidget.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "TimerManager.h"
 #include "UI/QP2NWidget.h"
@@ -36,7 +37,18 @@ void AQNPCController::StartDialog(TObjectPtr<APawn> _OpponentPawn, ENPCConversat
             P2NWidget->SetConversingNPC(this);
         }
         break;
-    case ENPCConversationType::N2N:
+    case ENPCConversationType::N2N: 
+        {
+            /** 유진 - @todo N2N 대화상태 변경하라는 함수를 서버로부터 호출해야함 */
+
+            {
+                /*@서버*/
+                //MyPawn->GetSpeechBubbleWidget()->으로 updatetext, turnof/off 접근가능
+
+            }
+
+            /** 유진 - @todo 대화끝낼 때 N2N 대화상태 변경하라는 함수를 서버로부터 호출해야함 */
+        }
         break;
     default:
         break;
@@ -80,6 +92,7 @@ void AQNPCController::EndDialog()
 {
 
     UnFreezePawn();
+
 }
 
 void AQNPCController::Response(FString& Text)
@@ -108,7 +121,8 @@ void AQNPCController::BeginPlay()
     NPCComponent = Cast<AQNPC>(GetPawn())->FindComponentByClass<UNPCComponent>();
     //VillageManager 대입하기
     VillageUIManager= AQVillageUIManager::GetInstance(GetWorld());
-    
+    //mypawn대입하기
+    MyPawn = Cast<AQNPC>(GetPawn());
 }
 
 void AQNPCController::Tick(float DeltaTime)
@@ -118,6 +132,15 @@ void AQNPCController::Tick(float DeltaTime)
     //회전 업데이트 처리
     if (bIsRotating) {
         UpdateRotation();
+    }
+
+    //가장 가까운 NPC가 있다면 서버에게 대화가능한지 체크
+    if (TObjectPtr<AQNPC> OpponentNPC = Cast<AQNPC>( MyPawn->GetClosestNPC())) {
+        UE_LOG(LogLogic, Log, TEXT("대화시도"));
+        if (MyPawn->GetCanStartConversN2N(OpponentNPC)) {
+            //@서버: 대화시작하라고 함수호출하기
+            StartDialog(OpponentNPC,ENPCConversationType::N2N);
+        }
     }
 }
 
