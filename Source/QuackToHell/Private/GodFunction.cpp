@@ -68,17 +68,17 @@ FString UGodFunction::ExtractValidJson(FString AIResponse)
         {
             FString JsonContent = Choices[0]->AsObject()->GetObjectField("message")->GetStringField("content");
 
-            // 🔥 Markdown 코드 블록(```json ... ```) 제거
+            // Markdown 코드 블록(```json ... ```) 제거
             JsonContent.ReplaceInline(TEXT("```json"), TEXT(""));
             JsonContent.ReplaceInline(TEXT("```"), TEXT(""));
             JsonContent = JsonContent.TrimStartAndEnd();
 
-            UE_LOG(LogTemp, Log, TEXT("📥 Extracted JSON Content: %s"), *JsonContent);
+            UE_LOG(LogTemp, Log, TEXT("Extracted JSON Content: %s"), *JsonContent);
             return JsonContent;
         }
     }
 
-    UE_LOG(LogTemp, Error, TEXT("❌ Failed to extract valid JSON from AI response!"));
+    UE_LOG(LogTemp, Error, TEXT("Failed to extract valid JSON from AI response!"));
     return TEXT("");
 }
 
@@ -101,11 +101,11 @@ FString UGodFunction::CleanUpJson(FString JsonString)
         TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&CleanJson);
         FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
 
-        UE_LOG(LogTemp, Log, TEXT("✅ Cleaned JSON: %s"), *CleanJson);
+        UE_LOG(LogTemp, Log, TEXT("Cleaned JSON: %s"), *CleanJson);
         return CleanJson;
     }
 
-    UE_LOG(LogTemp, Error, TEXT("❌ Failed to clean JSON!"));
+    UE_LOG(LogTemp, Error, TEXT("Failed to clean JSON!"));
     return JsonString;
 }
 
@@ -114,7 +114,7 @@ bool UGodFunction::SavePromptToFile(const FString& FileName, const FString& Cont
 {
     FString FilePath = FPaths::ProjectSavedDir() + TEXT("Prompt/") + FileName;
 
-    // 🔥 기존 파일 확인
+    // 기존 파일 확인
     if (FPaths::FileExists(FilePath))
     {
         FString ExistingContent;
@@ -122,26 +122,26 @@ bool UGodFunction::SavePromptToFile(const FString& FileName, const FString& Cont
 
         if (!ExistingContent.IsEmpty() && !Content.IsEmpty())
         {
-            UE_LOG(LogTemp, Warning, TEXT("⚠️ %s 파일이 이미 존재하며, 덮어쓰지 않음."), *FileName);
+            UE_LOG(LogTemp, Warning, TEXT("%s 파일이 이미 존재하며, 덮어쓰지 않음."), *FileName);
             return false;
         }
     }
 
-    // 🔥 빈 JSON이면 저장하지 않음
+    // 빈 JSON이면 저장하지 않음
     if (Content.IsEmpty())
     {
-        UE_LOG(LogTemp, Error, TEXT("❌ Empty content detected. Skipping file save for %s"), *FileName);
+        UE_LOG(LogTemp, Error, TEXT("Empty content detected. Skipping file save for %s"), *FileName);
         return false;
     }
 
     bool bSuccess = FFileHelper::SaveStringToFile(Content, *FilePath);
     if (bSuccess)
     {
-        UE_LOG(LogTemp, Log, TEXT("✅ Successfully saved prompt file: %s"), *FileName);
+        UE_LOG(LogTemp, Log, TEXT("Successfully saved prompt file: %s"), *FileName);
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("❌ Failed to save prompt file: %s"), *FileName);
+        UE_LOG(LogTemp, Error, TEXT("Failed to save prompt file: %s"), *FileName);
     }
 
     return bSuccess;
@@ -153,7 +153,7 @@ void UGodFunction::CallOpenAIAsync(const FString& Prompt, TFunction<void(FString
     FString ApiKey = LoadOpenAIKey();
     if (ApiKey.IsEmpty())
     {
-        UE_LOG(LogTemp, Error, TEXT("❌ OpenAI API Key is missing!"));
+        UE_LOG(LogTemp, Error, TEXT("OpenAI API Key is missing!"));
         Callback(TEXT(""));
         return;
     }
@@ -171,43 +171,43 @@ void UGodFunction::CallOpenAIAsync(const FString& Prompt, TFunction<void(FString
 
     Request->SetContentAsString(PostData);
 
-    UE_LOG(LogTemp, Log, TEXT("📤 OpenAI API Request Sent (Attempt %d): %s"), RetryCount + 1, *PostData);
+    UE_LOG(LogTemp, Log, TEXT("OpenAI API Request Sent (Attempt %d): %s"), RetryCount + 1, *PostData);
 
     Request->OnProcessRequestComplete().BindLambda([Callback, Prompt, RetryCount](FHttpRequestPtr Request, FHttpResponsePtr Response, bool bWasSuccessful)
         {
             if (bWasSuccessful && Response.IsValid())
             {
                 FString AIResponse = Response->GetContentAsString();
-                UE_LOG(LogTemp, Log, TEXT("📥 Raw OpenAI Response: %s"), *AIResponse);
+                UE_LOG(LogTemp, Log, TEXT("Raw OpenAI Response: %s"), *AIResponse);
 
-                // 🔥 JSON 추출 및 정리
+                // JSON 추출 및 정리
                 FString CleanedJson = UGodFunction::ExtractValidJson(AIResponse);
 
                 if (!CleanedJson.IsEmpty())
                 {
                     Callback(CleanedJson);
                 }
-                else if (RetryCount < 2)  // 🔥 최대 3번까지 재시도
+                else if (RetryCount < 2)  // 최대 3번까지 재시도
                 {
-                    UE_LOG(LogTemp, Warning, TEXT("⚠️ OpenAI 응답이 비어 있음. %d번째 재시도 중..."), RetryCount + 1);
+                    UE_LOG(LogTemp, Warning, TEXT("OpenAI 응답이 비어 있음. %d번째 재시도 중..."), RetryCount + 1);
                     FPlatformProcess::Sleep(1.0f);
-                    UGodFunction::CallOpenAIAsync(Prompt, Callback, RetryCount + 1); // 🔥 자동 재시도
+                    UGodFunction::CallOpenAIAsync(Prompt, Callback, RetryCount + 1); // 자동 재시도
                 }
                 else
                 {
-                    UE_LOG(LogTemp, Error, TEXT("❌ OpenAI 응답이 3회 연속 실패. 요청 중단."));
+                    UE_LOG(LogTemp, Error, TEXT("OpenAI 응답이 3회 연속 실패. 요청 중단."));
                     Callback(TEXT(""));
                 }
             }
-            else if (RetryCount < 2)  // 🔥 실패 시 최대 3번 재시도
+            else if (RetryCount < 2)  // 실패 시 최대 3번 재시도
             {
-                UE_LOG(LogTemp, Warning, TEXT("⚠️ OpenAI 요청 실패. %d번째 재시도 중..."), RetryCount + 1);
+                UE_LOG(LogTemp, Warning, TEXT("OpenAI 요청 실패. %d번째 재시도 중..."), RetryCount + 1);
                 FPlatformProcess::Sleep(1.0f);
-                UGodFunction::CallOpenAIAsync(Prompt, Callback, RetryCount + 1); // 🔥 자동 재시도
+                UGodFunction::CallOpenAIAsync(Prompt, Callback, RetryCount + 1); // 자동 재시도..
             }
             else
             {
-                UE_LOG(LogTemp, Error, TEXT("❌ OpenAI 요청이 3회 연속 실패. 요청 중단."));
+                UE_LOG(LogTemp, Error, TEXT("OpenAI 요청이 3회 연속 실패. 요청 중단."));
                 Callback(TEXT(""));
             }
         });
@@ -266,16 +266,16 @@ void UGodFunction::GeneratePromptWithDelay(UWorld* World, const FString& FileNam
                     {
                         if (UGodFunction::SavePromptToFile(FileName, AIResponse))
                         {
-                            UE_LOG(LogTemp, Log, TEXT("✅ Saved AI response for %s"), *FileName);
+                            UE_LOG(LogTemp, Log, TEXT("Saved AI response for %s"), *FileName);
                         }
                         else
                         {
-                            UE_LOG(LogTemp, Error, TEXT("❌ Failed to save %s"), *FileName);
+                            UE_LOG(LogTemp, Error, TEXT("Failed to save %s"), *FileName);
                         }
                     }
                     else
                     {
-                        UE_LOG(LogTemp, Error, TEXT("❌ OpenAI API returned empty response for %s"), *FileName);
+                        UE_LOG(LogTemp, Error, TEXT("OpenAI API returned empty response for %s"), *FileName);
                     }
                 });
 
@@ -289,7 +289,7 @@ void UGodFunction::GenerateDefendantPrompt(UWorld* World, TFunction<void()> Call
     // ✅ 이미 파일이 존재하면 중복 생성 방지
     if (FPaths::FileExists(FilePath))
     {
-        UE_LOG(LogTemp, Warning, TEXT("⚠️ PromptToDefendant.json 이미 존재하므로 생성하지 않음."));
+        UE_LOG(LogTemp, Warning, TEXT("PromptToDefendant.json 이미 존재하므로 생성하지 않음."));
         if (Callback) Callback();  // NPC 생성으로 넘어감
         return;
     }
@@ -311,12 +311,12 @@ void UGodFunction::GenerateDefendantPrompt(UWorld* World, TFunction<void()> Call
 
             if (bSaved)
             {
-                UE_LOG(LogTemp, Log, TEXT("✅ PromptToDefendant.json 생성 완료!"));
+                UE_LOG(LogTemp, Log, TEXT("PromptToDefendant.json 생성 완료!"));
                 if (Callback) Callback();  // NPC 생성 시작
             }
             else
             {
-                UE_LOG(LogTemp, Error, TEXT("❌ PromptToDefendant.json 저장 실패!"));
+                UE_LOG(LogTemp, Error, TEXT("PromptToDefendant.json 저장 실패!"));
             }
         });
 }
@@ -329,22 +329,22 @@ void UGodFunction::GenerateNPCPrompts(UWorld* World)
 
     if (PromptToGod.IsEmpty() || PromptToDefendant.IsEmpty())
     {
-        UE_LOG(LogTemp, Error, TEXT("❌ Required prompt files are missing!"));
+        UE_LOG(LogTemp, Error, TEXT("Required prompt files are missing!"));
         return;
     }
 
-    UE_LOG(LogTemp, Log, TEXT("✅ PromptToDefendant.json 존재 확인됨. NPC 프롬프트 순차적 생성 시작."));
+    UE_LOG(LogTemp, Log, TEXT("PromptToDefendant.json 존재 확인됨. NPC 프롬프트 순차적 생성 시작."));
 
-    // 🔥 첫 번째 배심원부터 순차적으로 생성 시작
+    // 첫 번째 배심원부터 순차적으로 생성 시작
     GenerateJuryNPC(World, 1);
 }
 
-// 🔹 배심원 NPC 생성 (순차적으로 진행)
+// 배심원 NPC 생성 (순차적으로 진행)
 void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
 {
     if (JuryIndex > 3)
     {
-        UE_LOG(LogTemp, Log, TEXT("✅ 모든 배심원 생성 완료! 이제 주민 생성 시작."));
+        UE_LOG(LogTemp, Log, TEXT("모든 배심원 생성 완료! 이제 주민 생성 시작."));
         GenerateResidentNPC(World, 1);
         return;
     }
@@ -364,7 +364,7 @@ void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
     );
 
     FString JuryFileName = FString::Printf(TEXT("PromptToJury%d.json"), JuryIndex);
-    UE_LOG(LogTemp, Log, TEXT("📢 Generating Jury NPC %d"), JuryIndex);
+    UE_LOG(LogTemp, Log, TEXT("Generating Jury NPC %d"), JuryIndex);
 
     CallOpenAIAsync(JuryPrompt, [World, JuryIndex, JuryFileName](FString JuryJson)
         {
@@ -376,12 +376,12 @@ void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
 
 
 
-// 🔹 마을 주민 NPC 생성 (순차적으로 진행)
+// 마을 주민 NPC 생성 (순차적으로 진행)
 void UGodFunction::GenerateResidentNPC(UWorld* World, int ResidentIndex)
 {
     if (ResidentIndex > 5)
     {
-        UE_LOG(LogTemp, Log, TEXT("✅ 모든 주민 생성 완료!"));
+        UE_LOG(LogTemp, Log, TEXT("모든 주민 생성 완료!"));
         return;
     }
 
@@ -406,13 +406,13 @@ void UGodFunction::GenerateResidentNPC(UWorld* World, int ResidentIndex)
         {
             FString CleanResidentJson = UGodFunction::CleanUpJson(ResidentJson);
 
-            // ✅ JSON 응답이 배열([]) 형태라면 첫 번째 객체만 저장
+            // JSON 응답이 배열([]) 형태라면 첫 번째 객체만 저장
             TSharedPtr<FJsonObject> JsonObject;
             TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(CleanResidentJson);
 
             if (FJsonSerializer::Deserialize(Reader, JsonObject))
             {
-                // ✅ `npcid`를 명확하게 지정 (resident001, resident002, ...)
+                // `npcid`를 명확하게 지정 (resident001, resident002, ...)
                 JsonObject->SetStringField("npcid", FString::Printf(TEXT("resident%03d"), ResidentIndex));
 
                 FString FinalJson;
@@ -423,16 +423,16 @@ void UGodFunction::GenerateResidentNPC(UWorld* World, int ResidentIndex)
             }
             else
             {
-                UE_LOG(LogTemp, Error, TEXT("❌ OpenAI 응답이 잘못된 형식임. Resident NPC %d 생성 실패. 다음 주민으로 이동."), ResidentIndex);
+                UE_LOG(LogTemp, Error, TEXT("OpenAI 응답이 잘못된 형식임. Resident NPC %d 생성 실패. 다음 주민으로 이동."), ResidentIndex);
                 GenerateResidentNPC(World, ResidentIndex + 1);
                 return;
             }
 
-            // ✅ 한 명의 주민 정보만 파일에 저장
+            // 한 명의 주민 정보만 파일에 저장
             UGodFunction::SavePromptToFile(ResidentFileName, CleanResidentJson);
-            UE_LOG(LogTemp, Log, TEXT("✅ Resident NPC %d 생성 완료!"), ResidentIndex);
+            UE_LOG(LogTemp, Log, TEXT("Resident NPC %d 생성 완료!"), ResidentIndex);
 
-            // ✅ 다음 주민 생성
+            // 다음 주민 생성
             GenerateResidentNPC(World, ResidentIndex + 1);
         });
 }
