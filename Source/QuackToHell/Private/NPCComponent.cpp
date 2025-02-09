@@ -18,9 +18,18 @@ UNPCComponent::UNPCComponent()
 void UNPCComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	LoadPrompt();
 
+	UE_LOG(LogTemp, Log, TEXT("NPC %s BeginPlay 실행됨."), *GetOwner()->GetName());
+	UE_LOG(LogTemp, Log, TEXT("현재 설정된 PromptFilePath: %s"), *PromptFilePath);
 
+	if (PromptFilePath.IsEmpty())
+	{
+		UE_LOG(LogTemp, Error, TEXT("NPC %s PromptFilePath is not set!"), *GetOwner()->GetName());
+	}
+	else
+	{
+		LoadPrompt();
+	}
 }
 
 void UNPCComponent::PerformNPCLogic()
@@ -97,25 +106,37 @@ bool UNPCComponent::CanSendOpenAIRequest() const
 // P2N 대화 시작
 void UNPCComponent::StartConversation(const FString& PlayerInput)
 {
+	if (PromptContent.IsEmpty())
+	{
+		UE_LOG(LogTemp, Error, TEXT("Prompt file is empty or failed to load for NPC: %s"), *GetOwner()->GetName());
+		return;
+	}
+
 	FString NPCID = GetOwner()->GetName();
-	UE_LOG(LogTemp, Log, TEXT("Player started conversation: %s"), *PlayerInput);
+	UE_LOG(LogTemp, Log, TEXT("Player started conversation with %s: %s"), *NPCID, *PlayerInput);
 
 	FOpenAIRequest AIRequest;
 
-	// 첫 대사인지 확인 (플레이어와의 P2N 대화 기록이 없는 경우!)
+	// 첫 대화인지 확인 (플레이어와의 P2N 대화 기록이 없는 경우!)
 	bool bIsFirstGreeting = !P2NDialogueHistory.Contains(NPCID) || P2NDialogueHistory[NPCID].DialogueLines.Num() == 0;
 
 	if (bIsFirstGreeting && PlayerInput.IsEmpty())
 	{
-		// 첫 대사 생성 (기존 RequestGreetingFromAI() 기능을 이거로 대체함)
+		// 첫 대사 생성 (NPC 설정을 기반으로 인사)
 		AIRequest.Prompt = FString::Printf(TEXT(
-			"'%s' 성격을 가진 NPC가 플레이어를 처음 만났을 때 하는 첫 인사를 생성하세요. 반드시 NPC 개인의 설정을 반영한 인사여야 합니다. 첫 문장을 생성하세요."), *NPCPersonality);
+			"아래 설정을 가진 NPC가 플레이어를 처음 만났을 때 하는 첫 인사를 생성하세요.\n"
+			"==== NPC 설정 ====\n%s\n"
+			"첫 인사는 NPC의 성격과 설정을 반영하여 자연스럽게 작성해야 합니다."), *PromptContent);
 	}
 	else
 	{
-		// 시작 멘트 제외한 일반적인 P2N 대화 처리
+		// 일반적인 P2N 대화 처리
 		AIRequest.Prompt = FString::Printf(TEXT(
-			"'%s' 성격을 가진 NPC가 플레이어 '%s'의 질문에 답변합니다.\n플레이어: \"%s\"\nNPC:"), *NPCPersonality, *NPCID, *PlayerInput);
+			"아래 설정을 가진 NPC가 플레이어 '%s'의 질문에 답변합니다.\n"
+			"==== NPC 설정 ====\n%s\n"
+			"==== 플레이어의 질문 ====\n"
+			"플레이어: \"%s\"\n"
+			"NPC:"), *NPCID, *PromptContent, *PlayerInput);
 	}
 
 	AIRequest.MaxTokens = 150;

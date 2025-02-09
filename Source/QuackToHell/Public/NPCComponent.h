@@ -122,10 +122,6 @@ class QUACKTOHELL_API UNPCComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-private:
-	FString NPCPersonality;
-	TMap<FString, FString> ResponseCache;
-
 public:
 	/**
 	 * @author 박시언
@@ -142,6 +138,9 @@ protected:
 
 	void LoadPrompt();
 	virtual void PerformNPCLogic();
+
+	FString NPCPersonality;
+	TMap<FString, FString> ResponseCache;
 
 private:
 	/**
@@ -173,7 +172,7 @@ public:
 	 * @param PlayerInput 플레이어의 입력 대사
 	 */
 	UFUNCTION(BlueprintCallable, Category = "NPC")
-	void StartConversation(const FString& PlayerInput);
+	virtual void StartConversation(const FString& PlayerInput);
 
 	/**
 	 * @author 박시언
@@ -253,6 +252,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
 	FString PromptFilePath;
 
+	/**
+	 * @author 박시언
+	 * @brief 로드된 프롬프트 내용을 저장하는 변수
+	 */
+	FString PromptContent;
+
 public:
 	/**
 	 * @author 박시언
@@ -269,12 +274,6 @@ private:
 	 */
 	UPROPERTY()
 	bool bIsFirstConversation = true;
-
-	/**
-	 * @author 박시언
-	 * @brief 로드된 프롬프트 내용을 저장하는 변수
-	 */
-	FString PromptContent;
 
 	/**
 	 * @author 박시언

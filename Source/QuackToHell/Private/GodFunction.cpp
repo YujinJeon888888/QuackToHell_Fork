@@ -1,6 +1,7 @@
 // Copyright_Team_AriAri
 
 #include "GodFunction.h"
+#include "GodCall.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "HAL/PlatformFilemanager.h"
@@ -286,13 +287,14 @@ void UGodFunction::GenerateDefendantPrompt(UWorld* World, TFunction<void()> Call
 {
     FString FilePath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json");
 
-    // ✅ 이미 파일이 존재하면 중복 생성 방지
     if (FPaths::FileExists(FilePath))
     {
         UE_LOG(LogTemp, Warning, TEXT("PromptToDefendant.json 이미 존재하므로 생성하지 않음."));
-        if (Callback) Callback();  // NPC 생성으로 넘어감
+        if (Callback) Callback();
         return;
     }
+
+    UE_LOG(LogTemp, Log, TEXT("피고인 Prompt 생성 시작! OpenAI API 호출 준비 완료."));
 
     FString PromptToGod = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToGod.json"));
     FString DefendantPrompt = FString::Printf(
@@ -306,17 +308,28 @@ void UGodFunction::GenerateDefendantPrompt(UWorld* World, TFunction<void()> Call
 
     CallOpenAIAsync(DefendantPrompt, [World, Callback](FString DefendantJson)
         {
+            UE_LOG(LogTemp, Log, TEXT("OpenAI API 응답 확인: %s"), *DefendantJson);
+
             FString CleanedJson = UGodFunction::CleanUpJson(DefendantJson);
             bool bSaved = UGodFunction::SavePromptToFile(TEXT("PromptToDefendant.json"), CleanedJson);
 
             if (bSaved)
             {
-                UE_LOG(LogTemp, Log, TEXT("PromptToDefendant.json 생성 완료!"));
-                if (Callback) Callback();  // NPC 생성 시작
+                UE_LOG(LogTemp, Log, TEXT("PromptToDefendant.json 정상적으로 저장됨. 배심원 생성 시작."));
+
+                // 프롬프트가 정상적으로 저장되었을 때만 배심원 생성 시작
+                if (!UGodCall::bShouldStopPromptGeneration)
+                {
+                    if (Callback) Callback();
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 배심원 생성 취소!"));
+                }
             }
             else
             {
-                UE_LOG(LogTemp, Error, TEXT("PromptToDefendant.json 저장 실패!"));
+                UE_LOG(LogTemp, Error, TEXT("PromptToDefendant.json 저장 실패! 배심원 생성 중단."));
             }
         });
 }
@@ -342,6 +355,12 @@ void UGodFunction::GenerateNPCPrompts(UWorld* World)
 // 배심원 NPC 생성 (순차적으로 진행)
 void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
 {
+    if (UGodCall::bShouldStopPromptGeneration)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 배심원(NPC) %d 생성 취소!"), JuryIndex);
+        return;
+    }
+
     if (JuryIndex > 3)
     {
         UE_LOG(LogTemp, Log, TEXT("모든 배심원 생성 완료! 이제 주민 생성 시작."));
@@ -356,9 +375,7 @@ void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
         TEXT("{ \"task\": \"배심원 정보를 생성하세요.\", "
             "\"instructions\": ["
             "\"PromptToGod.json과 PromptToDefendant.json을 참고하여 배심원(NPC) 한 명의 정보를 생성하세요.\", "
-            "\"npcid 값을 'jury%03d'로 설정하세요.\", "
-            "\"오직 하나의 배심원 정보만 생성해야 합니다.\", "
-            "\"JSON 리스트([])가 아닌, 개별적인 JSON 객체를 반환하세요.\"], "
+            "\"npcid 값을 'jury%03d'로 설정하세요.\"], "
             "\"references\": { \"PromptToGod\": \"%s\", \"PromptToDefendant\": \"%s\" } }"),
         JuryIndex, *EscapeJSON(PromptToGod.Mid(0, 2000)), *EscapeJSON(PromptToDefendant.Mid(0, 2000))
     );
@@ -368,6 +385,12 @@ void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
 
     CallOpenAIAsync(JuryPrompt, [World, JuryIndex, JuryFileName](FString JuryJson)
         {
+            if (UGodCall::bShouldStopPromptGeneration)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 배심원 데이터 저장 취소!"));
+                return;
+            }
+
             FString CleanJuryJson = UGodFunction::CleanUpJson(JuryJson);
             UGodFunction::SavePromptToFile(JuryFileName, CleanJuryJson);
             GenerateJuryNPC(World, JuryIndex + 1);
@@ -375,10 +398,15 @@ void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
 }
 
 
-
 // 마을 주민 NPC 생성 (순차적으로 진행)
 void UGodFunction::GenerateResidentNPC(UWorld* World, int ResidentIndex)
 {
+    if (UGodCall::bShouldStopPromptGeneration)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 주민(NPC) %d 생성 취소!"), ResidentIndex);
+        return;
+    }
+
     if (ResidentIndex > 5)
     {
         UE_LOG(LogTemp, Log, TEXT("모든 주민 생성 완료!"));
@@ -392,47 +420,24 @@ void UGodFunction::GenerateResidentNPC(UWorld* World, int ResidentIndex)
         TEXT("{ \"task\": \"마을 주민 정보를 생성하세요.\", "
             "\"instructions\": ["
             "\"PromptToGod.json과 PromptToDefendant.json을 참고하여 한 명의 마을 주민(NPC) 정보를 생성하세요.\", "
-            "\"npcid 값을 'resident%03d'로 설정하세요.\", "
-            "\"오직 하나의 주민 데이터만 생성해야 합니다.\", "
-            "\"다른 주민의 데이터는 포함하지 마세요.\"], "
+            "\"npcid 값을 'resident%03d'로 설정하세요.\"], "
             "\"references\": { \"PromptToGod\": \"%s\", \"PromptToDefendant\": \"%s\" } }"),
         ResidentIndex, *EscapeJSON(PromptToGod.Mid(0, 2000)), *EscapeJSON(PromptToDefendant.Mid(0, 2000))
     );
 
     FString ResidentFileName = FString::Printf(TEXT("PromptToResident%d.json"), ResidentIndex);
-    UE_LOG(LogTemp, Log, TEXT("📢 Generating Resident NPC %d"), ResidentIndex);
+    UE_LOG(LogTemp, Log, TEXT("Generating Resident NPC %d"), ResidentIndex);
 
     CallOpenAIAsync(ResidentPrompt, [World, ResidentIndex, ResidentFileName](FString ResidentJson)
         {
-            FString CleanResidentJson = UGodFunction::CleanUpJson(ResidentJson);
-
-            // JSON 응답이 배열([]) 형태라면 첫 번째 객체만 저장
-            TSharedPtr<FJsonObject> JsonObject;
-            TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(CleanResidentJson);
-
-            if (FJsonSerializer::Deserialize(Reader, JsonObject))
+            if (UGodCall::bShouldStopPromptGeneration)
             {
-                // `npcid`를 명확하게 지정 (resident001, resident002, ...)
-                JsonObject->SetStringField("npcid", FString::Printf(TEXT("resident%03d"), ResidentIndex));
-
-                FString FinalJson;
-                TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&FinalJson);
-                FJsonSerializer::Serialize(JsonObject.ToSharedRef(), Writer);
-
-                CleanResidentJson = FinalJson;
-            }
-            else
-            {
-                UE_LOG(LogTemp, Error, TEXT("OpenAI 응답이 잘못된 형식임. Resident NPC %d 생성 실패. 다음 주민으로 이동."), ResidentIndex);
-                GenerateResidentNPC(World, ResidentIndex + 1);
+                UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 주민 데이터 저장 취소!"));
                 return;
             }
 
-            // 한 명의 주민 정보만 파일에 저장
+            FString CleanResidentJson = UGodFunction::CleanUpJson(ResidentJson);
             UGodFunction::SavePromptToFile(ResidentFileName, CleanResidentJson);
-            UE_LOG(LogTemp, Log, TEXT("Resident NPC %d 생성 완료!"), ResidentIndex);
-
-            // 다음 주민 생성
             GenerateResidentNPC(World, ResidentIndex + 1);
         });
 }
