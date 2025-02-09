@@ -3,6 +3,9 @@
 
 #include "NPCComponent.h"
 #include "HttpModule.h"
+#include "Character/QPlayer.h"
+#include "FramePro/FramePro.h"
+#include "Game/QVillageGameState.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Templates/Function.h"
@@ -45,7 +48,7 @@ void UNPCComponent::BeginPlay()
 
 	UE_LOG(LogTemp, Log, TEXT("NPC %s BeginPlay 실행됨."), *NPCID);
 	UE_LOG(LogTemp, Log, TEXT("현재 설정된 PromptFilePath: %s"), *PromptFilePath);
-
+	
 	if (PromptFilePath.IsEmpty())
 	{
 		UE_LOG(LogTemp, Error, TEXT("NPC %s PromptFilePath is not set!"), *NPCID);
@@ -452,32 +455,82 @@ void UNPCComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 }
 
 // -------------------------------------------------------------------------------------- //
-
-void UNPCComponent::ServerRPCGetGreeting_Implementation(const FString& NewNPCID)
+void UNPCComponent::GetNPCResponseServer(FOpenAIRequest Request)
 {
+	if (!GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Log, TEXT("GetNPCGreeting -> HasAuthority false."))
+	}
+	RequestOpenAIResponse(Request, [this](FOpenAIResponse Response)
+	{
+		this->OnSuccessGetNPCResponse(Response);
+	});
 }
 
-void UNPCComponent::ServerRPCGetNPCResponseP2N_Implementation(const FString& NewNPCID, const FString& PlayerInput)
+void UNPCComponent::ServerRPCGetNPCResponseP2N_Implementation(FOpenAIRequest Request)
 {
+	RequestOpenAIResponse(Request, [this](FOpenAIResponse Response)
+	{
+		this->OnSuccessGetNPCResponse(Response);
+	});
 }
 
-void UNPCComponent::ServerRPCGetGreetingN2N_Implementation(const FString& SpeakerNPCID, const FString& ListenerNPCID)
+void UNPCComponent::OnSuccessGetNPCResponse(FOpenAIResponse Response)
 {
+	if (!GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Log, TEXT("GetNPCGreeting -> HasAuthority false."))
+	}
+	// 대화기록 저장
+	TObjectPtr<AQVillageGameState> VillageGameState = Cast<AQVillageGameState>(GetWorld()->GetGameState());
+	if (VillageGameState == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("OnSuccessStartConversation - VillageGameState is null."));
+		return;
+	}
+	FDateTime CurrentTime = FDateTime::Now();
+	VillageGameState->AddConversationRecord(Response.ConversationType, Response.ListenerID, Response.SpeakerID, CurrentTime, Response.ResponseText);
+
+	APlayerController* TargetPlayerController;
+	switch (Response.ConversationType)
+	{
+		case EConversationType::PStart:
+			TargetPlayerController = Cast<APlayerController>(GetOwner());
+			if (TargetPlayerController)
+			{
+				Cast<AQPlayer>(TargetPlayerController->GetPawn())->ClientRPCStartConversation_Implementation(Response, true);
+			}
+			break;
+		case EConversationType::P2N:
+			TargetPlayerController = Cast<APlayerController>(GetOwner());
+			if (TargetPlayerController)
+			{
+				Cast<AQPlayer>(TargetPlayerController->GetPawn())->ClientRPCGetNPCResponse_Implementation(Response);
+			}
+			break;
+		case EConversationType::N2N:
+			break;
+		case EConversationType::NMonologue:
+			break;
+		default:
+			UE_LOG(LogTemp, Error, TEXT("GetNPCResponse -> Invaild ConversationType"));
+			break;
+	}
 }
 
-void UNPCComponent::ServerRPCGetNPCResponseN2N_Implementation(const FString& SpeakerNPCID, const FString& ListenerNPCID, const FString& NPCInput)
+void UNPCComponent::GetNPCResponse(FOpenAIRequest Request)
 {
+	switch (Request.ConversationType)
+	{
+		case EConversationType::None:
+			UE_LOG(LogTemp, Error, TEXT("GetNPCResponse -> Invaild ConversationType"));
+			break;
+		case EConversationType::P2N:
+			ServerRPCGetNPCResponseP2N_Implementation(Request);
+			break;
+		default:
+			GetNPCResponseServer(Request);
+			break;
+	}
 }
 
-void UNPCComponent::ServerRPCGetNPCMonologue_Implementation(const FString& NewNPCID)
-{
-}
-
-// ------------------------------------- //
-
-FString UNPCComponent::GetNPCResponse(const FString& SpeakerNPCID, const FString& NPCInput,
-	const FString& ListenerNPCID)
-{
-	FString NPCResponse = TEXT("temp response");
-	return NPCResponse;
-}

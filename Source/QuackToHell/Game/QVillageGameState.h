@@ -34,7 +34,7 @@ private:
 
 public:
 	// 서버에서 실행되는 함수
-	const int32 AddConversationRecord(int32 ListenerID, int32 SpeakerID, FDateTime Timestamp, const FString& Message);
+	const int32 AddConversationRecord(EConversationType ConversationType, int32 ListenerID, int32 SpeakerID, FDateTime Timestamp, const FString& Message);
 	const int32 AddEvidence(FString EvidenceName, FString EvidenceDescription, FString EvidenceImagePath);
 	void RemoveEvidence(int32 EvidenceID);
 	void RemoveAllEvidence();

@@ -158,7 +158,7 @@ void AQPlayerState::TestAddConversation()
 {
 	GameState = Cast<AQVillageGameState>(GetWorld()->GetGameState());
 	FDateTime Timestamp = FDateTime::Now();
-	int32 ConversationID = GameState->AddConversationRecord(1000, 1001, Timestamp, FString::Printf(TEXT("TestAddConversation s: %d  l:%d"), 1000, 1001));
+	int32 ConversationID = GameState->AddConversationRecord(EConversationType::P2N, 1000, 1001, Timestamp, FString::Printf(TEXT("TestAddConversation s: %d  l:%d"), 1000, 1001));
 	PrintConversation(ConversationID);
 	PrintAllConversation(1001);
 }

@@ -120,7 +120,6 @@ void AQPlayer::BeginPlay()
 	//Player2NSpeechBubbleWidget->TurnOffSpeechBubble();
 }
 
-
 void AQPlayer::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//캐스팅 미성공시 nullptr
@@ -219,7 +218,7 @@ void AQPlayer::ServerRPCCanFinishConversP2N_Implementation(const AQNPC* NPC)
 	{
 		bResult = false;
 	}
-
+	
 	ClientRPCUpdateCanFinishConversP2N_Implementation(bResult);
 }
 
@@ -239,18 +238,25 @@ void AQPlayer::ClientRPCUpdateCanFinishConversP2N_Implementation(bool bCanFinish
 
 void AQPlayer::ServerRPCStartConversation_Implementation(AQNPC* NPC)
 {
-	bool bResult = false;
 	// 상태 업데이트
 	LocalPlayerState->SetPlayerConverstationState(EConversationType::P2N);
 	NPC->SetNPCConversationState(EConversationType::P2N);
 
-	ClientRPCStartConversation_Implementation(NPC, bResult);
+	// OpenAI에게 NPC의 첫 대사 요청하기
+	FString Temp = TEXT("");
+	FOpenAIRequest Request(
+		LocalPlayerState->GetPlayerId(),
+		NPC->FindComponentByClass<UNPCComponent>()->GetNPCID(),
+		EConversationType::PStart,
+		Temp
+	);
+	NPC->FindComponentByClass<UNPCComponent>()->GetNPCResponse(Request);
 }
 
-void AQPlayer::ClientRPCStartConversation_Implementation(AQNPC* NPC, bool bResult)
+void AQPlayer::ClientRPCStartConversation_Implementation(FOpenAIResponse NPCStartResponse, bool bResult)
 {
-	UE_LOG(LogTemp, Log, TEXT("Player Conversation State Updated. -> %hhd"), LocalPlayerState->GetPlayerConversationState());
-	UE_LOG(LogTemp, Log, TEXT("%s Conversation State Updated. -> %hhd"), *NPC->GetName(), NPC->GetNPCConversationState());
+	// UE_LOG(LogTemp, Log, TEXT("Player Conversation State Updated. -> %hhd"), LocalPlayerState->GetPlayerConversationState());
+	// UE_LOG(LogTemp, Log, TEXT("%s Conversation State Updated. -> %hhd"), *NPC->GetName(), NPC->GetNPCConversationState());
 	if (bResult)
 	{
 		/** @todo 유진 : 서버측에서 대화 시작 로직이 성공적으로 마무리 되었을 떄 실행할 함수 여기서 호출 */
@@ -287,4 +293,9 @@ void AQPlayer::ClientRPCFinishConversation_Implementation(AQNPC* NPC, bool bResu
 		/** @todo 유진 : 서버측에서 대화 마무리 로직 실행에 실패했을 때 실행할 함수 여기서 호출*/
 		
 	}
+}
+
+void AQPlayer::ClientRPCGetNPCResponse_Implementation(FOpenAIResponse NPCStartResponse)
+{
+	/** @todo 유진 : 서버측에서 NPC응답 왔을 때 실행할 함수 여기서 호출*/
 }

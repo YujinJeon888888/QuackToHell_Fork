@@ -21,12 +21,19 @@ struct FOpenAIRequest
 {
 	GENERATED_BODY()
 
-	FString Prompt;
-	int32 MaxTokens = 150;
 	int32 SpeakerID; 
 	int32 ListenerID;
 	EConversationType ConversationType;
+	FString Prompt;
+	int32 MaxTokens = 150;
 
+	// 기본 생성자
+	FOpenAIRequest(){};
+	// 생성자
+	FOpenAIRequest(int32 NewSpeakerID, int32 NewListenerID, EConversationType ConversationState, const FString& NewPrompt, int32 NewMaxTokens  = 150)
+		: SpeakerID(NewSpeakerID), ListenerID(NewListenerID), ConversationType(ConversationState), Prompt(NewPrompt), MaxTokens(NewMaxTokens)
+	{};
+	
 	// ToJson()은 public임
 	FString ToJson() const
 	{
@@ -57,6 +64,7 @@ private:
 	}
 };
 
+// ---------------------------------------------------------------------------------------------
 
 /**
  * @author 박시언
@@ -107,6 +115,8 @@ struct FOpenAIResponse
 	}
 };
 
+// ---------------------------------------------------------------------------------------------
+
 USTRUCT(BlueprintType)
 struct FDialogueHistory
 {
@@ -117,6 +127,7 @@ public:
 	TArray<FString> DialogueLines;
 };
 
+// ---------------------------------------------------------------------------------------------
 
 /**
  * @author 유서현
@@ -335,7 +346,6 @@ protected:
 	bool SendNPCResponseToServer_Validate(const FString& NPCResponse);
 
 public:
-
 	/**
 	 * @author 박시언
 	 * @brief NPC 별로 P2N 대화 기록을 저장합니다.
@@ -356,36 +366,28 @@ public:
 	 */
 	UPROPERTY(BlueprintReadWrite, Category = "Dialogue")
 	TMap<FString, FDialogueHistory> P2NDialogueHistory;
-
-
-public:
+	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
 	// Server RPC 함수
 	/** @brief 서버에게 NPC의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
-	UFUNCTION(Server, Reliable)
-	void ServerRPCGetGreeting(const FString& NewNPCID);
+	UFUNCTION()
+	void GetNPCResponseServer(FOpenAIRequest Request);
 
 	/** @brief 서버에게 플레이어 입력에 대한 NPC의 응답을 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
 	UFUNCTION(Server, Reliable)
-	void ServerRPCGetNPCResponseP2N(const FString& NewNPCID, const FString& PlayerInput);
-
-	/** @brief 서버에게 N2N 대화의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
-	UFUNCTION(Server, Reliable)
-	void ServerRPCGetGreetingN2N(const FString& SpeakerNPCID, const FString& ListenerNPCID);
-
-	/** @brief 서버에게 N2N 대화의 NPC 응답을 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
-	UFUNCTION(Server, Reliable)
-	void ServerRPCGetNPCResponseN2N(const FString& SpeakerNPCID, const FString& ListenerNPCID, const FString& NPCInput);
-
-	/** @brief 서버에게 NPC 혼잣말을 생성하도록 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
-	UFUNCTION(Server, Reliable)
-	void ServerRPCGetNPCMonologue(const FString& NewNPCID);
+	void ServerRPCGetNPCResponseP2N(FOpenAIRequest Request);
+	
+	/** @breif */
+	UFUNCTION()
+	void OnSuccessGetNPCResponse(FOpenAIResponse Response);
 
 public:
 	// 공용 인터페이스
 	/** @brief */
-	FString GetNPCResponse(const FString& SpeakerNPCID, const FString& NPCInput, const FString& ListenerNPCID = TEXT(""));
+	UFUNCTION()
+	void GetNPCResponse(FOpenAIRequest Request);
+
 };

@@ -36,7 +36,7 @@ void AQVillageGameState::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 }
 
 
-const int32 AQVillageGameState::AddConversationRecord(int32 ListenerID, int32 SpeakerID, FDateTime Timestamp, const FString& Message)
+const int32 AQVillageGameState::AddConversationRecord(EConversationType ConversationType, int32 ListenerID, int32 SpeakerID, FDateTime Timestamp, const FString& Message)
 {
 	// 클라이언트에서 이 함수에 접근하려고 하면 -1 return
 	if (!HasAuthority()) return -1;
@@ -49,7 +49,7 @@ const int32 AQVillageGameState::AddConversationRecord(int32 ListenerID, int32 Sp
 	//AQGameModeVillage* GameModeVillage = Cast<AQGameModeVillage>(GetWorld()->GetAuthGameMode());
 	//int32 ConversationID = GameModeVillage->ConversationIDCount++;
 	int32 ConversationID = 2345;
-	FConversationRecord NewConversationRecord(ConversationID, SpeakerID, ListenerID, Timestamp, Message);
+	FConversationRecord NewConversationRecord(ConversationID, ConversationType, SpeakerID, ListenerID, Timestamp, Message);
 	ConversationList.AddConversation(NewConversationRecord);
 
 	return ConversationID;

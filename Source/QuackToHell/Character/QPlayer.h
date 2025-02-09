@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NPCComponent.h"
 #include "QNPC.h"
 #include "Player/QPlayerState.h"
 #include "QPlayer.generated.h"
@@ -90,16 +91,23 @@ protected:
 	/** @brief NPC와의 대화 시작.*/
 	UFUNCTION(Server, Reliable)
 	void ServerRPCStartConversation(AQNPC* NPC);
-
+	
+	/** @breif ServerRPCStartConversation을 성공적으로 마치게 되면 실행되는 함수. 이 내부에 클라쪽 StartConversation 구현
+	* @param NPC 대화대상 npc
+	* @param NPCStartResponse NPC 시작 메세지
+	*/ 
 	UFUNCTION(Client, Reliable)
-	void ClientRPCStartConversation(AQNPC* NPC, bool bResult);
-
+	void ClientRPCStartConversation(FOpenAIResponse NPCStartResponse, bool bResult);
+	
 	/** @brief NPC와의 대화 마무리*/
 	UFUNCTION(Server, Reliable)
 	void ServerRPCFinishConversation(AQNPC* NPC);
 	
 	UFUNCTION(Client, Reliable)
 	void ClientRPCFinishConversation(AQNPC* NPC, bool bResult);
+
+	UFUNCTION(Client, Reliable)
+	void ClientRPCGetNPCResponse(FOpenAIResponse NPCStartResponse);
 	
 private:
 	UFUNCTION()
