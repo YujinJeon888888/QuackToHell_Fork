@@ -2,6 +2,8 @@
 
 
 #include "Character/QPlayer.h"
+
+#include "NPCComponent.h"
 #include "Camera/CameraComponent.h"
 #include "QLogCategories.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -15,6 +17,7 @@
 #include "Blueprint/UserWidget.h"
 #include "UI/QPlayer2NSpeechBubbleWidget.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/QPlayerState.h"
 
 
 TObjectPtr<class UQPlayer2NSpeechBubbleWidget> AQPlayer::GetPlayer2NSpeechBubbleWidget() const
@@ -93,12 +96,17 @@ void AQPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	UE_LOG(LogLogic, Log, TEXT("Player의Beginplay호출"));
+
+	LocalPlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AQPlayerState>();
+	
 	/*이름 세팅*/
-	FString _Name = TEXT("플레이어");
-	this->SetCharacterName(_Name);
-	Super::GetNameWidget()->SetNameWidgetText(GetCharacterName());
-
-
+	if (LocalPlayerState)
+	{
+		FString _Name = LocalPlayerState->GetPlayerName();
+		this->SetCharacterName(_Name);
+		Super::GetNameWidget()->SetNameWidgetText(GetCharacterName());
+	}
+	
 	/*Player2N말풍선 위젯 변수에 객체값 할당*/
 	if (Player2NSpeechBubbleWidget)
 	{
@@ -111,8 +119,6 @@ void AQPlayer::BeginPlay()
 	/*Player2N말풍선 위젯 기본적으로 끈 채로 시작*/
 	//Player2NSpeechBubbleWidget->TurnOffSpeechBubble();
 }
-
-
 
 void AQPlayer::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -132,54 +138,197 @@ void AQPlayer::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 	}
 }
 
-
-
-
 // -------------------------------------------------------------------------------------------------------- //
 void AQPlayer::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	// replicate할 프로퍼티 등록
-	DOREPLIFETIME(AQPlayer, bCanStartConversP2N);
-	DOREPLIFETIME(AQPlayer, bCanFinishConversP2N);
 }
 
-void AQPlayer::ServerRPCCanStartConversP2N_Implementation(const AQNPC* NPC)
+void AQPlayer::ServerRPCCanStartConversP2N_Implementation(AQNPC* NPC)
 {
+	bool bResult = true;
+	
+	TObjectPtr<UNPCComponent> NPCComponent = NPC->FindComponentByClass<UNPCComponent>();
 
+	if (LocalPlayerState == nullptr || NPCComponent == nullptr)
+	{
+		bResult = false;
+		ClientRPCUpdateCanStartConversP2N_Implementation(bResult);
+	}
+	
+	// OpenAI에 Request를 보낼 수 있는지 확인
+	if (!NPCComponent->CanSendOpenAIRequest())
+	{
+		bResult = false;
+	}
+	// Player ConversationState가 None인지 확인
+	else if (LocalPlayerState->GetPlayerConversationState() != EConversationType::None)
+	{
+		bResult = false;
+	}
+	// NPC ConversationState가 None인지 확인
+	else if (NPC->GetNPCConversationState() != EConversationType::None)
+	{
+		bResult = false;
+	}
+	// NPC와 이전에 대화한 적 있는지 확인
+	else if (!NPCComponent->GetIsFirstConversation())
+	{
+		bResult = false;
+	}
+	ClientRPCUpdateCanStartConversP2N_Implementation(bResult);
 }
 
-void AQPlayer::ServerRPCCanFinishConversP2N_Implementation(const AQNPC* NPC)
+void AQPlayer::ClientRPCUpdateCanStartConversP2N_Implementation(bool bCanStartConversP2N)
 {
+	if (bCanStartConversP2N)
+	{
+		/** @todo 유진 : 대화를 시작할 수 있을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
+		
+	}
+	else
+	{
+		/** @todo 유진 : 대화를 시작할 수 없을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
+		
+	}
 }
 
-void AQPlayer::ServerRPCStartConversation_Implementation(const AQNPC* NPC)
+void AQPlayer::ServerRPCCanFinishConversP2N_Implementation(AQNPC* NPC)
 {
+	bool bResult = true;
+	
+	TObjectPtr<UNPCComponent> NPCComponent = NPC->FindComponentByClass<UNPCComponent>();
+
+	// Player ConversationState가 None인지 확인
+	if (LocalPlayerState->GetPlayerConversationState() == EConversationType::None)
+	{
+		bResult = false;
+	}
+	
+	// NPC ConversationState가 None인지 확인
+	else if (NPC->GetNPCConversationState() == EConversationType::None)
+	{
+		bResult = false;
+	}
+
+	// OpenAI로부터 기다리고 있는 답변이 있는지
+	else if (NPCComponent->GetIsRequestInProgress())
+	{
+		bResult = false;
+	}
+	
+	ClientRPCUpdateCanFinishConversP2N_Implementation(bResult);
 }
 
-void AQPlayer::ServerRPCFinishConversation_Implementation(const AQNPC* NPC)
+void AQPlayer::ClientRPCUpdateCanFinishConversP2N_Implementation(bool bCanFinishConversP2N)
 {
+	if (bCanFinishConversP2N)
+	{
+		/** @todo 유진 : 대화를 끝낼 수 있을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
+		
+	}
+	else
+	{
+		/** @todo 유진 : 대화를 끝낼 수 없을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
+		
+	}
 }
 
-// ------------------------------------------------------------------------------------------------- //
-
-bool AQPlayer::GetCanStartConversP2N(const AQNPC* NPC)
+void AQPlayer::ServerRPCStartConversation_Implementation(AQNPC* NPC)
 {
-	ServerRPCCanStartConversP2N_Implementation(NPC);
-	return bCanStartConversP2N;
+	// 상태 업데이트
+	LocalPlayerState->SetPlayerConverstationState(EConversationType::P2N);
+	NPC->SetNPCConversationState(EConversationType::P2N);
+	
+	// 다른 플레이어들 시점 처리
+	AQPlayer* LocalPlayer = Cast<AQPlayer>(LocalPlayerState->GetPawn());
+	if (LocalPlayer)
+	{
+		MulticastRPCStartConversation_Implementation(LocalPlayer, NPC);
+	}
+
+	// OpenAI에게 NPC의 첫 대사 요청하기
+	FString Temp = TEXT("");
+	FOpenAIRequest Request(
+		LocalPlayerState->GetPlayerId(),
+		NPC->FindComponentByClass<UNPCComponent>()->GetNPCID(),
+		EConversationType::PStart,
+		Temp
+	);
+	NPC->FindComponentByClass<UNPCComponent>()->GetNPCResponse(Request);
 }
 
-bool AQPlayer::GetCanFinishConversP2N(const AQNPC* NPC)
+void AQPlayer::ClientRPCStartConversation_Implementation(FOpenAIResponse NPCStartResponse, bool bResult)
 {
-	ServerRPCCanFinishConversP2N_Implementation(NPC);
-	return bCanFinishConversP2N;
+	// UE_LOG(LogTemp, Log, TEXT("Player Conversation State Updated. -> %hhd"), LocalPlayerState->GetPlayerConversationState());
+	// UE_LOG(LogTemp, Log, TEXT("%s Conversation State Updated. -> %hhd"), *NPC->GetName(), NPC->GetNPCConversationState());
+	if (bResult)
+	{
+		/** @todo 유진 : 서버측에서 대화 시작 로직이 성공적으로 마무리 되었을 떄 실행할 함수 여기서 호출 */
+		
+	}
+	else
+	{
+		/** @todo 유진 : 서버측에서 대화 시작 로직 실행에 실패했을 때 실행할 함수 여기서 호출*/
+		
+	}
 }
 
-void AQPlayer::StartConversation(const AQNPC* NPC)
+void AQPlayer::MulticastRPCStartConversation_Implementation(AQPlayer* Player, AQNPC* NPC)
 {
+	if (HasAuthority() || LocalPlayerState->GetPawn() == Player)
+	{
+		return;
+	}
+	/** @todo 유진 Player2 시점에서 Player1과 NPC 머리위에 공백 말풍선 띄우기 */
+	
 }
 
-void AQPlayer::FinishConversation(const AQNPC* NPC)
+void AQPlayer::ServerRPCFinishConversation_Implementation(AQNPC* NPC)
 {
+	bool bResult = false;
+	// 상태 업데이트
+	LocalPlayerState->SetPlayerConverstationState(EConversationType::None);
+	NPC->SetNPCConversationState(EConversationType::None);
+
+	ClientRPCFinishConversation_Implementation(NPC, bResult);
+
+	// 다른 플레이어들 시점 처리
+	AQPlayer* LocalPlayer = Cast<AQPlayer>(LocalPlayerState->GetPawn());
+	if (LocalPlayer)
+	{
+		MulticastRPCFinishConversation_Implementation(LocalPlayer, NPC);
+	}
+}
+
+void AQPlayer::ClientRPCFinishConversation_Implementation(AQNPC* NPC, bool bResult)
+{
+	UE_LOG(LogTemp, Log, TEXT("Player Conversation State Updated. -> %hhd"), LocalPlayerState->GetPlayerConversationState());
+	UE_LOG(LogTemp, Log, TEXT("%s Conversation State Updated. -> %hhd"), *NPC->GetName(), NPC->GetNPCConversationState());
+	if (bResult)
+	{
+		/** @todo 유진 : 서버측에서 대화 마무리 로직이 성공적으로 마무리 되었을 때 실행할 함수 여기서 호출 */
+		
+	}
+	else
+	{
+		/** @todo 유진 : 서버측에서 대화 마무리 로직 실행에 실패했을 때 실행할 함수 여기서 호출*/
+		
+	}
+}
+
+void AQPlayer::MulticastRPCFinishConversation_Implementation(AQPlayer* Player, AQNPC* NPC)
+{
+	if (HasAuthority() || LocalPlayerState->GetPawn() == Player)
+	{
+		return;
+	}
+	/** @todo 유진 Player2 시점에서 Player1과 NPC 머리위에 공백 말풍선 제거*/
+	
+}
+
+void AQPlayer::ClientRPCGetNPCResponse_Implementation(FOpenAIResponse NPCStartResponse)
+{
+	/** @todo 유진 : 서버측에서 NPC응답 왔을 때 실행할 함수 여기서 호출*/
 }

@@ -6,21 +6,11 @@
 #include "Components/ActorComponent.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
+#include "GameData/QConversationData.h"
 #include "Delegates/DelegateCombinations.h"
 #include "NPCComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNPCResponseReceived, const FString&, ResponseText);
-
-/**
- * @brief 대화 유형을 나타내는 Enum
- */
-UENUM(BlueprintType)
-enum class EConversationType : uint8
-{
-	P2N UMETA(DisplayName = "P2N"),  // 플레이어 ↔ NPC 대화
-	N2N UMETA(DisplayName = "N2N"),    // NPC ↔ NPC 대화
-	NMonologue UMETA(DisplayName = "NMonologue") // NPC 혼잣말
-};
 
 /**
  * @author 박시언
@@ -31,20 +21,27 @@ struct FOpenAIRequest
 {
 	GENERATED_BODY()
 
+	int32 SpeakerID; 
+	int32 ListenerID;
+	EConversationType ConversationType;
 	FString Prompt;
 	int32 MaxTokens = 150;
-	FString SpeakerID; 
-	FString ListenerID;
-	EConversationType ConversationType;
 
+	// 기본 생성자
+	FOpenAIRequest(){};
+	// 생성자
+	FOpenAIRequest(int32 NewSpeakerID, int32 NewListenerID, EConversationType ConversationState, const FString& NewPrompt, int32 NewMaxTokens  = 150)
+		: SpeakerID(NewSpeakerID), ListenerID(NewListenerID), ConversationType(ConversationState), Prompt(NewPrompt), MaxTokens(NewMaxTokens)
+	{};
+	
 	// ToJson()은 public임
 	FString ToJson() const
 	{
 		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 		JsonObject->SetStringField("prompt", Prompt);
 		JsonObject->SetNumberField("max_tokens", MaxTokens);
-		JsonObject->SetStringField("speaker_id", SpeakerID);
-		JsonObject->SetStringField("listener_id", ListenerID);
+		JsonObject->SetNumberField("speaker_id", SpeakerID);
+		JsonObject->SetNumberField("listener_id", ListenerID);
 		JsonObject->SetStringField("conversation_type", ConversationTypeToString(ConversationType));
 
 		FString OutputString;
@@ -67,6 +64,7 @@ private:
 	}
 };
 
+// ---------------------------------------------------------------------------------------------
 
 /**
  * @author 박시언
@@ -78,6 +76,9 @@ struct FOpenAIResponse
 	GENERATED_BODY()
 
 	FString ResponseText;
+	int32 SpeakerID;
+	int32 ListenerID;
+	EConversationType ConversationType;
 
 	static FOpenAIResponse FromJson(const FString& JsonContent)
 	{
@@ -92,6 +93,17 @@ struct FOpenAIResponse
 			{
 				Response.ResponseText = (*ChoicesArray)[0]->AsString();
 			}
+
+			// SpeakerID, ListenerID, ConversationType 값
+            Response.SpeakerID = JsonObject->GetIntegerField("speaker_id");
+            Response.ListenerID = JsonObject->GetIntegerField("listener_id");
+
+            FString ConversationTypeString = JsonObject->GetStringField("conversation_type");
+
+            if (ConversationTypeString == "P2N") Response.ConversationType = EConversationType::P2N;
+            else if (ConversationTypeString == "N2N") Response.ConversationType = EConversationType::N2N;
+            else if (ConversationTypeString == "NMonologue") Response.ConversationType = EConversationType::NMonologue;
+            else Response.ConversationType = EConversationType::P2N; 
 		}
 
 		if (Response.ResponseText.IsEmpty())
@@ -103,6 +115,8 @@ struct FOpenAIResponse
 	}
 };
 
+// ---------------------------------------------------------------------------------------------
+
 USTRUCT(BlueprintType)
 struct FDialogueHistory
 {
@@ -113,6 +127,7 @@ public:
 	TArray<FString> DialogueLines;
 };
 
+// ---------------------------------------------------------------------------------------------
 
 /**
  * @author 유서현
@@ -121,10 +136,6 @@ UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class QUACKTOHELL_API UNPCComponent : public UActorComponent
 {
 	GENERATED_BODY()
-
-private:
-	FString NPCPersonality;
-	TMap<FString, FString> ResponseCache;
 
 public:
 	/**
@@ -140,8 +151,15 @@ protected:
 	 */
 	virtual void BeginPlay() override;
 
-	void LoadPrompt();
+	bool LoadPrompt();
+
 	virtual void PerformNPCLogic();
+
+	FString GetPlayerIDAsString() const;
+	FString NPCName;
+	FString NPCID;
+	FString NPCPersonality;
+	TMap<FString, FString> ResponseCache;
 
 private:
 	/**
@@ -173,7 +191,7 @@ public:
 	 * @param PlayerInput 플레이어의 입력 대사
 	 */
 	UFUNCTION(BlueprintCallable, Category = "NPC")
-	void StartConversation(const FString& PlayerInput);
+	virtual void StartConversation(const FString& PlayerInput);
 
 	/**
 	 * @author 박시언
@@ -209,7 +227,7 @@ public:
 	 * \return 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")
-	TArray<FString> GetP2NDialogueHistory(const FString& NPCID);
+	TArray<FString> GetP2NDialogueHistory() const;
 
 protected:
 	/**
@@ -253,6 +271,12 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
 	FString PromptFilePath;
 
+	/**
+	 * @author 박시언
+	 * @brief 로드된 프롬프트 내용을 저장하는 변수
+	 */
+	FString PromptContent;
+
 public:
 	/**
 	 * @author 박시언
@@ -262,6 +286,19 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "NPC")
 	FString GetNPCName() const;
 
+	/**
+	 * @author 박시언
+	 * @brief NPC의 ID를 int32로 변환하여 반환
+	 */
+	UFUNCTION(BlueprintCallable, Category = "NPC")
+	int32 GetNPCID() const;
+
+	UFUNCTION(BlueprintCallable, Category = "NPC")
+	bool GetIsFirstConversation() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "NPC")
+	bool GetIsRequestInProgress() const;
+
 private:
 	/**
 	 * @author 박시언
@@ -269,12 +306,6 @@ private:
 	 */
 	UPROPERTY()
 	bool bIsFirstConversation = true;
-
-	/**
-	 * @author 박시언
-	 * @brief 로드된 프롬프트 내용을 저장하는 변수
-	 */
-	FString PromptContent;
 
 	/**
 	 * @author 박시언
@@ -315,13 +346,12 @@ protected:
 	bool SendNPCResponseToServer_Validate(const FString& NPCResponse);
 
 public:
-
 	/**
 	 * @author 박시언
 	 * @brief NPC 별로 P2N 대화 기록을 저장합니다.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")
-	void SaveP2NDialogue(const FString& NPCID, const FString& PlayerInput, const FString& NPCResponse);
+	void SaveP2NDialogue(const FString& PlayerInput, const FString& NPCResponse);
 
 	/**
 	 * @author 박시언
@@ -336,36 +366,28 @@ public:
 	 */
 	UPROPERTY(BlueprintReadWrite, Category = "Dialogue")
 	TMap<FString, FDialogueHistory> P2NDialogueHistory;
-
-
-public:
+	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
 	// Server RPC 함수
 	/** @brief 서버에게 NPC의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
-	UFUNCTION(Server, Reliable)
-	void ServerRPCGetGreeting(const FString& NPCID);
+	UFUNCTION()
+	void GetNPCResponseServer(FOpenAIRequest Request);
 
 	/** @brief 서버에게 플레이어 입력에 대한 NPC의 응답을 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
 	UFUNCTION(Server, Reliable)
-	void ServerRPCGetNPCResponseP2N(const FString& NPCID, const FString& PlayerInput);
-
-	/** @brief 서버에게 N2N 대화의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
-	UFUNCTION(Server, Reliable)
-	void ServerRPCGetGreetingN2N(const FString& SpeakerNPCID, const FString& ListenerNPCID);
-
-	/** @brief 서버에게 N2N 대화의 NPC 응답을 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
-	UFUNCTION(Server, Reliable)
-	void ServerRPCGetNPCResponseN2N(const FString& SpeakerNPCID, const FString& ListenerNPCID, const FString& NPCInput);
-
-	/** @brief 서버에게 NPC 혼잣말을 생성하도록 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
-	UFUNCTION(Server, Reliable)
-	void ServerRPCGetNPCMonologue(const FString& NPCID);
+	void ServerRPCGetNPCResponseP2N(FOpenAIRequest Request);
+	
+	/** @breif */
+	UFUNCTION()
+	void OnSuccessGetNPCResponse(FOpenAIResponse Response);
 
 public:
 	// 공용 인터페이스
 	/** @brief */
-	FString GetNPCResponse(const FString& SpeakerNPCID, const FString& NPCInput, const FString& ListenerNPCID = TEXT(""));
+	UFUNCTION()
+	void GetNPCResponse(FOpenAIRequest Request);
+
 };

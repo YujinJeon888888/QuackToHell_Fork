@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/QCharacter.h"
+#include "GameData/QConversationData.h"
 #include "QNPC.generated.h"
 
 /**
@@ -99,6 +100,9 @@ private:
 	UPROPERTY(Replicated)
 	bool bCanFinishConversN2N = false;
 
+	UPROPERTY(Replicated)
+	EConversationType NPCConversationState = EConversationType::None;
+
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	UFUNCTION(Server, Reliable)
@@ -107,7 +111,16 @@ private:
 	UFUNCTION(Server, Reliable)
 	void ServerRPCCanCanFinishConversN2N(const AQNPC* NPC);
 
+public:
+	EConversationType GetNPCConversationState() const
+	{
+		return NPCConversationState;
+	}
 
+	void SetNPCConversationState(EConversationType NewState)
+	{
+		NPCConversationState = NewState;
+	}
 };
 
 

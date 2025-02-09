@@ -69,6 +69,8 @@ void AQPlayerController::StartDialog()
 	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
 	TObjectPtr<AQNPC> NPC = Cast<AQNPC>(_Player->GetClosestNPC());
 	//1. 대화 가능한지 check (서버에게 질문)
+	/** @todo 유진 - 이 부분을 Player.cpp에 표시해놓은 부분에서 호출하면 될듯. + nullcheck같은거 추가로 하면ㄷ 좋을 것 같아요*/
+	/*
 	if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
 	{
 		//1. UI를 킨다.
@@ -89,6 +91,7 @@ void AQPlayerController::StartDialog()
 		//내 정보 넘겨주기
 		Cast<UQP2NWidget>((VillageUIManager->GetVillageWidgets())[EVillageUIType::P2N])->SetConversingPlayer(this);
 	}
+	**/
 }
 
 void AQPlayerController::EndDialog()
@@ -153,7 +156,10 @@ void AQPlayerController::ConverseEndProcess(TObjectPtr<class AQNPC> NPC)
 	//1. 얼음땡
 	UnFreezePawn();
 	//2. 상태전환
+	/** @todo 유진 - 이 부분을 Player.cpp에 표시해놓은 부분에서 호출하면 될듯. + nullcheck같은거 추가로 하면ㄷ 좋을 것 같아요*/
+	/*
 	Cast<AQPlayer>(GetPawn())->FinishConversation(NPC);
+	*/
 }
 
 void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)

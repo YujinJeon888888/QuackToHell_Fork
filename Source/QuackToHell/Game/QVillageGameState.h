@@ -34,7 +34,7 @@ private:
 
 public:
 	// 서버에서 실행되는 함수
-	const int32 AddConversationRecord(int32 ListenerID, int32 SpeakerID, FDateTime Timestamp, const FString& Message);
+	const int32 AddConversationRecord(EConversationType ConversationType, int32 ListenerID, int32 SpeakerID, FDateTime Timestamp, const FString& Message);
 	const int32 AddEvidence(FString EvidenceName, FString EvidenceDescription, FString EvidenceImagePath);
 	void RemoveEvidence(int32 EvidenceID);
 	void RemoveAllEvidence();
@@ -50,6 +50,7 @@ public:
 	}
 	const FConversationRecord* GetRecordWithConvID(int32 ConversationID) const;
 	const TArray<FConversationRecord> GetRecordWithPlayerID() const;
+	const TArray<FConversationRecord> GetRecordWithNPCID(int32 NPCID) const;
 	const FEvidence* GetEvidenceWithID(int32 EvidenceID) const;
 	const FEvidence* GetEvidenceWithName(FString EvidenceName) const;
 	const TArray<FEvidence> GetEvidencesWithPlayerID() const;
