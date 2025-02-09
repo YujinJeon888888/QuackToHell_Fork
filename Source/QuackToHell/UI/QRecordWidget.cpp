@@ -34,25 +34,6 @@ void UQRecordWidget::NativeConstruct()
 	DefaultVillageWidet->OnRecordButtonPressed.AddDynamic(this, &UQRecordWidget::UpdateRecordHistory);
 	UE_LOG(LogLogic, Log, TEXT("RecordWidget - UpdateRecordHistory 바인딩 완료! 현재 바인딩 개수: %d"),
 		DefaultVillageWidet->OnRecordButtonPressed.GetAllObjects().Num());
-
-
-	/*더미데이터*/
-	/**
-	 * @todo 더미데이터 지우고 서버로부터 데이터 가져오기.
-	 *
-	 */
-	for (int8 i = 0; i < 4; i++) {
-		FString DummyMessage = FString::Printf(TEXT("Babo_%d"),i);
-		FConversationRecord DummyRecord(i, 1, 1, FDateTime(), DummyMessage);
-		ConversationRecord.Add(DummyRecord);
-	}
-	for (int8 i = 0; i < 4; i++) {
-		FString DummyMessage = FString::Printf(TEXT("Babo_%d"), i);
-		FConversationRecord DummyRecord(i, 2, 1, FDateTime(), DummyMessage);
-		ConversationRecord.Add(DummyRecord);
-	}
-
-
 	
 
 	/*버튼 정보 가져오기*/
@@ -94,10 +75,10 @@ void UQRecordWidget::NativeConstruct()
 void UQRecordWidget::UpdateRecordHistory()
 {
 	/*정보가져오기*/
-	////월드로부터 가져오는 것이니 delete는 내가 신경쓰지x (세상에 하나만 존재)
-	//AQVillageGameState* const MyGameState = GetWorld() != NULL ? GetWorld()->GetGameState<AQVillageGameState>() : NULL;
-	////값이므로 파괴주기 신경x (스택에쌓임)
-	//ConversationRecord = MyGameState->GetRecordWithPlayerID();
+	//월드로부터 가져오는 것이니 delete는 내가 신경쓰지x (세상에 하나만 존재)
+	AQVillageGameState* const MyGameState = GetWorld() != NULL ? GetWorld()->GetGameState<AQVillageGameState>() : NULL;
+	//값이므로 파괴주기 신경x (스택에쌓임)
+	ConversationRecord = MyGameState->GetRecordWithPlayerID();
 
 	/*대화기록 정보 업데이트*/
 	{

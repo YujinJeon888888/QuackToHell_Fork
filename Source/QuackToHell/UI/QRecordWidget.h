@@ -87,7 +87,7 @@ private:
 	/**
 	 * @brief 버튼위젯의 모양을 업데이트한다.
 	 */
-	void TurnOnButtonWidget();
+	void UpdateButtonOverlay();
 
 private:
 	/**
