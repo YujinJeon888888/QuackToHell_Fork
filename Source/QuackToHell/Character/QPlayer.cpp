@@ -145,7 +145,7 @@ void AQPlayer::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLi
 
 }
 
-void AQPlayer::ServerRPCCanStartConversP2N_Implementation(const AQNPC* NPC)
+void AQPlayer::ServerRPCCanStartConversP2N_Implementation(AQNPC* NPC)
 {
 	bool bResult = true;
 	
@@ -177,7 +177,6 @@ void AQPlayer::ServerRPCCanStartConversP2N_Implementation(const AQNPC* NPC)
 	{
 		bResult = false;
 	}
-
 	ClientRPCUpdateCanStartConversP2N_Implementation(bResult);
 }
 
@@ -195,7 +194,7 @@ void AQPlayer::ClientRPCUpdateCanStartConversP2N_Implementation(bool bCanStartCo
 	}
 }
 
-void AQPlayer::ServerRPCCanFinishConversP2N_Implementation(const AQNPC* NPC)
+void AQPlayer::ServerRPCCanFinishConversP2N_Implementation(AQNPC* NPC)
 {
 	bool bResult = true;
 	
@@ -241,6 +240,13 @@ void AQPlayer::ServerRPCStartConversation_Implementation(AQNPC* NPC)
 	// 상태 업데이트
 	LocalPlayerState->SetPlayerConverstationState(EConversationType::P2N);
 	NPC->SetNPCConversationState(EConversationType::P2N);
+	
+	// 다른 플레이어들 시점 처리
+	AQPlayer* LocalPlayer = Cast<AQPlayer>(LocalPlayerState->GetPawn());
+	if (LocalPlayer)
+	{
+		MulticastRPCStartConversation_Implementation(LocalPlayer, NPC);
+	}
 
 	// OpenAI에게 NPC의 첫 대사 요청하기
 	FString Temp = TEXT("");
@@ -269,6 +275,16 @@ void AQPlayer::ClientRPCStartConversation_Implementation(FOpenAIResponse NPCStar
 	}
 }
 
+void AQPlayer::MulticastRPCStartConversation_Implementation(AQPlayer* Player, AQNPC* NPC)
+{
+	if (HasAuthority() || LocalPlayerState->GetPawn() == Player)
+	{
+		return;
+	}
+	/** @todo 유진 Player2 시점에서 Player1과 NPC 머리위에 공백 말풍선 띄우기 */
+	
+}
+
 void AQPlayer::ServerRPCFinishConversation_Implementation(AQNPC* NPC)
 {
 	bool bResult = false;
@@ -277,6 +293,13 @@ void AQPlayer::ServerRPCFinishConversation_Implementation(AQNPC* NPC)
 	NPC->SetNPCConversationState(EConversationType::None);
 
 	ClientRPCFinishConversation_Implementation(NPC, bResult);
+
+	// 다른 플레이어들 시점 처리
+	AQPlayer* LocalPlayer = Cast<AQPlayer>(LocalPlayerState->GetPawn());
+	if (LocalPlayer)
+	{
+		MulticastRPCFinishConversation_Implementation(LocalPlayer, NPC);
+	}
 }
 
 void AQPlayer::ClientRPCFinishConversation_Implementation(AQNPC* NPC, bool bResult)
@@ -293,6 +316,16 @@ void AQPlayer::ClientRPCFinishConversation_Implementation(AQNPC* NPC, bool bResu
 		/** @todo 유진 : 서버측에서 대화 마무리 로직 실행에 실패했을 때 실행할 함수 여기서 호출*/
 		
 	}
+}
+
+void AQPlayer::MulticastRPCFinishConversation_Implementation(AQPlayer* Player, AQNPC* NPC)
+{
+	if (HasAuthority() || LocalPlayerState->GetPawn() == Player)
+	{
+		return;
+	}
+	/** @todo 유진 Player2 시점에서 Player1과 NPC 머리위에 공백 말풍선 제거*/
+	
 }
 
 void AQPlayer::ClientRPCGetNPCResponse_Implementation(FOpenAIResponse NPCStartResponse)

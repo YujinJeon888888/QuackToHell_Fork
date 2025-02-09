@@ -71,7 +71,7 @@ protected:
 
 	/** @breif 해당 NPC와 대화가능한지 check*/
 	UFUNCTION(Server, Reliable)
-	void ServerRPCCanStartConversP2N(const AQNPC* NPC);
+	void ServerRPCCanStartConversP2N(AQNPC* NPC);
 
 	/** @breif ServerRPCCanStartConversP2N를 통해 대화시작이 가능한지 체크가 완료된 후 실행되는 클라이언트 RPC
 	 * 인자로 시작할 수 있는지 없는지에 대한 bool값이 들어오게 된다. */
@@ -80,7 +80,7 @@ protected:
 
 	/** @brief 해당 NPC와의 대화를 마칠 수 있는 check*/
 	UFUNCTION(Server, Reliable)
-	void ServerRPCCanFinishConversP2N(const AQNPC* NPC);
+	void ServerRPCCanFinishConversP2N(AQNPC* NPC);
 
 	/** @breif ServerRPCCanFinishConversP2N를 통해 대화마무리가 가능한지 체크가 완료된 후 실행되는 클라이언트 RPC
 	 * 인자로 마무리할 수 있는지 없는지에 대한 bool값이 들어오게 된다. */
@@ -108,6 +108,12 @@ protected:
 
 	UFUNCTION(Client, Reliable)
 	void ClientRPCGetNPCResponse(FOpenAIResponse NPCStartResponse);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCStartConversation(AQPlayer* Player, AQNPC* NPC);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCFinishConversation(AQPlayer* Player, AQNPC* NPC);
 	
 private:
 	UFUNCTION()

@@ -35,7 +35,6 @@ void AQVillageGameState::GetLifetimeReplicatedProps(TArray<class FLifetimeProper
 	DOREPLIFETIME(AQVillageGameState, EvidenceList);
 }
 
-
 const int32 AQVillageGameState::AddConversationRecord(EConversationType ConversationType, int32 ListenerID, int32 SpeakerID, FDateTime Timestamp, const FString& Message)
 {
 	// 클라이언트에서 이 함수에 접근하려고 하면 -1 return

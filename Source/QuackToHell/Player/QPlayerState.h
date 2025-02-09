@@ -59,6 +59,7 @@ private:
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
+
 public:
 	EConversationType GetPlayerConversationState() const
 	{
