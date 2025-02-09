@@ -2,6 +2,8 @@
 
 
 #include "Character/QCharacter.h"
+
+#include "EngineUtils.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/SoftObjectPath.h"
 #include "UI/QNameWidget.h"
@@ -21,6 +23,8 @@ AQCharacter::AQCharacter()
 	TSubclassOf<UQNameWidget> _NameWidget;
 	//QNameWidget을 상속한 클래스만 담을 수 있도록 강제한다.
 	this->NameWidgetComponent->SetWidgetClass(_NameWidget);
+	/*멀티플레이 관련*/
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -34,6 +38,15 @@ void AQCharacter::BeginPlay()
 		if (UserWidget)
 		{
 			NameWidget = Cast<UQNameWidget>(UserWidget);
+		}
+	}
+
+	// 서버에서 실행 -> 오너십을 부여하기 위해
+	if (HasAuthority())
+	{
+		if (GetOwner() == nullptr)
+		{
+			SetOwner(GetWorld()->GetFirstPlayerController());
 		}
 	}
 }

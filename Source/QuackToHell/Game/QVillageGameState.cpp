@@ -94,7 +94,12 @@ const FConversationRecord* AQVillageGameState::GetRecordWithConvID(int32 Convers
 const TArray<FConversationRecord>AQVillageGameState::GetRecordWithPlayerID() const
 {
 	int32 PlayerID = GetWorld()->GetFirstPlayerController()->GetPlayerState<AQPlayerState>()->GetPlayerId();
-	return ConversationList.GetRecordWithPlayerID(PlayerID);
+	return ConversationList.GetRecordWithID(PlayerID);
+}
+
+const TArray<FConversationRecord> AQVillageGameState::GetRecordWithNPCID(int32 NPCID) const
+{
+	return ConversationList.GetRecordWithID(NPCID);
 }
 
 const FEvidence* AQVillageGameState::GetEvidenceWithID(int32 EvidenceID) const
