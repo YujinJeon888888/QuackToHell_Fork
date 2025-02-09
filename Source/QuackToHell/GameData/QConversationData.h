@@ -11,13 +11,16 @@
  * @brief 대화 기록 데이터 저장을 위한 자료구조 및 열거형이 정의되어있는 헤더파일입니다.
  */
 
+/**
+ * @brief 대화 유형을 나타내는 Enum
+ */
 UENUM(BlueprintType)
-enum class EConversationState : uint8
+enum class EConversationType : uint8
 {
 	None UMETA(DisplayName = "None"),
-	P2N UMETA(DisplayName = "P2N"),
-	N2N	UMETA(DisplayName = "N2N"),
-	NMonologue UMETA(DisplayName = "NMonologue"),
+	P2N UMETA(DisplayName = "P2N"),  // 플레이어 ↔ NPC 대화
+	N2N UMETA(DisplayName = "N2N"),    // NPC ↔ NPC 대화
+	NMonologue UMETA(DisplayName = "NMonologue") // NPC 혼잣말
 };
 
 USTRUCT(BlueprintType)
@@ -111,11 +114,11 @@ public:
 	}
 
 	// Player가 소유하고 있는 대화기록에 대한 정보만 반환
-	const TArray<FConversationRecord> GetRecordWithPlayerID(int32 PlayerID) const
+	const TArray<FConversationRecord> GetRecordWithID(int32 ID) const
 	{
-		return ConversationList.FilterByPredicate([PlayerID](const FConversationRecord& Record)
+		return ConversationList.FilterByPredicate([ID](const FConversationRecord& Record)
 		{
-			return (Record.GetSpeakerID() == PlayerID || Record.GetListenerID() == PlayerID);
+			return (Record.GetSpeakerID() == ID || Record.GetListenerID() == ID);
 		});
 	}
 };

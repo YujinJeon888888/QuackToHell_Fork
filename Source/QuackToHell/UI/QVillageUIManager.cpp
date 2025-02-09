@@ -31,7 +31,7 @@ AQVillageUIManager::AQVillageUIManager()
 	static ConstructorHelpers::FClassFinder<UQDefaultVillageWidget> DefaultVillageWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_QDefailtVillageWidgets.WBP_QDefailtVillageWidgets_C'"));
 	static ConstructorHelpers::FClassFinder<UQMapWidget> MapWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_QMap.WBP_QMap_C'"));
 	static ConstructorHelpers::FClassFinder<UQPlayer2NSpeechBubbleWidget> Player2NSpeechBubbleWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_QPlayer2NSpeechBubble.WBP_QPlayer2NSpeechBubble_C'"));
-	static ConstructorHelpers::FClassFinder<UQSpeechBubbleWidget> SpeechBubbleWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_QSpeechBubble.WBP_QSpeechBubble'"));
+	static ConstructorHelpers::FClassFinder<UQSpeechBubbleWidget> SpeechBubbleWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_QSpeechBubble.WBP_QSpeechBubble_C'"));
 
 
 	// TSubclassOf 템플릿 클래스 객체에 블루프린트 클래스를 넣어준다

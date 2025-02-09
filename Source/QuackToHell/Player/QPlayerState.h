@@ -49,12 +49,9 @@ private:
 	UPROPERTY(VisibleAnywhere,Category = "GameplayTags")
 	AQVillageGameState* GameState;
 	
-	UPROPERTY(Replicated)
-	FString PlayerName;
-	
 	/** @brief 플레이어의 대화 상태 */
 	UPROPERTY(Replicated)
-	EConversationState PlayerConversationState = EConversationState::None;
+	EConversationType PlayerConversationState = EConversationType::None;
 	
 	/**  @breif 플레이어가 소지한 증거 정보의 ID가 저장되어 있는 Array */
 	UPROPERTY(Replicated)
@@ -63,6 +60,16 @@ private:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
+	EConversationType GetPlayerConversationState() const
+	{
+		return PlayerConversationState;
+	}
+
+	void SetPlayerConverstationState(EConversationType NewState)
+	{
+		PlayerConversationState = NewState;
+	}
+	
 	TArray<int32> GetEvidenceIDInHand() const
 	{
 		return EvidenceIDInHand;
@@ -72,6 +79,8 @@ public:
 	const FConversationRecord* GetRecordWithConvID(int32 ConversationID) const;
 	/** @brief PlayerID를 이욯해 대화기록 조회. 로컬 Player가 Speaker와 Listener로 참여한 모든 대화기록을 배열 형태로 반환*/
 	const TArray<FConversationRecord> GetRecordWithPlayerID() const;
+	/** @brief 특정 NPCID를 이용해 대화기록 조회.*/
+	const TArray<FConversationRecord> GetRecrodWithNPCID(int32 NPCID) const;
 	/** @brief 증거ID를 이용해 증거 조회. */
 	const FEvidence* GetEvidenceWithID(int32 EvidenceID) const;
 	/** @brief 증거 이름을 이용해 증거 조회*/

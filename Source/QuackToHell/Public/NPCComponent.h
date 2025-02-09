@@ -6,21 +6,11 @@
 #include "Components/ActorComponent.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
+#include "GameData/QConversationData.h"
 #include "Delegates/DelegateCombinations.h"
 #include "NPCComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNPCResponseReceived, const FString&, ResponseText);
-
-/**
- * @brief 대화 유형을 나타내는 Enum
- */
-UENUM(BlueprintType)
-enum class EConversationType : uint8
-{
-	P2N UMETA(DisplayName = "P2N"),  // 플레이어 ↔ NPC 대화
-	N2N UMETA(DisplayName = "N2N"),    // NPC ↔ NPC 대화
-	NMonologue UMETA(DisplayName = "NMonologue") // NPC 혼잣말
-};
 
 /**
  * @author 박시언
@@ -291,6 +281,12 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "NPC")
 	int32 GetNPCID() const;
+
+	UFUNCTION(BlueprintCallable, Category = "NPC")
+	bool GetIsFirstConversation() const;
+	
+	UFUNCTION(BlueprintCallable, Category = "NPC")
+	bool GetIsRequestInProgress() const;
 
 private:
 	/**

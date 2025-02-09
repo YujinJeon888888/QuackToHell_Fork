@@ -12,7 +12,8 @@
 
 AQPlayerState::AQPlayerState()
 {
-	
+	/*멀티플레이 관련*/
+	bReplicates = true;
 }
 
 void AQPlayerState::AddStateTag(FGameplayTag NewStateTag)
@@ -37,7 +38,6 @@ void AQPlayerState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& 
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AQPlayerState, EvidenceIDInHand);
-	DOREPLIFETIME(AQPlayerState, PlayerName);
 	DOREPLIFETIME(AQPlayerState, PlayerConversationState);
 }
 
@@ -57,6 +57,11 @@ const FConversationRecord* AQPlayerState::GetRecordWithConvID(int32 Conversation
 const TArray<FConversationRecord> AQPlayerState::GetRecordWithPlayerID() const
 {
 	return GameState->GetRecordWithPlayerID();
+}
+
+const TArray<FConversationRecord> AQPlayerState::GetRecrodWithNPCID(int32 NPCID) const
+{
+	return GameState->GetRecordWithNPCID(NPCID);
 }
 
 const FEvidence* AQPlayerState::GetEvidenceWithID(int32 EvidenceID) const

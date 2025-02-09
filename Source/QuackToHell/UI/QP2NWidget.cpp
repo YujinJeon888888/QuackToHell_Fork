@@ -18,13 +18,10 @@ void UQP2NWidget::UpdatePlayerText(const FString& Text)
 
 }
 
-
 void UQP2NWidget::UpdateNPCText(const FString& Text)
 {
     NPCText->SetText(FText::FromString(Text));
 }
-
-
 
 void UQP2NWidget::SetConversingNPC(const TObjectPtr<class AQNPCController> NPC)
 {
@@ -34,7 +31,6 @@ void UQP2NWidget::SetConversingNPC(const TObjectPtr<class AQNPCController> NPC)
     TObjectPtr<UNPCComponent> NPCComponent = _NPC->GetComponentByClass<UNPCComponent>();
     NPCComponent->OnNPCResponseReceived.AddDynamic(this, &UQP2NWidget::UpdateNPCText);
 }
-
 
 void UQP2NWidget::SetConversingPlayer(const TObjectPtr<class AQPlayerController> Player)
 {
@@ -81,8 +77,11 @@ void UQP2NWidget::HandleEnterEndButton()
     //2. 서버로부터 대화마치기 가능하다고 리턴받아야됨
     TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(ConversingPlayer->GetPawn());
     TObjectPtr<AQNPC> _NPC = Cast<AQNPC>(ConversingNPC->GetPawn());
+    /** @todo 유진 - 이 부분을 Player.cpp에 표시해놓은 부분에서 호출하면 될듯.
+     * IsGenerationResponse는 서버에서 확인해주고 있으니까 클라에선 생략 가능*/
+    /*
     bool bCanFinishConversing = _Player->GetCanFinishConversP2N(_NPC);
-
+    
     //대화마칠 수 있으면
     if (!bGeneratingResponse && bCanFinishConversing) {
         {
@@ -95,6 +94,7 @@ void UQP2NWidget::HandleEnterEndButton()
             ConversingNPC->EndDialog();
         }
     }
+    */
 }
 
 

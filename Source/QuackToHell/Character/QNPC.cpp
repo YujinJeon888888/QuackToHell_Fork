@@ -74,6 +74,7 @@ void AQNPC::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifet
 	// replicate할 프로퍼티 등록
 	DOREPLIFETIME(AQNPC, bCanStartConversN2N);
 	DOREPLIFETIME(AQNPC, bCanFinishConversN2N);
+	DOREPLIFETIME(AQNPC, NPCConversationState);
 }
 
 void AQNPC::ServerRPCCanCanStartConversN2N_Implementation(const AQNPC* NPC)
@@ -83,8 +84,6 @@ void AQNPC::ServerRPCCanCanStartConversN2N_Implementation(const AQNPC* NPC)
 void AQNPC::ServerRPCCanCanFinishConversN2N_Implementation(const AQNPC* NPC)
 {
 }
-
-
 
 
 // ---------------------------------------------------------------------------------- //

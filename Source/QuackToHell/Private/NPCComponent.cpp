@@ -144,6 +144,16 @@ int32 UNPCComponent::GetNPCID() const
 	return FCString::Atoi(*NPCID);
 }
 
+bool UNPCComponent::GetIsFirstConversation() const
+{
+	return bIsFirstConversation;
+}
+
+bool UNPCComponent::GetIsRequestInProgress() const
+{
+	return bIsRequestInProgress;
+}
+
 // 현재 AI에게 요청을 보낼 수 있는지 없는지 판단
 bool UNPCComponent::CanSendOpenAIRequest() const
 {
