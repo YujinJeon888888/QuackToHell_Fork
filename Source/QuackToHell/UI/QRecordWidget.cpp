@@ -12,7 +12,7 @@
 #include "UI/QDefaultVillageWidget.h"
 #include "Components/VerticalBoxSlot.h"
 #include "UI/QChatBoxWidget.h"
-
+#include "Player/QPlayerState.h"
 UQRecordWidget::UQRecordWidget(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
@@ -75,10 +75,12 @@ void UQRecordWidget::NativeConstruct()
 void UQRecordWidget::UpdateRecordHistory()
 {
 	/*정보가져오기*/
-	//월드로부터 가져오는 것이니 delete는 내가 신경쓰지x (세상에 하나만 존재)
-	AQVillageGameState* const MyGameState = GetWorld() != NULL ? GetWorld()->GetGameState<AQVillageGameState>() : NULL;
-	//값이므로 파괴주기 신경x (스택에쌓임)
-	ConversationRecord = MyGameState->GetRecordWithPlayerID();
+	AQPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AQPlayerState>();
+	if (PlayerState)
+	{
+		ConversationRecord = PlayerState->GetRecordWithPlayerID();
+	}
+
 
 	/*대화기록 정보 업데이트*/
 	{
