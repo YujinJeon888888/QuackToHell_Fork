@@ -10,22 +10,22 @@ void UJuryComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    // 배심원 ID 가져오기
-    FString NPCID = GetOwner()->GetName();
+    // NPCID를 int32로 변환
+    int32 JuryID = GetNPCID();
 
-    // NPC ID가 "Jury1", "Jury2", "Jury3"와 매칭되도록 설정
-    int32 JuryIndex = 0;
-
-    if (NPCID.Contains(TEXT("Jury001"))) JuryIndex = 1;
-    else if (NPCID.Contains(TEXT("Jury002"))) JuryIndex = 2;
-    else if (NPCID.Contains(TEXT("Jury003"))) JuryIndex = 3;
-
-    if (JuryIndex > 0)
+    // 배심원 ID 확인 (2001~2003)
+    if (JuryID >= 2001 && JuryID <= 2003)
     {
+        int32 JuryIndex = JuryID - 2000; // 2001 -> 1, 2002 -> 2, 2003 -> 3
         PromptFilePath = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Prompt"), FString::Printf(TEXT("PromptToJury%d.json"), JuryIndex));
         LoadPrompt();
     }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("JuryComponent - 잘못된 NPCID (%d). 배심원 ID는 2001~2003이ㅂ니다."), JuryID);
+    }
 }
+
 
 void UJuryComponent::AskJuryQuestion(const FString& PlayerInput)
 {
@@ -37,11 +37,10 @@ void UJuryComponent::StartConversation(const FString& PlayerInput)
 {
     if (PromptContent.IsEmpty())
     {
-        UE_LOG(LogTemp, Error, TEXT("Prompt file is empty or failed to load for Jury: %s"), *GetOwner()->GetName());
+        UE_LOG(LogTemp, Error, TEXT("Prompt file is empty or failed to load for Jury: %s"), *NPCID);
         return;
     }
 
-    FString NPCID = GetOwner()->GetName();
     UE_LOG(LogTemp, Log, TEXT("Player started conversation with %s: %s"), *NPCID, *PlayerInput);
 
     FOpenAIRequest AIRequest;
@@ -73,11 +72,12 @@ void UJuryComponent::StartConversation(const FString& PlayerInput)
     AIRequest.ListenerID = NPCID;
     AIRequest.ConversationType = EConversationType::P2N;
 
-    RequestOpenAIResponse(AIRequest, [this, PlayerInput, NPCID](FOpenAIResponse AIResponse)
+    RequestOpenAIResponse(AIRequest, [this, PlayerInput](FOpenAIResponse AIResponse)
         {
             ResponseCache.Add(PlayerInput, AIResponse.ResponseText);
-            UE_LOG(LogTemp, Log, TEXT("OpenAI Response: %s"), *AIResponse.ResponseText);
+            UE_LOG(LogTemp, Log, TEXT("OpenAI Response for NPC %s: %s"), *NPCID, *AIResponse.ResponseText);
             SendNPCResponseToServer(AIResponse.ResponseText);
-            SaveP2NDialogue(NPCID, PlayerInput, AIResponse.ResponseText);
+            SaveP2NDialogue(PlayerInput, AIResponse.ResponseText);
         });
 }
+

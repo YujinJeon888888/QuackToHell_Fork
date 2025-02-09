@@ -19,12 +19,12 @@ void UNPCComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Log, TEXT("NPC %s BeginPlay 실행됨."), *GetOwner()->GetName());
+	UE_LOG(LogTemp, Log, TEXT("NPC %s BeginPlay 실행됨."), *NPCID);
 	UE_LOG(LogTemp, Log, TEXT("현재 설정된 PromptFilePath: %s"), *PromptFilePath);
 
 	if (PromptFilePath.IsEmpty())
 	{
-		UE_LOG(LogTemp, Error, TEXT("NPC %s PromptFilePath is not set!"), *GetOwner()->GetName());
+		UE_LOG(LogTemp, Error, TEXT("NPC %s PromptFilePath is not set!"), *NPCID);
 	}
 	else
 	{
@@ -38,16 +38,48 @@ void UNPCComponent::PerformNPCLogic()
 }
 
 // NPC의 프롬프트 파일 로드
-void UNPCComponent::LoadPrompt()
+bool UNPCComponent::LoadPrompt()
 {
-	if (FFileHelper::LoadFileToString(PromptFilePath, *PromptFilePath))
+	FString FileContent;
+
+	if (!FFileHelper::LoadFileToString(FileContent, *PromptFilePath))
 	{
-		UE_LOG(LogTemp, Log, TEXT("Prompt loaded for NPC: %s"), *PromptFilePath);
+		UE_LOG(LogTemp, Error, TEXT("LoadPrompt 실패 - %s"), *PromptFilePath);
+		return false;
+	}
+
+	TSharedPtr<FJsonObject> JsonObject;
+	TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(FileContent);
+
+	if (!FJsonSerializer::Deserialize(Reader, JsonObject) || !JsonObject.IsValid())
+	{
+		UE_LOG(LogTemp, Error, TEXT("JSON 파싱 실패 - %s"), *PromptFilePath);
+		return false;
+	}
+
+	if (!JsonObject->HasField("npcid") || !JsonObject->HasField("name"))
+	{
+		UE_LOG(LogTemp, Error, TEXT("필수 필드 누락 - %s"), *PromptFilePath);
+		return false;
+	}
+
+	// NPCID를 FString으로 저장 (JSON의 int32 값을 변환)
+	int32 TempID = 0;
+	if (JsonObject->TryGetNumberField("npcid", TempID))
+	{
+		NPCID = FString::FromInt(TempID);  // JSON에서 받아온 NPCID를 멤버 변수에 저장
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load prompt file: %s"), *PromptFilePath);
+		UE_LOG(LogTemp, Error, TEXT("npcid 변환 실패!"));
+		return false;
 	}
+
+	// NPC 이름 저장
+	NPCName = JsonObject->GetStringField("name");
+
+	UE_LOG(LogTemp, Log, TEXT("LoadPrompt: NPCID=%s, Name=%s"), *NPCID, *NPCName);
+	return true;
 }
 
 /**
@@ -80,21 +112,12 @@ FOpenAIResponse UNPCComponent::ParseAIResponse(FString ResponseContent)
 // NPC 이름 가져오기
 FString UNPCComponent::GetNPCName() const
 {
-	FString FilePath = PromptFilePath;
-	FString FileContent;
+	return NPCName;
+}
 
-	if (FFileHelper::LoadFileToString(FileContent, *FilePath))
-	{
-		TSharedPtr<FJsonObject> JsonObject;
-		TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(FileContent);
-
-		if (FJsonSerializer::Deserialize(Reader, JsonObject) && JsonObject.IsValid())
-		{
-			return JsonObject->GetStringField("name");
-		}
-	}
-
-	return TEXT("Unknown NPC");
+int32 UNPCComponent::GetNPCID() const
+{
+	return FCString::Atoi(*NPCID);
 }
 
 // 현재 AI에게 요청을 보낼 수 있는지 없는지 판단
@@ -108,11 +131,10 @@ void UNPCComponent::StartConversation(const FString& PlayerInput)
 {
 	if (PromptContent.IsEmpty())
 	{
-		UE_LOG(LogTemp, Error, TEXT("Prompt file is empty or failed to load for NPC: %s"), *GetOwner()->GetName());
+		UE_LOG(LogTemp, Error, TEXT("Prompt file is empty or failed to load for NPC: %s"), *NPCID);
 		return;
 	}
 
-	FString NPCID = GetOwner()->GetName();
 	UE_LOG(LogTemp, Log, TEXT("Player started conversation with %s: %s"), *NPCID, *PlayerInput);
 
 	FOpenAIRequest AIRequest;
@@ -144,14 +166,14 @@ void UNPCComponent::StartConversation(const FString& PlayerInput)
 	AIRequest.ListenerID = NPCID;
 	AIRequest.ConversationType = EConversationType::P2N;
 
-	RequestOpenAIResponse(AIRequest, [this, PlayerInput, NPCID](FOpenAIResponse AIResponse)
+	RequestOpenAIResponse(AIRequest, [this, PlayerInput](FOpenAIResponse AIResponse)
 		{
 			ResponseCache.Add(PlayerInput, AIResponse.ResponseText);
 			UE_LOG(LogTemp, Log, TEXT("OpenAI Response: %s"), *AIResponse.ResponseText);
 			SendNPCResponseToServer(AIResponse.ResponseText);
 
 			// 대화 기록 저장
-			SaveP2NDialogue(NPCID, PlayerInput, AIResponse.ResponseText);
+			SaveP2NDialogue(PlayerInput, AIResponse.ResponseText);
 		});
 }
 
@@ -221,7 +243,6 @@ void UNPCComponent::ContinueNPCToNPCDialog(const FString& SpeakerNPCID, const FS
 // N혼잣말 생성
 void UNPCComponent::PerformNPCMonologue()
 {
-	FString NPCID = GetOwner()->GetName(); // 현재 NPC의 ID
 	FString Context;
 
 	// P2N 대화 기록이 존재하는 경우에만!! 해당 NPC의 대화 기록을 기반으로 혼잣말 생성
@@ -231,7 +252,7 @@ void UNPCComponent::PerformNPCMonologue()
 	}
 	else
 	{
-		Context = TEXT("플레이어와 대화를 나누 적이 없는 NPC입니다.");
+		Context = TEXT("플레이어와 대화를 나눈 적이 없는 NPC입니다.");
 	}
 
 	FOpenAIRequest AIRequest;
@@ -243,7 +264,7 @@ void UNPCComponent::PerformNPCMonologue()
 
 	RequestOpenAIResponse(AIRequest, [this](FOpenAIResponse AIResponse)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Generated Monologue: %s"), *AIResponse.ResponseText);
+			UE_LOG(LogTemp, Log, TEXT("Generated Monologue for NPC %s: %s"), *NPCID, *AIResponse.ResponseText);
 		});
 }
 
@@ -319,7 +340,7 @@ void UNPCComponent::RequestAIResponse(const FString& PlayerInput)
 		});
 }
 
-void UNPCComponent::SaveP2NDialogue(const FString& NPCID, const FString& PlayerInput, const FString& NPCResponse)
+void UNPCComponent::SaveP2NDialogue(const FString& PlayerInput, const FString& NPCResponse)
 {
 	if (!P2NDialogueHistory.Contains(NPCID))
 	{
@@ -340,13 +361,14 @@ void UNPCComponent::SaveP2NDialogue(const FString& NPCID, const FString& PlayerI
 
 
 // GetP2NDialogueHistory("NPCID")를 호출하면 대화 기록을 가져올 수 있음
-TArray<FString> UNPCComponent::GetP2NDialogueHistory(const FString& NPCID)
+TArray<FString> UNPCComponent::GetP2NDialogueHistory() const
 {
 	if (P2NDialogueHistory.Contains(NPCID))
 	{
 		return P2NDialogueHistory[NPCID].DialogueLines;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("GetP2NDialogueHistory: No conversation history found for NPC %s"), *NPCID);
 	return TArray<FString>(); // 기록이 없으면 빈 배열 반환
 }
 
@@ -374,11 +396,11 @@ void UNPCComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 // -------------------------------------------------------------------------------------- //
 
-void UNPCComponent::ServerRPCGetGreeting_Implementation(const FString& NPCID)
+void UNPCComponent::ServerRPCGetGreeting_Implementation(const FString& NewNPCID)
 {
 }
 
-void UNPCComponent::ServerRPCGetNPCResponseP2N_Implementation(const FString& NPCID, const FString& PlayerInput)
+void UNPCComponent::ServerRPCGetNPCResponseP2N_Implementation(const FString& NewNPCID, const FString& PlayerInput)
 {
 }
 
@@ -391,7 +413,7 @@ void UNPCComponent::ServerRPCGetNPCResponseN2N_Implementation(const FString& Spe
 {
 }
 
-void UNPCComponent::ServerRPCGetNPCMonologue_Implementation(const FString& NPCID)
+void UNPCComponent::ServerRPCGetNPCMonologue_Implementation(const FString& NewNPCID)
 {
 }
 

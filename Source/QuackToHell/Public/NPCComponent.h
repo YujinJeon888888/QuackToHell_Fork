@@ -136,9 +136,12 @@ protected:
 	 */
 	virtual void BeginPlay() override;
 
-	void LoadPrompt();
+	bool LoadPrompt();
+
 	virtual void PerformNPCLogic();
 
+	FString NPCName;
+	FString NPCID;
 	FString NPCPersonality;
 	TMap<FString, FString> ResponseCache;
 
@@ -208,7 +211,7 @@ public:
 	 * \return 
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")
-	TArray<FString> GetP2NDialogueHistory(const FString& NPCID);
+	TArray<FString> GetP2NDialogueHistory() const;
 
 protected:
 	/**
@@ -267,6 +270,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "NPC")
 	FString GetNPCName() const;
 
+	/**
+	 * @author 박시언
+	 * @brief NPC의 ID를 int32로 변환하여 반환
+	 */
+	UFUNCTION(BlueprintCallable, Category = "NPC")
+	int32 GetNPCID() const;
+
 private:
 	/**
 	 * @author 박시언
@@ -320,7 +330,7 @@ public:
 	 * @brief NPC 별로 P2N 대화 기록을 저장합니다.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Dialogue")
-	void SaveP2NDialogue(const FString& NPCID, const FString& PlayerInput, const FString& NPCResponse);
+	void SaveP2NDialogue(const FString& PlayerInput, const FString& NPCResponse);
 
 	/**
 	 * @author 박시언
@@ -345,11 +355,11 @@ protected:
 	// Server RPC 함수
 	/** @brief 서버에게 NPC의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
 	UFUNCTION(Server, Reliable)
-	void ServerRPCGetGreeting(const FString& NPCID);
+	void ServerRPCGetGreeting(const FString& NewNPCID);
 
 	/** @brief 서버에게 플레이어 입력에 대한 NPC의 응답을 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
 	UFUNCTION(Server, Reliable)
-	void ServerRPCGetNPCResponseP2N(const FString& NPCID, const FString& PlayerInput);
+	void ServerRPCGetNPCResponseP2N(const FString& NewNPCID, const FString& PlayerInput);
 
 	/** @brief 서버에게 N2N 대화의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
 	UFUNCTION(Server, Reliable)
@@ -361,7 +371,7 @@ protected:
 
 	/** @brief 서버에게 NPC 혼잣말을 생성하도록 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
 	UFUNCTION(Server, Reliable)
-	void ServerRPCGetNPCMonologue(const FString& NPCID);
+	void ServerRPCGetNPCMonologue(const FString& NewNPCID);
 
 public:
 	// 공용 인터페이스

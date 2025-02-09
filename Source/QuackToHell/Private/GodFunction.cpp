@@ -188,11 +188,12 @@ void UGodFunction::CallOpenAIAsync(const FString& Prompt, TFunction<void(FString
                 {
                     Callback(CleanedJson);
                 }
-                else if (RetryCount < 2)  // 최대 3번까지 재시도
+                // 최대 3번까지 재시도
+                else if (RetryCount < 2)
                 {
                     UE_LOG(LogTemp, Warning, TEXT("OpenAI 응답이 비어 있음. %d번째 재시도 중..."), RetryCount + 1);
                     FPlatformProcess::Sleep(1.0f);
-                    UGodFunction::CallOpenAIAsync(Prompt, Callback, RetryCount + 1); // 자동 재시도
+                    UGodFunction::CallOpenAIAsync(Prompt, Callback, RetryCount + 1);
                 }
                 else
                 {
@@ -200,11 +201,12 @@ void UGodFunction::CallOpenAIAsync(const FString& Prompt, TFunction<void(FString
                     Callback(TEXT(""));
                 }
             }
-            else if (RetryCount < 2)  // 실패 시 최대 3번 재시도
+            // 실패 시 최대 3번 재시도
+            else if (RetryCount < 2)
             {
                 UE_LOG(LogTemp, Warning, TEXT("OpenAI 요청 실패. %d번째 재시도 중..."), RetryCount + 1);
                 FPlatformProcess::Sleep(1.0f);
-                UGodFunction::CallOpenAIAsync(Prompt, Callback, RetryCount + 1); // 자동 재시도..
+                UGodFunction::CallOpenAIAsync(Prompt, Callback, RetryCount + 1);
             }
             else
             {
@@ -234,10 +236,10 @@ void UGodFunction::DeleteOldPromptFiles()
 
     for (const FString& File : Files)
     {
-        if (File.Contains("PromptToGod") || File.Contains("PromptToNPC"))
+        if (File.Contains("PromptToGod"))
         {
             UE_LOG(LogTemp, Log, TEXT("Skipping essential file: %s"), *File);
-            continue; // PromptToGod.json & PromptToNPC.json은 삭제하지 X
+            continue;
         }
 
         FString FilePath = PromptFolder + File;
@@ -263,7 +265,8 @@ void UGodFunction::GeneratePromptWithDelay(UWorld* World, const FString& FileNam
 
             CallOpenAIAsync(Prompt, [=](FString AIResponse)
                 {
-                    if (!AIResponse.IsEmpty()) // 응답이 있을 경우에만 파일 저장
+                    // 응답이 있을 경우에만 파일 저장
+                    if (!AIResponse.IsEmpty())
                     {
                         if (UGodFunction::SavePromptToFile(FileName, AIResponse))
                         {
@@ -301,7 +304,7 @@ void UGodFunction::GenerateDefendantPrompt(UWorld* World, TFunction<void()> Call
         TEXT("{ \"task\": \"피고인 정보를 생성하세요.\", "
             "\"instructions\": ["
             "\"PromptToGod.json을 바탕으로 피고인(NPC)의 정보를 생성하세요.\", "
-            "\"npcid 값을 'defendant'로 설정하세요.\"], "
+            "\"npcid 값을 '2000'으로 설정하세요.\"], "
             "\"references\": { \"PromptToGod\": \"%s\" } }"),
         *EscapeJSON(PromptToGod.Mid(0, 2000))
     );
@@ -375,7 +378,7 @@ void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
         TEXT("{ \"task\": \"배심원 정보를 생성하세요.\", "
             "\"instructions\": ["
             "\"PromptToGod.json과 PromptToDefendant.json을 참고하여 배심원(NPC) 한 명의 정보를 생성하세요.\", "
-            "\"npcid 값을 'jury%03d'로 설정하세요.\"], "
+            "\"npcid 값을 2001부터 순차적으로 증가하는 정수로 설정하세요.\"], "
             "\"references\": { \"PromptToGod\": \"%s\", \"PromptToDefendant\": \"%s\" } }"),
         JuryIndex, *EscapeJSON(PromptToGod.Mid(0, 2000)), *EscapeJSON(PromptToDefendant.Mid(0, 2000))
     );
@@ -420,7 +423,7 @@ void UGodFunction::GenerateResidentNPC(UWorld* World, int ResidentIndex)
         TEXT("{ \"task\": \"마을 주민 정보를 생성하세요.\", "
             "\"instructions\": ["
             "\"PromptToGod.json과 PromptToDefendant.json을 참고하여 한 명의 마을 주민(NPC) 정보를 생성하세요.\", "
-            "\"npcid 값을 'resident%03d'로 설정하세요.\"], "
+            "\"npcid 값을 2004부터 순차적으로 증가하는 정수로 설정하세요.\"], "
             "\"references\": { \"PromptToGod\": \"%s\", \"PromptToDefendant\": \"%s\" } }"),
         ResidentIndex, *EscapeJSON(PromptToGod.Mid(0, 2000)), *EscapeJSON(PromptToDefendant.Mid(0, 2000))
     );
