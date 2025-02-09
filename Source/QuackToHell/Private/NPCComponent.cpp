@@ -6,11 +6,36 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Templates/Function.h"
+#include "GameFramework/PlayerState.h"
+#include "GameFramework/PlayerController.h"
 
 // Sets default values for this component's properties
 UNPCComponent::UNPCComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+}
+
+FString UNPCComponent::GetPlayerIDAsString() const
+{
+	APlayerController* PC = GetWorld()->GetFirstPlayerController();
+	if (!PC)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GetPlayerIDAsString - PlayerController is nullptr!"));
+		return TEXT("UnknownPlayer");
+	}
+
+	APlayerState* PS = PC->GetPlayerState<APlayerState>();
+	if (!PS)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GetPlayerIDAsString - PlayerState is nullptr!"));
+		return TEXT("UnknownPlayer");
+	}
+
+	int32 PlayerID = PS->GetPlayerId();
+	FString PlayerIDString = FString::FromInt(PlayerID);
+
+	UE_LOG(LogTemp, Log, TEXT("GetPlayerIDAsString - PlayerID: %s"), *PlayerIDString);
+	return PlayerIDString;
 }
 
 // Called when the game starts
@@ -171,8 +196,8 @@ void UNPCComponent::StartConversation(const FString& PlayerInput)
 	}
 
 	AIRequest.MaxTokens = 150;
-	AIRequest.SpeakerID = "Player";
-	AIRequest.ListenerID = NPCID;
+	AIRequest.SpeakerID = FCString::Atoi(*GetPlayerIDAsString());
+	AIRequest.ListenerID = GetNPCID();
 	AIRequest.ConversationType = EConversationType::P2N;
 
 	RequestOpenAIResponse(AIRequest, [this, PlayerInput](FOpenAIResponse AIResponse)
@@ -189,6 +214,7 @@ void UNPCComponent::StartConversation(const FString& PlayerInput)
 // N2N 대화 시작
 void UNPCComponent::StartNPCToNPCDialog(const FString& SpeakerNPCID, const FString& ListenerNPCID)
 {
+
 	UE_LOG(LogTemp, Log, TEXT("Starting dialog between %s and %s"), *SpeakerNPCID, *ListenerNPCID);
 
 	// 해당 NPC가 플레이어와 나눈 대화 기록을 가져오기
@@ -210,16 +236,23 @@ void UNPCComponent::StartNPCToNPCDialog(const FString& SpeakerNPCID, const FStri
 	}
 
 	FOpenAIRequest AIRequest;
-	AIRequest.Prompt = FString::Printf(TEXT("NPC '%s'가 NPC '%s'와의 대화를 시작합니다. (플레이어와 나눈 대화: %s) 내용을 언급하며 대화를 시작하세요."), *SpeakerNPCID, *ListenerNPCID, *PlayerDialogueSummary);
+	AIRequest.Prompt = FString::Printf(
+		TEXT("NPC '%s'가 NPC '%s'와의 대화를 시작합니다. "
+			"최근 플레이어와 나눈 대화 기록: %s "
+			"위 내용을 참고하여 상대 NPC와의 대화를 시작하기 위한 말을 꺼내세요."),
+		*SpeakerNPCID, *ListenerNPCID, *PlayerDialogueSummary);
+
 	AIRequest.MaxTokens = 150;
-	AIRequest.SpeakerID = SpeakerNPCID;
-	AIRequest.ListenerID = ListenerNPCID;
+	AIRequest.SpeakerID = FCString::Atoi(*SpeakerNPCID);
+	AIRequest.ListenerID = FCString::Atoi(*ListenerNPCID);
 	AIRequest.ConversationType = EConversationType::N2N;
 
 	RequestOpenAIResponse(AIRequest, [this, SpeakerNPCID, ListenerNPCID](FOpenAIResponse AIResponse)
 		{
 			ContinueNPCToNPCDialog(ListenerNPCID, SpeakerNPCID, AIResponse.ResponseText, 4);
 		});
+
+	UE_LOG(LogTemp, Log, TEXT("NPC-to-NPC 대화 요청 전송 완료"));
 }
 
 // N2N 대화 이어나감
@@ -238,8 +271,8 @@ void UNPCComponent::ContinueNPCToNPCDialog(const FString& SpeakerNPCID, const FS
 		*SpeakerNPCID, *ListenerNPCID, *SpeakerNPCID, *ReceivedMessage);
 
 	AIRequest.MaxTokens = 150;
-	AIRequest.SpeakerID = SpeakerNPCID;
-	AIRequest.ListenerID = ListenerNPCID;
+	AIRequest.SpeakerID = FCString::Atoi(*SpeakerNPCID);
+	AIRequest.ListenerID = FCString::Atoi(*ListenerNPCID);
 	AIRequest.ConversationType = EConversationType::N2N;
 
 	// OpenAI API 호출 후, 대화 이어나가기 (남은 턴 수가 감소함요)
@@ -257,7 +290,17 @@ void UNPCComponent::PerformNPCMonologue()
 	// P2N 대화 기록이 존재하는 경우에만!! 해당 NPC의 대화 기록을 기반으로 혼잣말 생성
 	if (P2NDialogueHistory.Contains(NPCID) && P2NDialogueHistory[NPCID].DialogueLines.Num() > 0)
 	{
-		Context = FString::Join(P2NDialogueHistory[NPCID].DialogueLines, TEXT("\n"));
+		TArray<FString>& DialogueLines = P2NDialogueHistory[NPCID].DialogueLines;
+		int32 NumLines = DialogueLines.Num();
+
+		FString RecentLines;
+		int32 StartIndex = FMath::Max(0, NumLines - 3);
+		for (int32 i = StartIndex; i < NumLines; i++)
+		{
+			RecentLines += DialogueLines[i] + TEXT(" ");
+		}
+
+		Context = RecentLines.TrimEnd();
 	}
 	else
 	{
@@ -265,10 +308,15 @@ void UNPCComponent::PerformNPCMonologue()
 	}
 
 	FOpenAIRequest AIRequest;
-	AIRequest.Prompt = TEXT("플레이어와의 최근 대화 기록을 바탕으로 NPC의 혼잣말을 생성합니다.");
+	AIRequest.Prompt = FString::Printf(TEXT(
+		"NPC '%s'가 혼잣말을 합니다. "
+		"최근 대화 기록: %s "
+		"이 대화를 바탕으로 자연스럽고 감정적인 독백을 생성하세요."),
+		*NPCID, *Context);
+
 	AIRequest.MaxTokens = 100;
-	AIRequest.SpeakerID = NPCID;
-	AIRequest.ListenerID = TEXT("Self");
+	AIRequest.SpeakerID = FCString::Atoi(*NPCID);
+	AIRequest.ListenerID = 0;
 	AIRequest.ConversationType = EConversationType::NMonologue;
 
 	RequestOpenAIResponse(AIRequest, [this](FOpenAIResponse AIResponse)
@@ -417,8 +465,7 @@ void UNPCComponent::ServerRPCGetGreetingN2N_Implementation(const FString& Speake
 {
 }
 
-void UNPCComponent::ServerRPCGetNPCResponseN2N_Implementation(const FString& SpeakerNPCID, const FString& ListenerNPCID,
-	const FString& NPCInput)
+void UNPCComponent::ServerRPCGetNPCResponseN2N_Implementation(const FString& SpeakerNPCID, const FString& ListenerNPCID, const FString& NPCInput)
 {
 }
 

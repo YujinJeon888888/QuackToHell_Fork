@@ -23,8 +23,8 @@ struct FOpenAIRequest
 
 	FString Prompt;
 	int32 MaxTokens = 150;
-	FString SpeakerID; 
-	FString ListenerID;
+	int32 SpeakerID; 
+	int32 ListenerID;
 	EConversationType ConversationType;
 
 	// ToJson()은 public임
@@ -33,8 +33,8 @@ struct FOpenAIRequest
 		TSharedPtr<FJsonObject> JsonObject = MakeShareable(new FJsonObject);
 		JsonObject->SetStringField("prompt", Prompt);
 		JsonObject->SetNumberField("max_tokens", MaxTokens);
-		JsonObject->SetStringField("speaker_id", SpeakerID);
-		JsonObject->SetStringField("listener_id", ListenerID);
+		JsonObject->SetNumberField("speaker_id", SpeakerID);
+		JsonObject->SetNumberField("listener_id", ListenerID);
 		JsonObject->SetStringField("conversation_type", ConversationTypeToString(ConversationType));
 
 		FString OutputString;
@@ -68,6 +68,9 @@ struct FOpenAIResponse
 	GENERATED_BODY()
 
 	FString ResponseText;
+	int32 SpeakerID;
+	int32 ListenerID;
+	EConversationType ConversationType;
 
 	static FOpenAIResponse FromJson(const FString& JsonContent)
 	{
@@ -82,6 +85,17 @@ struct FOpenAIResponse
 			{
 				Response.ResponseText = (*ChoicesArray)[0]->AsString();
 			}
+
+			// SpeakerID, ListenerID, ConversationType 값
+            Response.SpeakerID = JsonObject->GetIntegerField("speaker_id");
+            Response.ListenerID = JsonObject->GetIntegerField("listener_id");
+
+            FString ConversationTypeString = JsonObject->GetStringField("conversation_type");
+
+            if (ConversationTypeString == "P2N") Response.ConversationType = EConversationType::P2N;
+            else if (ConversationTypeString == "N2N") Response.ConversationType = EConversationType::N2N;
+            else if (ConversationTypeString == "NMonologue") Response.ConversationType = EConversationType::NMonologue;
+            else Response.ConversationType = EConversationType::P2N; 
 		}
 
 		if (Response.ResponseText.IsEmpty())
@@ -130,6 +144,7 @@ protected:
 
 	virtual void PerformNPCLogic();
 
+	FString GetPlayerIDAsString() const;
 	FString NPCName;
 	FString NPCID;
 	FString NPCPersonality;

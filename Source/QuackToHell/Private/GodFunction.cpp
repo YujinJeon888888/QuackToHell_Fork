@@ -358,18 +358,21 @@ void UGodFunction::GenerateNPCPrompts(UWorld* World)
 // 배심원 NPC 생성 (순차적으로 진행)
 void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
 {
+    UE_LOG(LogTemp, Log, TEXT("GenerateJuryNPC 실행됨 - JuryIndex: %d"), JuryIndex);
+
+    if (!World)
+    {
+        UE_LOG(LogTemp, Error, TEXT("GenerateJuryNPC - World is nullptr! JuryIndex: %d"), JuryIndex);
+        return;
+    }
+
     if (UGodCall::bShouldStopPromptGeneration)
     {
         UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 배심원(NPC) %d 생성 취소!"), JuryIndex);
         return;
     }
 
-    if (JuryIndex > 3)
-    {
-        UE_LOG(LogTemp, Log, TEXT("모든 배심원 생성 완료! 이제 주민 생성 시작."));
-        GenerateResidentNPC(World, 1);
-        return;
-    }
+    UE_LOG(LogTemp, Log, TEXT("GenerateJuryNPC - World 유효. NPC 생성 준비 중."));
 
     FString PromptToGod = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToGod.json"));
     FString PromptToDefendant = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json"));
@@ -384,20 +387,47 @@ void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
     );
 
     FString JuryFileName = FString::Printf(TEXT("PromptToJury%d.json"), JuryIndex);
-    UE_LOG(LogTemp, Log, TEXT("Generating Jury NPC %d"), JuryIndex);
+    UE_LOG(LogTemp, Log, TEXT("Jury JSON 파일명: %s"), *JuryFileName);
 
     CallOpenAIAsync(JuryPrompt, [World, JuryIndex, JuryFileName](FString JuryJson)
-        {
-            if (UGodCall::bShouldStopPromptGeneration)
-            {
-                UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 배심원 데이터 저장 취소!"));
-                return;
-            }
+    {
+        UE_LOG(LogTemp, Log, TEXT("OpenAI 응답 도착 - JuryIndex: %d"), JuryIndex);
 
-            FString CleanJuryJson = UGodFunction::CleanUpJson(JuryJson);
-            UGodFunction::SavePromptToFile(JuryFileName, CleanJuryJson);
-            GenerateJuryNPC(World, JuryIndex + 1);
-        });
+        if (!World)
+        {
+            UE_LOG(LogTemp, Error, TEXT("GenerateJuryNPC Callback - World is nullptr! JuryIndex: %d"), JuryIndex);
+            return;
+        }
+
+        if (UGodCall::bShouldStopPromptGeneration)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 배심원 데이터 저장 취소!"));
+            return;
+        }
+
+        FString CleanJuryJson = UGodFunction::CleanUpJson(JuryJson);
+        if (CleanJuryJson.IsEmpty())
+        {
+            UE_LOG(LogTemp, Error, TEXT("GenerateJuryNPC Callback - Received empty JSON response! JuryIndex: %d"), JuryIndex);
+            return;
+        }
+
+        UE_LOG(LogTemp, Log, TEXT("Jury JSON 데이터 저장 시도 - 파일명: %s"), *JuryFileName);
+
+        bool bSaved = UGodFunction::SavePromptToFile(JuryFileName, CleanJuryJson);
+        if (!bSaved)
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to save JuryPrompt file: %s"), *JuryFileName);
+            return;
+        }
+
+        UE_LOG(LogTemp, Log, TEXT("Successfully saved JuryPrompt file: %s"), *JuryFileName);
+
+        UE_LOG(LogTemp, Log, TEXT("다음 Jury NPC 생성 - JuryIndex: %d"), JuryIndex + 1);
+        GenerateJuryNPC(World, JuryIndex + 1);
+    });
+
+    UE_LOG(LogTemp, Log, TEXT("GenerateJuryNPC 종료 - JuryIndex: %d"), JuryIndex);
 }
 
 

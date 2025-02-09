@@ -5,6 +5,8 @@
 #include "Misc/Paths.h"
 #include "HAL/PlatformFilemanager.h"
 #include "JsonObjectConverter.h"
+#include "GameFramework/PlayerState.h"
+#include "GameFramework/PlayerController.h"
 
 void UResidentComponent::BeginPlay()
 {
@@ -48,6 +50,13 @@ void UResidentComponent::StartConversation(const FString& PlayerInput)
 
     UE_LOG(LogTemp, Log, TEXT("Player started conversation with %s: %s"), *NPCID, *PlayerInput);
 
+    int32 PlayerID = -1;
+    APlayerState* PS = GetOwner() ? Cast<APlayerState>(GetOwner()->GetInstigator()->GetPlayerState()) : nullptr;
+    if (PS)
+    {
+        PlayerID = PS->GetPlayerId();
+    }
+
     FOpenAIRequest AIRequest;
 
     // 첫 대화인지 확인
@@ -73,8 +82,8 @@ void UResidentComponent::StartConversation(const FString& PlayerInput)
     }
 
     AIRequest.MaxTokens = 150;
-    AIRequest.SpeakerID = "Player";
-    AIRequest.ListenerID = NPCID;
+    AIRequest.SpeakerID = PlayerID;
+    AIRequest.ListenerID = FCString::Atoi(*NPCID);
     AIRequest.ConversationType = EConversationType::P2N;
 
     RequestOpenAIResponse(AIRequest, [this, PlayerInput](FOpenAIResponse AIResponse)

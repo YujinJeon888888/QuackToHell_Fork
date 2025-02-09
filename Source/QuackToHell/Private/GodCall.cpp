@@ -80,6 +80,8 @@ void UGodCall::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 bool UGodCall::StartGodProcess()
 {
+    UE_LOG(LogTemp, Log, TEXT("StartGodProcess 실행됨."));
+
     if (bIsPromptGenerating)
     {
         UE_LOG(LogTemp, Warning, TEXT("StartGodProcess()가 이미 실행 중이므로 중단!"));
@@ -88,15 +90,15 @@ bool UGodCall::StartGodProcess()
 
     bIsPromptGenerating = true;
 
-    UE_LOG(LogTemp, Log, TEXT("StartGodProcess() 실행됨. 피고인(Defendant) 프롬프트 생성 중..."));
-
     UWorld* World = GetOwner() ? GetOwner()->GetWorld() : nullptr;
     if (!World)
     {
-        UE_LOG(LogTemp, Error, TEXT("StartGodProcess() 실패! World를 가져올 수 없습니다"));
+        UE_LOG(LogTemp, Error, TEXT("StartGodProcess() 실패! World를 가져올 수 없습니다."));
         bIsPromptGenerating = false;
         return false;
     }
+
+    UE_LOG(LogTemp, Log, TEXT("StartGodProcess - World 정상 인식."));
 
     FString DefendantFilePath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json");
 
@@ -108,18 +110,23 @@ bool UGodCall::StartGodProcess()
         return true;
     }
 
-    UE_LOG(LogTemp, Log, TEXT("피고인 데이터 생성 시작!"));
+    UE_LOG(LogTemp, Log, TEXT("피고인 데이터 생성 시작."));
 
-    // 피고인 데이터 생성 여부 확인 후 배심원 생성
     UGodFunction::GenerateDefendantPrompt(World, [World]()
         {
+            if (!World)
+            {
+                UE_LOG(LogTemp, Error, TEXT("StartGodProcess Callback - World is nullptr!"));
+                return;
+            }
+
             UE_LOG(LogTemp, Log, TEXT("PromptToDefendant.json 생성 완료! 배심원 생성 시작."));
             bIsPromptGenerating = false;
 
-            // 피고인 프롬프트가 정상적으로 생성된 경우에만 배심원 생성 시작
             FString DefendantFilePath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json");
             if (FPaths::FileExists(DefendantFilePath))
             {
+                UE_LOG(LogTemp, Log, TEXT("피고인 프롬프트 파일 확인됨. 배심원 생성 시작."));
                 UGodFunction::GenerateJuryNPC(World, 1);
             }
             else
