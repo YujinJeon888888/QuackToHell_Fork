@@ -13,7 +13,11 @@ enum class EVillageUIType :uint8 {
 	DefaultVillageUI,
 	Map,
 	Player2NSpeechBubble,
-	SpeechBubble
+	SpeechBubble,
+	Inventory, 
+	Record,
+	ChatBox
+
 
 
 };
