@@ -12,12 +12,10 @@ class QUACKTOHELL_API UDefendantComponent : public UNPCComponent
     GENERATED_BODY()
 
 public:
-    // Override PerformNPCLogic to implement Defendant-specific behavior
-    virtual void PerformNPCLogic() override;
+    virtual void BeginPlay() override;
 
     /**
-     * @brief 피고인이 플레이어의 질문에 대답하도록 NPCComponent에게 요청하는 함수
-     * @param PlayerInput 플레이어의 입력 (질문)
+     * @brief 피고인의 데이터를 로드하고 논리를 수행하는 함수
      */
-    void AskDefendantQuestion(const FString& PlayerInput);
+    virtual void PerformNPCLogic() override;
 };
