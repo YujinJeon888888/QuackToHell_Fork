@@ -10,6 +10,11 @@ UENUM()
 /** @brief 마을 내 존재해야하는 UI목록들 */
 enum class EVillageUIType :uint8 {
 	P2N= 0,
+	DefaultVillageUI,
+	Map,
+	Player2NSpeechBubble,
+	SpeechBubble
+
 
 };
 UCLASS()
@@ -62,8 +67,7 @@ private:
 	 * 
 	 */
 	AQVillageUIManager();
-	/** @brief 마을 맵 언로드될 때 UI들 파괴 */
-	void DestroyAllUI();
+
 	/**
 	 * @brief 마을 내 존재해야하는 위젯클래스들: UI타입과 위젯클래스 매핑.
 	 * UIWidgetClasses에 따라서 UI를 생성한다: 해당 UI를 키라는 입력이 들어올 때
