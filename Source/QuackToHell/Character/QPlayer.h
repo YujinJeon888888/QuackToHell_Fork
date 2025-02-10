@@ -24,7 +24,7 @@ public:
 	 */
 	TObjectPtr<class UQPlayer2NSpeechBubbleWidget> GetPlayer2NSpeechBubbleWidget() const;
 public:
-	AQPlayer();
+	AQPlayer(const FObjectInitializer& ObjectInitializer);
 	/**
 	 * @brief 캐릭터 기준으로 가장 가까이 있는 npc를 반환합니다.
 	 * 

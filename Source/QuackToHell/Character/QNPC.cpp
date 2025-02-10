@@ -12,7 +12,8 @@
 #include "Net/UnrealNetwork.h"
 #include "UI/QNameWidget.h"
 
-AQNPC::AQNPC()
+AQNPC::AQNPC(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer)
 {	/*위치값 세팅*/
 	this->GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -50.f));
 	this->GetMesh()->SetRelativeRotation(FRotator(0.f, 0.f, -90.f));
@@ -138,7 +139,9 @@ void AQNPC::BeginPlay()
 {
 	Super::BeginPlay();
 	/*이름 세팅*/
-	FString _Name = NPCComponent->GetNPCName();
+	FString _Name = (NPCComponent && !NPCComponent->GetNPCName().IsEmpty())
+		? NPCComponent->GetNPCName()
+		: TEXT("이름비었음");	
 	this->SetCharacterName(_Name);
 	Super::GetNameWidget()->SetNameWidgetText(GetCharacterName());
 	/*말풍선 위젯 변수에 객체값 할당*/

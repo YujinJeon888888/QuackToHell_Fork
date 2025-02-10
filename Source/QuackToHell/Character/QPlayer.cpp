@@ -25,8 +25,8 @@ TObjectPtr<class UQPlayer2NSpeechBubbleWidget> AQPlayer::GetPlayer2NSpeechBubble
 	return Player2NSpeechBubbleWidget;
 }
 
-AQPlayer::AQPlayer()
-	:Super()
+AQPlayer::AQPlayer(const FObjectInitializer& ObjectInitializer)
+	:Super(ObjectInitializer)
 {
 	
 	/*캡슐 콜라이더 산하 컴포넌트*/

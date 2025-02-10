@@ -14,5 +14,8 @@ UCLASS()
 class QUACKTOHELL_API AQJuryNPC : public AQDynamicNPC
 {
 	GENERATED_BODY()
-	
+public:
+	AQJuryNPC(const FObjectInitializer& ObjectInitializer);
+protected:
+	virtual void BeginPlay() override;
 };
