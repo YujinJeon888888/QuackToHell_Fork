@@ -133,7 +133,7 @@ bool AQVillageUIManager::IsVillageMap()
 	 * 
 	 * 
 	 */
-	if (CurrentMap == "ClinetTestMap") {
+	if (CurrentMap == "VillageMap") {
 		return true;
 	}
 	return false;

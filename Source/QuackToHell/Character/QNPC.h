@@ -17,7 +17,7 @@ class QUACKTOHELL_API AQNPC : public AQCharacter
 	GENERATED_BODY()
 
 public:
-	AQNPC();
+	AQNPC(const FObjectInitializer& ObjectInitializer);
 public:
 	/**
 	 * @brief 스피치버블 위젯을 리턴합니다. NPCController에서 접근하기 위함입니다.

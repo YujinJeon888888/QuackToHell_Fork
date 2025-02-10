@@ -14,7 +14,8 @@ UCLASS()
 class QUACKTOHELL_API AQDefendantNPC : public AQNPC
 {
 	GENERATED_BODY()
-
+public:
+	AQDefendantNPC(const FObjectInitializer& ObjectInitializer);
 protected:
 	/**
 	 * @brief 모든 컴포넌트 초기화 후 호출 보장.

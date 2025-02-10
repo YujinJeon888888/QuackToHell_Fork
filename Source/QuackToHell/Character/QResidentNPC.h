@@ -14,5 +14,8 @@ UCLASS()
 class QUACKTOHELL_API AQResidentNPC : public AQDynamicNPC
 {
 	GENERATED_BODY()
-	
+public:
+	AQResidentNPC(const FObjectInitializer& ObjectInitializer);
+protected:
+	virtual void BeginPlay() override;
 };

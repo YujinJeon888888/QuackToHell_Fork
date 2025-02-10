@@ -13,7 +13,7 @@ class QUACKTOHELL_API AQCharacter : public ACharacter
 
 public:
 	// Sets default values for this character's properties
-	AQCharacter();
+	AQCharacter(const FObjectInitializer& ObjectInitializer);
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

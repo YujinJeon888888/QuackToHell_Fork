@@ -6,9 +6,17 @@
 #include "Math/Color.h"
 #include "Character/QPlayer.h"
 #include "UI/QSpeechBubbleWidget.h"
+#include "NPCComponent.h"
+#include "DefendantComponent.h"
 
 
 
+AQDefendantNPC::AQDefendantNPC(const FObjectInitializer& ObjectInitializer)
+	: Super(
+		ObjectInitializer.SetDefaultSubobjectClass<UDefendantComponent>(TEXT("NPCComponent"))
+	)
+{
+}
 
 void AQDefendantNPC::BeginPlay()
 {
