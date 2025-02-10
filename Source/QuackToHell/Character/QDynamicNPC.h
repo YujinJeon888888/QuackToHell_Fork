@@ -16,7 +16,24 @@ class QUACKTOHELL_API AQDynamicNPC : public AQNPC
 	GENERATED_BODY()
 public:
 	AQDynamicNPC(const FObjectInitializer& ObjectInitializer);
+
+public:
+	/**
+	 * @brief Player2N 스피치버블 위젯을 리턴합니다. NPCController에서 접근하기 위함입니다.
+	 *
+	 * @return Player2Nspeechbubblewidget
+	 */
+	TObjectPtr<class UQPlayer2NSpeechBubbleWidget> GetPlayer2NSpeechBubbleWidget() const;
+public:
+	/**
+	 * @brief 캐릭터 기준으로 가장 가까이 있는 npc를 반환합니다.
+	 *
+	 * @return 캐릭터 기준 가장 가까이 있는 npc
+	 */
+	TObjectPtr<AActor> GetClosestNPC();
 protected:
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	virtual void BeginPlay() override;
 protected:
 	/**
@@ -24,10 +41,24 @@ protected:
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UWidgetComponent> EKeyWidgetComponent;
+	/**
+	 * @brief Player2NSpeechBubble UI 컴포넌트입니다.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UWidgetComponent>  Player2NSpeechBubbleWidgetComponent;
 private:
 	/** @brief EKey위젯 클래스 정보를 담습니다. */
 	UPROPERTY()
 	TObjectPtr<class UQEKeyWidget> EKeyWidget;
+
+	/** @brief 허공말풍선 위젯 클래스 정보를 담습니다. */
+	UPROPERTY()
+	TObjectPtr<class UQPlayer2NSpeechBubbleWidget> Player2NSpeechBubbleWidget;
+private:
+
+	/** @brief overlap에 들어온 대상을 담습니다. */
+	TArray<TObjectPtr<AActor>> OverlappingNPCs;
+private:
 	/**
 	 * @brief EKey위젯 UI를 켭니다.
 	 */
@@ -36,6 +67,7 @@ private:
 	 * @brief EKey위젯 UI를 끕니다.
 	 */
 	void TurnOffEKeyUI();
+
 
 };
 

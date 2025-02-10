@@ -33,7 +33,7 @@ public:
 	 * 
 	 * @param NPC
 	 */
-	void SetConversingNPC(const TObjectPtr<class AQNPCController> NPC);
+	void SetConversingNPC(const TObjectPtr<class AQDynamicNPCController> NPC);
 	/**
 	 * @brief 대화중인 player정보를 세팅합니다..
 	 *
@@ -67,7 +67,7 @@ private:
 	TObjectPtr<class UEditableTextBox> inputBox;
 	/** @brief 대화중인 npc정보 */
 	UPROPERTY()
-	TObjectPtr<class AQNPCController> ConversingNPC;
+	TObjectPtr<class AQDynamicNPCController> ConversingNPC;
 	/** @brief 대화중인 플레이어정보 */
 	UPROPERTY()
 	TObjectPtr<class AQPlayerController> ConversingPlayer;

@@ -25,20 +25,7 @@ public:
 	 * @return speechbubblewidget
 	 */
 	TObjectPtr<class UQSpeechBubbleWidget> GetSpeechBubbleWidget() const;
-public:
-	/**
-	 * @brief Player2N 스피치버블 위젯을 리턴합니다. NPCController에서 접근하기 위함입니다.
-	 *
-	 * @return Player2Nspeechbubblewidget
-	 */
-	TObjectPtr<class UQPlayer2NSpeechBubbleWidget> GetPlayer2NSpeechBubbleWidget() const;
-public:
-	/**
-	 * @brief 캐릭터 기준으로 가장 가까이 있는 npc를 반환합니다.
-	 *
-	 * @return 캐릭터 기준 가장 가까이 있는 npc
-	 */
-	TObjectPtr<AActor> GetClosestNPC();
+
 public:
 	// 공용 인터페이스
 	/** @brief N2N 대화가 가능한지에 대한 Getter*/
@@ -68,29 +55,13 @@ protected:
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UWidgetComponent> SpeechBubbleWidgetComponent;
-protected:
-	/**
-	 * @brief Player2NSpeechBubble UI 컴포넌트입니다.
-	 */
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UWidgetComponent>  Player2NSpeechBubbleWidgetComponent;
+
 
 private:
 	/** @brief 스피치버블 위젯 클래스 정보를 담습니다. */
 	UPROPERTY()
 	TObjectPtr<class UQSpeechBubbleWidget> SpeechBubbleWidget;
-private:
-	/** @brief 허공말풍선 위젯 클래스 정보를 담습니다. */
-	UPROPERTY()
-	TObjectPtr<class UQPlayer2NSpeechBubbleWidget> Player2NSpeechBubbleWidget;
-private:
-	UFUNCTION()
-	virtual void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION()
-	virtual void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-	/** @brief overlap에 들어온 대상을 담습니다. */
-	TArray<TObjectPtr<AActor>> OverlappingNPCs;
 	
 private:
 	// NPC 대화
