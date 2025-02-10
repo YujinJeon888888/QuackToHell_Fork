@@ -45,13 +45,19 @@ const int32 AQVillageGameState::AddConversationRecord(EConversationType Conversa
 		return -1;
 	}
 	
-	//AQGameModeVillage* GameModeVillage = Cast<AQGameModeVillage>(GetWorld()->GetAuthGameMode());
-	//int32 ConversationID = GameModeVillage->ConversationIDCount++;
-	int32 ConversationID = 2345;
-	FConversationRecord NewConversationRecord(ConversationID, ConversationType, SpeakerID, ListenerID, Timestamp, Message);
-	ConversationList.AddConversation(NewConversationRecord);
+	AQGameModeVillage* GameModeVillage = Cast<AQGameModeVillage>(GetWorld()->GetAuthGameMode());
+	if (GameModeVillage)
+	{
+		int32 ConversationID = GameModeVillage->ConversationIDCount++;
+		FConversationRecord NewConversationRecord(ConversationID, ConversationType, SpeakerID, ListenerID, Timestamp, Message);
+		ConversationList.AddConversation(NewConversationRecord);
 
-	return ConversationID;
+		return ConversationID;
+	}
+	else
+	{
+		return -1;
+	}
 }
 
 const int32 AQVillageGameState::AddEvidence(FString EvidenceName, FString EvidenceDescription, FString EvidenceImagePath)
@@ -121,10 +127,12 @@ void AQVillageGameState::BeginPlay()
 {
 	Super::BeginPlay();
 	// 이부분을 주석해제하면 테스트 결과 확인가능//
+	/*
 	UUserWidget* StartWidget = CreateWidget<UUserWidget>(GetWorld()->GetFirstPlayerController(), StartLevelWidget);
 	if (StartWidget)
 	{
 		// 위젯을 화면에 추가
 		StartWidget->AddToViewport();
 	}
+	*/
 }

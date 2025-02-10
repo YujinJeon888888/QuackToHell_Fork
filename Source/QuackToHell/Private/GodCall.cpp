@@ -48,6 +48,7 @@ void UGodCall::BeginPlay()
 {
     Super::BeginPlay();
 
+
     UE_LOG(LogTemp, Log, TEXT("GodCall::BeginPlay() 실행됨. bShouldStopPromptGeneration = %d"), bShouldStopPromptGeneration);
 
     FString DefendantFilePath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json");
@@ -91,6 +92,10 @@ bool UGodCall::StartGodProcess()
     bIsPromptGenerating = true;
 
     UWorld* World = GetOwner() ? GetOwner()->GetWorld() : nullptr;
+    if (GetOwner())
+    {
+        UE_LOG(LogTemp, Log, TEXT("GodCall's owner is %s"), *GetOwner()->GetName());
+    }
     if (!World)
     {
         UE_LOG(LogTemp, Error, TEXT("StartGodProcess() 실패! World를 가져올 수 없습니다."));

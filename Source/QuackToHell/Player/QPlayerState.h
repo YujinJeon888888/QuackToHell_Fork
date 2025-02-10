@@ -89,6 +89,7 @@ public:
 	/** @brief 플레이어가 소유한 증거를 배열 형태로 반환 */
 	const TArray<FEvidence> GetEvidencesWithPlayerID() const;
 
+	/*
 	// for testing conversation & evidence system -----------------------
 	void PrintEvidence(int32 EvidenceID, FString EvidenceName) const;
 	void PrintAllEvidence() const;
@@ -99,8 +100,5 @@ public:
 	void TestAddConversation();
 	UFUNCTION(BlueprintCallable)
 	void TestAddEvidence();
+	*/
 };
-
-
-
-

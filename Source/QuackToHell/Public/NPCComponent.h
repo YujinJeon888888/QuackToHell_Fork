@@ -161,6 +161,11 @@ protected:
 	FString NPCPersonality;
 	TMap<FString, FString> ResponseCache;
 
+	UPROPERTY(Replicated)
+	FDateTime LastConversationTime;
+
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
 private:
 	/**
 	 * @author 박시언
@@ -304,6 +309,13 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "NPC")
 	bool GetIsRequestInProgress() const;
+
+	UFUNCTION(BlueprintCallable, Category = "NPC")
+	FDateTime GetLastConversationTime() const;
+
+	UFUNCTION(BlueprintCallable, Category = "NPC")
+	void SetLastConversationTime(FDateTime NewLastConversationTime);
+
 
 private:
 	/**

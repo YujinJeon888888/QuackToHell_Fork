@@ -80,6 +80,7 @@ const TArray<FEvidence> AQPlayerState::GetEvidencesWithPlayerID() const
 }
 
 // -------------------------------------------------------------------------- //
+/*
 
 void AQPlayerState::PrintEvidence(int32 EvidenceID, FString EvidenceName) const
 {
@@ -190,5 +191,4 @@ void AQPlayerState::TestAddEvidence()
 	GameState->RemoveAllEvidence();
 	PrintAllEvidence();
 }
-
-
+*/

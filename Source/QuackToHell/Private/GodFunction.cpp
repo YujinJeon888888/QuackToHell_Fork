@@ -378,7 +378,7 @@ void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
     FString PromptToDefendant = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json"));
 
     FString JuryPrompt = FString::Printf(
-        TEXT("{ \"task\": \"배심원 정보를 생성하세요.\", "
+        TEXT("{ \"task\": \"배심원 정보 %d를 생성하세요.\", "
             "\"instructions\": ["
             "\"PromptToGod.json과 PromptToDefendant.json을 참고하여 배심원(NPC) 한 명의 정보를 생성하세요.\", "
             "\"npcid 값을 2001부터 순차적으로 증가하는 정수로 설정하세요.\"], "
