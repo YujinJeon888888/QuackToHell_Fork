@@ -6,6 +6,7 @@
 #include "Character/QPlayer.h"
 #include "Components/WidgetComponent.h"
 #include "Components/SphereComponent.h"
+#include "QLogCategories.h"
 #include "UI/QPlayer2NSpeechBubbleWidget.h"
 AQDynamicNPC::AQDynamicNPC(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
@@ -29,9 +30,6 @@ AQDynamicNPC::AQDynamicNPC(const FObjectInitializer& ObjectInitializer)
 	//QNameWidget을 상속한 클래스만 담을 수 있도록 강제한다.
 	this->EKeyWidgetComponent->SetWidgetClass(_EKeyWidget);
 
-	/*충돌처리 바인딩*/
-	InteractionSphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AQDynamicNPC::OnOverlapBegin);
-	InteractionSphereComponent->OnComponentEndOverlap.AddDynamic(this, &AQDynamicNPC::OnOverlapEnd);
 }
 TObjectPtr<AActor> AQDynamicNPC::GetClosestNPC()
 {
@@ -65,13 +63,16 @@ TObjectPtr<class UQPlayer2NSpeechBubbleWidget> AQDynamicNPC::GetPlayer2NSpeechBu
 void AQDynamicNPC::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//만약 플레이어가 다가왔을 시, E대화하기 유아이 띄우기
-	TObjectPtr<AQPlayer> OpponentPlayer= Cast<AQPlayer>(OtherActor);
-	TurnOnEKeyUI();
+	TObjectPtr<AQPlayer> OpponentPlayer = Cast<AQPlayer>(OtherActor);
+	if (OpponentPlayer) {
+		TurnOnEKeyUI();
+	}
+	
 
 	//캐스팅 미성공시 nullptr
-	TObjectPtr<AQNPC> OpponentNPC = Cast<AQNPC>(OtherActor);
+	TObjectPtr<AQDynamicNPC> OpponentNPC = Cast<AQDynamicNPC>(OtherActor);
 	if (OpponentNPC) {
-		OverlappingNPCs.Add(OtherActor);
+		OverlappingNPCs.Add(OpponentNPC);
 	}
 }
 
@@ -79,12 +80,15 @@ void AQDynamicNPC::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Oth
 {
 	//만약 플레이어가 나갔을 시, E대화하기 유아이 끄기
 	TObjectPtr<AQPlayer> OpponentPlayer = Cast<AQPlayer>(OtherActor);
-	TurnOffEKeyUI();
+	if (OpponentPlayer) {
+		TurnOffEKeyUI();
+	}
+	
 	
 	//캐스팅 미성공시 nullptr
-	TObjectPtr<AQNPC> OpponentNPC = Cast<AQNPC>(OtherActor);
+	TObjectPtr<AQDynamicNPC> OpponentNPC = Cast<AQDynamicNPC>(OtherActor);
 	if (OpponentNPC) {
-		OverlappingNPCs.Remove(OtherActor);
+		OverlappingNPCs.Remove(OpponentNPC);
 	}
 }
 void AQDynamicNPC::BeginPlay()
@@ -99,6 +103,7 @@ void AQDynamicNPC::BeginPlay()
 			EKeyWidget = Cast<UQEKeyWidget>(UserWidget);
 		}
 	}
+
 	/*Player2N말풍선 위젯 변수에 객체값 할당*/
 	if (Player2NSpeechBubbleWidgetComponent)
 	{
@@ -112,10 +117,12 @@ void AQDynamicNPC::BeginPlay()
 
 void AQDynamicNPC::TurnOnEKeyUI()
 {
+	UE_LOG(LogLogic, Log, TEXT("UI켜기시도"));
 	EKeyWidget->SetVisibility(ESlateVisibility::Visible);
 }
 
 void AQDynamicNPC::TurnOffEKeyUI()
 {
+	UE_LOG(LogLogic, Log, TEXT("UI끄기시도"));
 	EKeyWidget->SetVisibility(ESlateVisibility::Hidden);
 }

@@ -32,6 +32,8 @@ public:
 	bool GetCanStartConversN2N(const AQNPC* NPC);
 	/** @brief NPC와의 대화를 마칠 수 있는지에 대한 Getter*/
 	bool GetCanFinishConversN2N(const AQNPC* NPC);
+
+
 protected:
 	/**
 	 * @brief Sphere 컴포넌트입니다. 플레이어를 기준으로 원형을 그려 트리거를 탐지합니다.
@@ -42,7 +44,7 @@ protected:
 	 * @brief Sphere 컴포넌트의 반지름입니다.
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Interaction")
-	float SphereRadius = 500.f;
+	float SphereRadius = 200.f;
 protected:
 	virtual void BeginPlay() override;
 protected:
@@ -81,6 +83,13 @@ private:
 	
 	UFUNCTION(Server, Reliable)
 	void ServerRPCCanCanFinishConversN2N(const AQNPC* NPC);
+private:
+	/*충돌처리*/
+	UFUNCTION()
+	virtual void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	UFUNCTION()
+	virtual void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 
 public:
 	EConversationType GetNPCConversationState() const

@@ -32,8 +32,10 @@ public:
 	 */
 	TObjectPtr<AActor> GetClosestNPC();
 protected:
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
+
+	virtual void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex) override;
 	virtual void BeginPlay() override;
 protected:
 	/**
@@ -57,7 +59,7 @@ private:
 private:
 
 	/** @brief overlap에 들어온 대상을 담습니다. */
-	TArray<TObjectPtr<AActor>> OverlappingNPCs;
+	TArray<TObjectPtr<class AQDynamicNPC>> OverlappingNPCs;
 private:
 	/**
 	 * @brief EKey위젯 UI를 켭니다.

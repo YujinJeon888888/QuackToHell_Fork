@@ -38,6 +38,9 @@ AQNPC::AQNPC(const FObjectInitializer& ObjectInitializer)
 	InteractionSphereComponent->SetupAttachment(RootComponent);
 	InteractionSphereComponent->SetSphereRadius(SphereRadius);
 
+	/*충돌처리 바인딩*/
+	InteractionSphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AQNPC::OnOverlapBegin);
+	InteractionSphereComponent->OnComponentEndOverlap.AddDynamic(this, &AQNPC::OnOverlapEnd);
 }
 
 // ---------------------------------------------------------------------------------- //
@@ -52,6 +55,14 @@ void AQNPC::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(AQNPC, bCanStartConversN2N);
 	DOREPLIFETIME(AQNPC, bCanFinishConversN2N);
 	DOREPLIFETIME(AQNPC, NPCConversationState);
+}
+
+void AQNPC::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+}
+
+void AQNPC::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
 }
 
 void AQNPC::ServerRPCCanCanStartConversN2N_Implementation(const AQNPC* NPC)
