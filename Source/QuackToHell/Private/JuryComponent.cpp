@@ -11,27 +11,26 @@
 void UJuryComponent::BeginPlay()
 {
     Super::BeginPlay();
+    UE_LOG(LogTemp, Warning, TEXT("UJuryComponent::BeginPlay() 실행됨 - NPC %s"), *NPCID);
 
     if (NPCID.IsEmpty())
-    {
-        UE_LOG(LogTemp, Error, TEXT("JuryComponent - NPCID가 설정되지 않았습니다!"));
         return;
-    }
 
+    // 배심원의 JSON 파일 경로 설정
     int32 JuryIndex = FCString::Atoi(*NPCID) - 2000; // NPCID 2001 -> JuryIndex 1
 
     if (JuryIndex < 1 || JuryIndex > 3)
-    {
-        UE_LOG(LogTemp, Error, TEXT("잘못된 JuryIndex! NPCID: %s"), *NPCID);
         return;
-    }
 
     FString PromptFileName = FString::Printf(TEXT("PromptToJury%d.json"), JuryIndex);
-    PromptFilePath = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Prompt"), PromptFileName);
-
-    LoadPrompt();
+    PromptFilePath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Prompt"), PromptFileName));
 
     UE_LOG(LogTemp, Log, TEXT("JuryComponent - NPC %s는 %s를 사용합니다."), *NPCID, *PromptFilePath);
+
+    // 배심원 데이터 로드
+    if (!NPCID.IsEmpty())
+        LoadPrompt();
+
 }
 
 void UJuryComponent::AskJuryQuestion(const FString& PlayerInput)

@@ -11,27 +11,25 @@
 void UResidentComponent::BeginPlay()
 {
     Super::BeginPlay();
+    UE_LOG(LogTemp, Warning, TEXT("UResidentComponent::BeginPlay() 실행됨 - NPC %s"), *NPCID);
 
     if (NPCID.IsEmpty())
-    {
-        UE_LOG(LogTemp, Error, TEXT("ResidentComponent - NPCID가 설정되지 않았습니다!"));
         return;
-    }
 
+    // 마을 주민의 JSON 파일 경로 설정
     int32 ResidentIndex = FCString::Atoi(*NPCID) - 2003; // NPCID 2004 -> ResidentIndex 1
 
     if (ResidentIndex < 1 || ResidentIndex > 5)
-    {
-        UE_LOG(LogTemp, Error, TEXT("잘못된 ResidentIndex! NPCID: %s"), *NPCID);
         return;
-    }
 
     FString PromptFileName = FString::Printf(TEXT("PromptToResident%d.json"), ResidentIndex);
-    PromptFilePath = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Prompt"), PromptFileName);
-
-    LoadPrompt();
+    PromptFilePath = FPaths::ConvertRelativePathToFull(FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Prompt"), PromptFileName));
 
     UE_LOG(LogTemp, Log, TEXT("ResidentComponent - NPC %s는 %s를 사용합니다."), *NPCID, *PromptFilePath);
+
+    // 마을 주민 데이터 로드
+    if (!NPCID.IsEmpty())
+        LoadPrompt();
 }
 
 void UResidentComponent::AskResidentQuestion(const FString& PlayerInput)
