@@ -14,5 +14,31 @@ UCLASS()
 class QUACKTOHELL_API AQDynamicNPC : public AQNPC
 {
 	GENERATED_BODY()
-	
+public:
+	AQDynamicNPC(const FObjectInitializer& ObjectInitializer);
+protected:
+	virtual void BeginPlay() override;
+protected:
+	/**
+	 * @brief E UI 컴포넌트입니다.
+	 */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UWidgetComponent> EKeyWidgetComponent;
+private:
+	/** @brief EKey위젯 클래스 정보를 담습니다. */
+	UPROPERTY()
+	TObjectPtr<class UQEKeyWidget> EKeyWidget;
+	/**
+	 * @brief EKey위젯 UI를 켭니다.
+	 */
+	void TurnOnEKeyUI();
+	/**
+	 * @brief EKey위젯 UI를 끕니다.
+	 */
+	void TurnOffEKeyUI();
+
 };
+
+
+
+
