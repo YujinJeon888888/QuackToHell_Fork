@@ -12,22 +12,27 @@ void UJuryComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    // NPCID를 int32로 변환
-    int32 JuryID = GetNPCID();
+    if (NPCID.IsEmpty())
+    {
+        UE_LOG(LogTemp, Error, TEXT("JuryComponent - NPCID가 설정되지 않았습니다!"));
+        return;
+    }
 
-    // 배심원 ID 확인 (2001~2003)
-    if (JuryID >= 2001 && JuryID <= 2003)
+    int32 JuryIndex = FCString::Atoi(*NPCID) - 2000; // NPCID 2001 -> JuryIndex 1
+
+    if (JuryIndex < 1 || JuryIndex > 3)
     {
-        int32 JuryIndex = JuryID - 2000; // 2001 -> 1, 2002 -> 2, 2003 -> 3
-        PromptFilePath = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Prompt"), FString::Printf(TEXT("PromptToJury%d.json"), JuryIndex));
-        LoadPrompt();
+        UE_LOG(LogTemp, Error, TEXT("잘못된 JuryIndex! NPCID: %s"), *NPCID);
+        return;
     }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("JuryComponent - 잘못된 NPCID (%d). 배심원 ID는 2001~2003이ㅂ니다."), JuryID);
-    }
+
+    FString PromptFileName = FString::Printf(TEXT("PromptToJury%d.json"), JuryIndex);
+    PromptFilePath = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Prompt"), PromptFileName);
+
+    LoadPrompt();
+
+    UE_LOG(LogTemp, Log, TEXT("JuryComponent - NPC %s는 %s를 사용합니다."), *NPCID, *PromptFilePath);
 }
-
 
 void UJuryComponent::AskJuryQuestion(const FString& PlayerInput)
 {
@@ -46,13 +51,10 @@ void UJuryComponent::StartConversation(const FString& PlayerInput)
     UE_LOG(LogTemp, Log, TEXT("Player started conversation with %s: %s"), *NPCID, *PlayerInput);
 
     // 첫 대화인지 확인
-    bool bIsFirstGreeting = !P2NDialogueHistory.Contains(NPCID) || P2NDialogueHistory[NPCID].DialogueLines.Num() == 0;
-
-    int32 PlayerID = -1;
-    APlayerState* PS = GetOwner() ? Cast<APlayerState>(GetOwner()->GetInstigator()->GetPlayerState()) : nullptr;
-    if (PS)
+    bool bIsFirstGreeting = false;
+    if (!NPCID.IsEmpty() && P2NDialogueHistory.Contains(NPCID))
     {
-        PlayerID = PS->GetPlayerId();
+        bIsFirstGreeting = P2NDialogueHistory[NPCID].DialogueLines.Num() == 0;
     }
 
     FOpenAIRequest AIRequest;
@@ -77,7 +79,7 @@ void UJuryComponent::StartConversation(const FString& PlayerInput)
     }
 
     AIRequest.MaxTokens = 150;
-    AIRequest.SpeakerID = PlayerID;
+    AIRequest.SpeakerID = FCString::Atoi(*GetPlayerIDAsString());
     AIRequest.ListenerID = FCString::Atoi(*NPCID);
     AIRequest.ConversationType = EConversationType::P2N;
 

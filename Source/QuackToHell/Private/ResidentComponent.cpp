@@ -12,20 +12,26 @@ void UResidentComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    // NPCID를 int32로 변환
-    int32 ResidentID = GetNPCID();
+    if (NPCID.IsEmpty())
+    {
+        UE_LOG(LogTemp, Error, TEXT("ResidentComponent - NPCID가 설정되지 않았습니다!"));
+        return;
+    }
 
-    // 주민 ID 확인 (2004~2008)
-    if (ResidentID >= 2004 && ResidentID <= 2008)
+    int32 ResidentIndex = FCString::Atoi(*NPCID) - 2003; // NPCID 2004 -> ResidentIndex 1
+
+    if (ResidentIndex < 1 || ResidentIndex > 5)
     {
-        int32 ResidentIndex = ResidentID - 2003; // 2004 -> 1, 2005 -> 2, 2006 -> 3, 2007 -> 4, 2008 -> 5
-        PromptFilePath = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Prompt"), FString::Printf(TEXT("PromptToResident%d.json"), ResidentIndex));
-        LoadPrompt();
+        UE_LOG(LogTemp, Error, TEXT("잘못된 ResidentIndex! NPCID: %s"), *NPCID);
+        return;
     }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("ResidentComponent - 잘못된 NPCID (%d). 주민 ID는 2004~2008이어야 합니다."), ResidentID);
-    }
+
+    FString PromptFileName = FString::Printf(TEXT("PromptToResident%d.json"), ResidentIndex);
+    PromptFilePath = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Prompt"), PromptFileName);
+
+    LoadPrompt();
+
+    UE_LOG(LogTemp, Log, TEXT("ResidentComponent - NPC %s는 %s를 사용합니다."), *NPCID, *PromptFilePath);
 }
 
 void UResidentComponent::AskResidentQuestion(const FString& PlayerInput)
@@ -50,17 +56,14 @@ void UResidentComponent::StartConversation(const FString& PlayerInput)
 
     UE_LOG(LogTemp, Log, TEXT("Player started conversation with %s: %s"), *NPCID, *PlayerInput);
 
-    int32 PlayerID = -1;
-    APlayerState* PS = GetOwner() ? Cast<APlayerState>(GetOwner()->GetInstigator()->GetPlayerState()) : nullptr;
-    if (PS)
-    {
-        PlayerID = PS->GetPlayerId();
-    }
-
     FOpenAIRequest AIRequest;
 
     // 첫 대화인지 확인
-    bool bIsFirstGreeting = !P2NDialogueHistory.Contains(NPCID) || P2NDialogueHistory[NPCID].DialogueLines.Num() == 0;
+    bool bIsFirstGreeting = false;
+    if (!NPCID.IsEmpty() && P2NDialogueHistory.Contains(NPCID))
+    {
+        bIsFirstGreeting = P2NDialogueHistory[NPCID].DialogueLines.Num() == 0;
+    }
 
     if (bIsFirstGreeting && PlayerInput.IsEmpty())
     {
@@ -82,7 +85,7 @@ void UResidentComponent::StartConversation(const FString& PlayerInput)
     }
 
     AIRequest.MaxTokens = 150;
-    AIRequest.SpeakerID = PlayerID;
+    AIRequest.SpeakerID = FCString::Atoi(*GetPlayerIDAsString());
     AIRequest.ListenerID = FCString::Atoi(*NPCID);
     AIRequest.ConversationType = EConversationType::P2N;
 
