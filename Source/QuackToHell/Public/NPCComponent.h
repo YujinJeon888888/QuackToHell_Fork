@@ -277,6 +277,12 @@ protected:
 	 */
 	FString PromptContent;
 
+	/**
+	 * @author 박시언
+	 * @brief NPCID에 맞는 프롬프트 로드
+	 */
+	FString LoadPromptForNPC(const FString& InputNPCID) const;
+
 public:
 	/**
 	 * @author 박시언
