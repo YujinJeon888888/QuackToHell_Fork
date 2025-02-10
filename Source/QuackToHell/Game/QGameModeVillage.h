@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "GameFramework/GameMode.h"
 #include "QGameModeVillage.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class QUACKTOHELL_API AQGameModeVillage : public AGameModeBase
+class QUACKTOHELL_API AQGameModeVillage : public AGameMode
 {
 	GENERATED_BODY()
 
