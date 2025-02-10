@@ -11,13 +11,15 @@
 #include "EnhancedInputComponent.h"
 #include "UI/QInventoryWidget.h"
 #include "Character/QPlayer.h"
+#include "Character/QDynamicNPC.h"
 #include "Character/QNPC.h"
+#include "NPC/QDynamicNPCController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NPC/QNPCController.h"
 #include "Player/QPlayerState.h"
 #include "QGameplayTags.h"
 #include "Kismet/KismetMathLibrary.h"
-
+#include "NPC/QDynamicNPCController.h"
 
 void AQPlayerController::BeginPlay()
 {
@@ -101,8 +103,8 @@ void AQPlayerController::EndDialog()
 	//1. 상대방 NPC를 불러옴
 	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
 	//2. 상대방 NPC의 컨트롤러를 불러옴
-	TObjectPtr<AQNPC> NPC = Cast<AQNPC>(_Player->GetClosestNPC());
-	TObjectPtr<AQNPCController> NPCController = Cast<AQNPCController>(NPC->GetController());
+	TObjectPtr<AQDynamicNPC> NPC = Cast<AQDynamicNPC>(_Player->GetClosestNPC());
+	TObjectPtr<AQDynamicNPCController> NPCController = Cast<AQDynamicNPCController>(NPC->GetController());
 
 	//3. 대화 그만하라고 명령한다.
 	NPCController->EndDialog();

@@ -31,42 +31,21 @@ AQNPC::AQNPC(const FObjectInitializer& ObjectInitializer)
 	//UQSpeechBubbleWidget을 상속한 클래스만 담을 수 있도록 강제한다.
 	this->SpeechBubbleWidgetComponent->SetWidgetClass(_SpeechBubbleWidget);
 
-	/*허공말풍선 UI 컴포넌트*/
-	this->Player2NSpeechBubbleWidgetComponent= CreateDefaultSubobject<UWidgetComponent>(TEXT("Player2NSpeechBubbleWidget"));
-	this->Player2NSpeechBubbleWidgetComponent->SetWidgetSpace(WidgetSpace);
-	this->Player2NSpeechBubbleWidgetComponent->SetDrawAtDesiredSize(true);
-	this->Player2NSpeechBubbleWidgetComponent->SetupAttachment(RootComponent);
-	TSubclassOf<UQPlayer2NSpeechBubbleWidget> _Player2NSpeechBubbleWidget;
-	//UQPlayer2NSpeechBubbleWidget을 상속한 클래스만 담을 수 있도록 강제한다.
-	this->Player2NSpeechBubbleWidgetComponent->SetWidgetClass(_Player2NSpeechBubbleWidget);
+
 
 	/*충돌처리*/
 	InteractionSphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("InteractionSphere"));
 	InteractionSphereComponent->SetupAttachment(RootComponent);
 	InteractionSphereComponent->SetSphereRadius(SphereRadius);
+
+	/*충돌처리 바인딩*/
 	InteractionSphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AQNPC::OnOverlapBegin);
 	InteractionSphereComponent->OnComponentEndOverlap.AddDynamic(this, &AQNPC::OnOverlapEnd);
 }
 
 // ---------------------------------------------------------------------------------- //
 
-void AQNPC::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	//캐스팅 미성공시 nullptr
-	TObjectPtr<AQNPC> OpponentNPC = Cast<AQNPC>(OtherActor);
-	if (OpponentNPC) {
-		OverlappingNPCs.Add(OtherActor);
-	}
-}
 
-void AQNPC::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	//캐스팅 미성공시 nullptr
-	TObjectPtr<AQNPC> OpponentNPC = Cast<AQNPC>(OtherActor);
-	if (OpponentNPC) {
-		OverlappingNPCs.Remove(OtherActor);
-	}
-}
 
 void AQNPC::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -76,6 +55,14 @@ void AQNPC::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(AQNPC, bCanStartConversN2N);
 	DOREPLIFETIME(AQNPC, bCanFinishConversN2N);
 	DOREPLIFETIME(AQNPC, NPCConversationState);
+}
+
+void AQNPC::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+}
+
+void AQNPC::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
 }
 
 void AQNPC::ServerRPCCanCanStartConversN2N_Implementation(const AQNPC* NPC)
@@ -94,33 +81,8 @@ TObjectPtr<class UQSpeechBubbleWidget> AQNPC::GetSpeechBubbleWidget() const
 	return SpeechBubbleWidget;
 }
 
-TObjectPtr<class UQPlayer2NSpeechBubbleWidget> AQNPC::GetPlayer2NSpeechBubbleWidget() const
-{
-	return Player2NSpeechBubbleWidget;
-}
 
-TObjectPtr<AActor> AQNPC::GetClosestNPC()
-{
-	if (OverlappingNPCs.Num() == 0) {
-		//대화 대상 없음
-		return nullptr;
-	}
 
-	TObjectPtr<AActor> ClosestNPC = nullptr;
-	float MinDistance = FLT_MAX;
-
-	for (TObjectPtr<AActor> NPC : OverlappingNPCs) {
-		//캐릭터와 NPC간 거리
-		float Distance = FVector::Dist(this->GetActorLocation(), NPC->GetActorLocation());
-		//최소거리찾기
-		if (Distance < MinDistance) {
-			MinDistance = Distance;
-			ClosestNPC = NPC;
-		}
-	}
-
-	return ClosestNPC;
-}
 
 bool AQNPC::GetCanStartConversN2N(const AQNPC* NPC)
 {
@@ -157,15 +119,7 @@ void AQNPC::BeginPlay()
 	/*말풍선 위젯 기본적으로 끈 채로 시작*/
 	//SpeechBubbleWidget->TurnOffSpeechBubble();
 	
-	/*Player2N말풍선 위젯 변수에 객체값 할당*/
-	if (Player2NSpeechBubbleWidgetComponent)
-	{
-		UUserWidget* UserWidget = Player2NSpeechBubbleWidgetComponent->GetWidget();
-		if (UserWidget)
-		{
-			Player2NSpeechBubbleWidget = Cast<UQPlayer2NSpeechBubbleWidget>(UserWidget);
-		}
-	}
+
 	/*Player2N말풍선 위젯 기본적으로 끈 채로 시작*/
 	//Player2NSpeechBubbleWidget->TurnOffSpeechBubble();
 }

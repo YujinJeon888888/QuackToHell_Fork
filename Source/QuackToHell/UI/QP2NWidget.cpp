@@ -9,6 +9,8 @@
 #include "Player/QPlayerController.h"
 #include "Character/QPlayer.h"
 #include "Components/TextBlock.h"
+#include "Character/QDynamicNPC.h"
+#include "NPC/QDynamicNPCController.h"
 #include "NPCComponent.h"
 #include "UI/QVillageUIManager.h"
 
@@ -23,11 +25,11 @@ void UQP2NWidget::UpdateNPCText(const FString& Text)
     NPCText->SetText(FText::FromString(Text));
 }
 
-void UQP2NWidget::SetConversingNPC(const TObjectPtr<class AQNPCController> NPC)
+void UQP2NWidget::SetConversingNPC(const TObjectPtr<class AQDynamicNPCController> NPC)
 {
     ConversingNPC = NPC;
     //브로드캐스트 등록
-    TObjectPtr<AQNPC> _NPC = Cast<AQNPC>(ConversingNPC->GetPawn());
+    TObjectPtr<AQDynamicNPC> _NPC = Cast<AQDynamicNPC>(ConversingNPC->GetPawn());
     TObjectPtr<UNPCComponent> NPCComponent = _NPC->GetComponentByClass<UNPCComponent>();
     NPCComponent->OnNPCResponseReceived.AddDynamic(this, &UQP2NWidget::UpdateNPCText);
 }

@@ -61,7 +61,7 @@ protected:
 	 * @brief Sphere 컴포넌트의 반지름입니다. 
 	 */
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Interaction")
-	float SphereRadius = 500.f;
+	float SphereRadius = 200.f;
 protected:
 	UPROPERTY()
 	TObjectPtr<AQPlayerState> LocalPlayerState;
