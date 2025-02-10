@@ -9,12 +9,19 @@
 void UDefendantComponent::BeginPlay()
 {
     Super::BeginPlay();
+    UE_LOG(LogTemp, Warning, TEXT("UDefendantComponent::BeginPlay() 실행됨 - NPC %s"), *NPCID);
+
+    if (NPCID.IsEmpty())
+        return;
 
     // 피고인의 JSON 파일 경로 설정
     PromptFilePath = FPaths::Combine(FPaths::ProjectSavedDir(), TEXT("Prompt"), TEXT("PromptToDefendant.json"));
 
+    UE_LOG(LogTemp, Log, TEXT("DefendantComponent - NPC %s는 %s를 사용합니다."), *NPCID, *PromptFilePath);
+
     // 피고인 데이터 로드
-    LoadPrompt();
+    if (!NPCID.IsEmpty())
+        LoadPrompt();
 }
 
 void UDefendantComponent::PerformNPCLogic()

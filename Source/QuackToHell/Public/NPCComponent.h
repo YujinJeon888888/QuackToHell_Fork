@@ -156,9 +156,15 @@ protected:
 	virtual void PerformNPCLogic();
 
 	FString GetPlayerIDAsString() const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
 	FString NPCName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "NPC")
 	FString NPCID;
+
 	FString NPCPersonality;
+
 	TMap<FString, FString> ResponseCache;
 
 	UPROPERTY(Replicated)

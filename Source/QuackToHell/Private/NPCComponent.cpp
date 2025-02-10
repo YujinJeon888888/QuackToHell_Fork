@@ -48,17 +48,7 @@ void UNPCComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UE_LOG(LogTemp, Log, TEXT("NPC %s BeginPlay 실행됨."), *NPCID);
-	UE_LOG(LogTemp, Log, TEXT("현재 설정된 PromptFilePath: %s"), *PromptFilePath);
-	
-	if (PromptFilePath.IsEmpty())
-	{
-		UE_LOG(LogTemp, Error, TEXT("NPC %s PromptFilePath is not set!"), *NPCID);
-	}
-	else
-	{
-		LoadPrompt();
-	}
+	UE_LOG(LogTemp, Log, TEXT("NPCComponent - NPC %s BeginPlay 실행됨"), *GetOwner()->GetName());
 }
 
 void UNPCComponent::PerformNPCLogic()
@@ -71,9 +61,9 @@ bool UNPCComponent::LoadPrompt()
 {
 	FString FileContent;
 
-	if (!FFileHelper::LoadFileToString(FileContent, *PromptFilePath))
+	if (!FFileHelper::LoadFileToString(FileContent, *PromptFilePath) || FileContent.IsEmpty())
 	{
-		UE_LOG(LogTemp, Error, TEXT("LoadPrompt 실패 - %s"), *PromptFilePath);
+		UE_LOG(LogTemp, Error, TEXT("LoadPrompt 실패 (파일이 비어 있음) - %s"), *PromptFilePath);
 		return false;
 	}
 
@@ -86,28 +76,28 @@ bool UNPCComponent::LoadPrompt()
 		return false;
 	}
 
+	// 필수 필드 확인
 	if (!JsonObject->HasField("npcid") || !JsonObject->HasField("name"))
 	{
 		UE_LOG(LogTemp, Error, TEXT("필수 필드 누락 - %s"), *PromptFilePath);
 		return false;
 	}
 
-	// NPCID를 FString으로 저장 (JSON의 int32 값을 변환)
+	// NPCID를 정상적으로 읽어왔는지 확인
 	int32 TempID = 0;
 	if (JsonObject->TryGetNumberField("npcid", TempID))
 	{
-		NPCID = FString::FromInt(TempID);  // JSON에서 받아온 NPCID를 멤버 변수에 저장
+		NPCID = FString::FromInt(TempID);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("npcid 변환 실패!"));
+		UE_LOG(LogTemp, Error, TEXT("NPCID 변환 실패!"));
 		return false;
 	}
 
-	// NPC 이름 저장
 	NPCName = JsonObject->GetStringField("name");
 
-	UE_LOG(LogTemp, Log, TEXT("LoadPrompt: NPCID=%s, Name=%s"), *NPCID, *NPCName);
+	UE_LOG(LogTemp, Log, TEXT("LoadPrompt 완료: NPCID=%s, Name=%s"), *NPCID, *NPCName);
 	return true;
 }
 
