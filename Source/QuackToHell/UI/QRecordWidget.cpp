@@ -75,12 +75,17 @@ void UQRecordWidget::NativeConstruct()
 void UQRecordWidget::UpdateRecordHistory()
 {
 	/*정보가져오기*/
-	AQPlayerState* PlayerState = GetWorld()->GetFirstPlayerController()->GetPlayerState<AQPlayerState>();
+	AQPlayerState* PlayerState = Cast<AQPlayerState>(GetOwningPlayerState());
 	if (PlayerState)
 	{
 		ConversationRecord = PlayerState->GetRecordWithPlayerID();
 	}
 
+	if (ConversationRecord.Num() == 0)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UQRecordWidget UpdateRecordHistory : ConversationRecord is empty"))
+		return;
+	}
 
 	/*대화기록 정보 업데이트*/
 	{

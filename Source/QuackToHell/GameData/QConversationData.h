@@ -91,15 +91,22 @@ USTRUCT()
 struct FConversationList
 {
 	GENERATED_BODY()
-private:UPROPERTY()
-	TArray<FConversationRecord> ConversationList;
 public:
+	UPROPERTY()
+	TArray<FConversationRecord> ConversationList;
+
+	FConversationList()
+	{
+		ConversationList = TArray<FConversationRecord>();  // 강제 초기화
+	}
+
 	void AddConversation(const FConversationRecord& ConversationRecord)
 	{
 		if (ConversationList.Contains(ConversationRecord)) return;
 
 		ConversationList.Add(ConversationRecord);
 	}
+	
 	const TArray<FConversationRecord>& GetConversationList() const
 	{
 		return ConversationList;
@@ -121,6 +128,25 @@ public:
 	// Player가 소유하고 있는 대화기록에 대한 정보만 반환
 	const TArray<FConversationRecord> GetRecordWithID(int32 ID) const
 	{
+		if (this == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("FConversationList instance is nullptr!"));
+			return TArray<FConversationRecord>();
+		}
+
+		if (!ensureAlwaysMsgf(ConversationList.GetAllocatedSize() > 0, TEXT("ConversationList is not properly allocated!")))
+		{
+			UE_LOG(LogTemp, Error, TEXT("ConversationList is not initialized!"));
+			return TArray<FConversationRecord>();
+		}
+		
+		// 대화기록이 없다면 바로 return
+		if (ConversationList.Num() == 0)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ConversationList is empty in GetRecordWithID!"));
+			return TArray<FConversationRecord>();
+		}
+		
 		return ConversationList.FilterByPredicate([ID](const FConversationRecord& Record)
 		{
 			// Player와 관련된 대화가 아니라면 제외

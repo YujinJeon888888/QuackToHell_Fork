@@ -96,9 +96,7 @@ const FConversationRecord* AQVillageGameState::GetRecordWithConvID(int32 Convers
 	return ConversationList.GetRecordWithConvID(ConversationID);
 }
 
-const TArray<FConversationRecord>AQVillageGameState::GetRecordWithPlayerID() const
-{
-	int32 PlayerID = GetWorld()->GetFirstPlayerController()->GetPlayerState<AQPlayerState>()->GetPlayerId();
+const TArray<FConversationRecord> AQVillageGameState::GetRecordWithPlayerID(int32 PlayerID) const{
 	return ConversationList.GetRecordWithID(PlayerID);
 }
 

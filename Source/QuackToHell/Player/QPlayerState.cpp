@@ -56,7 +56,20 @@ const FConversationRecord* AQPlayerState::GetRecordWithConvID(int32 Conversation
 
 const TArray<FConversationRecord> AQPlayerState::GetRecordWithPlayerID() const
 {
-	return GameState->GetRecordWithPlayerID();
+	//AQVillageGameState* VillageGameState = GetWorld() ? GetWorld()->GetGameState<AQVillageGameState>() : nullptr;
+
+	if (!GameState)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AQPlayerState GetRecordWithPlayerID: VillageGameState is nullptr!"));
+		return TArray<FConversationRecord>();
+	}
+	if (GameState->GetConversationList().GetConversationList().Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AQPlayerState GetRecordWithPlayerID: ConversationList is empty!"));
+		return TArray<FConversationRecord>();
+	}
+	
+	return GameState->GetRecordWithPlayerID(GetPlayerId());
 }
 
 const TArray<FConversationRecord> AQPlayerState::GetRecrodWithNPCID(int32 NPCID) const
