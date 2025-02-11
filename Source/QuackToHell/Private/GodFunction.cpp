@@ -9,6 +9,7 @@
 #include "HttpModule.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
+#include "TimerManager.h"
 
 // JSON 파일을 읽는 함수
 FString UGodFunction::ReadFileContent(const FString& FilePath)
@@ -288,76 +289,99 @@ void UGodFunction::GeneratePromptWithDelay(UWorld* World, const FString& FileNam
 
 void UGodFunction::GenerateDefendantPrompt(UWorld* World, TFunction<void()> Callback)
 {
-    FString FilePath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json");
+    FString DefendantFilePath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json");
+    FString PromptToGodPath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToGod.json");
 
-    if (FPaths::FileExists(FilePath))
+    if (FPaths::FileExists(DefendantFilePath))
     {
         UE_LOG(LogTemp, Warning, TEXT("PromptToDefendant.json 이미 존재하므로 생성하지 않음."));
         if (Callback) Callback();
         return;
     }
 
-    UE_LOG(LogTemp, Log, TEXT("피고인 Prompt 생성 시작! OpenAI API 호출 준비 완료."));
-
-    FString PromptToGod = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToGod.json"));
-    FString DefendantPrompt = FString::Printf(
-        TEXT("{ \"task\": \"피고인 정보를 생성하세요.\", "
-            "\"instructions\": ["
-            "\"PromptToGod.json을 바탕으로 피고인(NPC)의 정보를 생성하세요.\", "
-            "\"npcid 값을 '2000'으로 설정하세요.\"], "
-            "\"references\": { \"PromptToGod\": \"%s\" } }"),
-        *EscapeJSON(PromptToGod.Mid(0, 2000))
-    );
-
-    CallOpenAIAsync(DefendantPrompt, [World, Callback](FString DefendantJson)
-        {
-            UE_LOG(LogTemp, Log, TEXT("OpenAI API 응답 확인: %s"), *DefendantJson);
-
-            FString CleanedJson = UGodFunction::CleanUpJson(DefendantJson);
-            bool bSaved = UGodFunction::SavePromptToFile(TEXT("PromptToDefendant.json"), CleanedJson);
-
-            if (bSaved)
-            {
-                UE_LOG(LogTemp, Log, TEXT("PromptToDefendant.json 정상적으로 저장됨. 배심원 생성 시작."));
-
-                // 프롬프트가 정상적으로 저장되었을 때만 배심원 생성 시작
-                if (!UGodCall::bShouldStopPromptGeneration)
-                {
-                    if (Callback) Callback();
-                }
-                else
-                {
-                    UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 배심원 생성 취소!"));
-                }
-            }
-            else
-            {
-                UE_LOG(LogTemp, Error, TEXT("PromptToDefendant.json 저장 실패! 배심원 생성 중단."));
-            }
-        });
-}
-
-
-void UGodFunction::GenerateNPCPrompts(UWorld* World)
-{
-    FString PromptToGod = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToGod.json"));
-    FString PromptToDefendant = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json"));
-
-    if (PromptToGod.IsEmpty() || PromptToDefendant.IsEmpty())
+    if (!FPaths::FileExists(PromptToGodPath))
     {
-        UE_LOG(LogTemp, Error, TEXT("Required prompt files are missing!"));
+        UE_LOG(LogTemp, Warning, TEXT("PromptToGod.json이 존재하지 않음. 피고인 프롬프트 생성 대기!"));
+        World->GetTimerManager().SetTimerForNextTick([World, Callback]()
+            {
+                GenerateDefendantPrompt(World, Callback);
+            });
         return;
     }
 
-    UE_LOG(LogTemp, Log, TEXT("PromptToDefendant.json 존재 확인됨. NPC 프롬프트 순차적 생성 시작."));
+    UE_LOG(LogTemp, Log, TEXT("기존 Prompt 파일 삭제 시작."));
+    UGodFunction::DeleteOldPromptFiles();
 
-    // 첫 번째 배심원부터 순차적으로 생성 시작
-    GenerateJuryNPC(World, 1);
+    World->GetTimerManager().SetTimerForNextTick([World, Callback, DefendantFilePath, PromptToGodPath]()
+        {
+            UE_LOG(LogTemp, Log, TEXT("기존 Prompt 파일 삭제 완료. PromptToDefendant.json 생성 시작!"));
+            FString PromptToGod = ReadFileContent(PromptToGodPath);
+            FString DefendantPrompt = FString::Printf(
+                TEXT("{ \"task\": \"피고인 정보를 생성하세요.\", "
+                    "\"instructions\": ["
+                    "\"PromptToGod.json을 바탕으로 피고인(NPC)의 정보를 생성하세요.\", "
+                    "\"npcid 값을 '2000'으로 설정하세요.\"], "
+                    "\"references\": { \"PromptToGod\": \"%s\" } }"),
+                *EscapeJSON(PromptToGod.Mid(0, 2000))
+            );
+
+            CallOpenAIAsync(DefendantPrompt, [World, Callback, DefendantFilePath](FString DefendantJson)
+                {
+                    FString CleanedJson = UGodFunction::CleanUpJson(DefendantJson);
+                    if (UGodFunction::SavePromptToFile(DefendantFilePath, CleanedJson))
+                    {
+                        UE_LOG(LogTemp, Log, TEXT("PromptToDefendant.json 저장 완료!"));
+                        if (Callback) Callback();
+                        World->GetTimerManager().SetTimerForNextTick([World]()
+                            {
+                                GenerateNPCPrompts(World);
+                            });
+                    }
+                    else
+                    {
+                        UE_LOG(LogTemp, Error, TEXT("PromptToDefendant.json 저장 실패! 다시 시도."));
+                        World->GetTimerManager().SetTimerForNextTick([World]()
+                            {
+                                GenerateDefendantPrompt(World, nullptr);
+                            });
+                    }
+                });
+        });
+}
+
+void UGodFunction::GenerateNPCPrompts(UWorld* World)
+{
+    FString PromptToDefendantPath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json");
+    FString PromptToGodPath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToGod.json");
+
+    if (!FPaths::FileExists(PromptToDefendantPath) || !FPaths::FileExists(PromptToGodPath))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("PromptToGod.json 또는 PromptToDefendant.json이 존재하지 않음. NPC 생성 대기!"));
+        World->GetTimerManager().SetTimerForNextTick([World]()
+            {
+                GenerateNPCPrompts(World);
+            });
+        return;
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("PromptToGod.json 및 PromptToDefendant.json 존재 확인됨. NPC 프롬프트 순차적 생성 시작."));
+
+    World->GetTimerManager().SetTimerForNextTick([World]()
+        {
+            GenerateJuryNPC(World, 1);
+        });
 }
 
 // 배심원 NPC 생성 (순차적으로 진행)
 void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
 {
+    if (JuryIndex > 3)
+    {
+        UE_LOG(LogTemp, Log, TEXT("모든 배심원 생성 완료!"));
+        GenerateResidentNPC(World, 1);
+        return;
+    }
+
     UE_LOG(LogTemp, Log, TEXT("GenerateJuryNPC 실행됨 - JuryIndex: %d"), JuryIndex);
 
     if (!World)
@@ -378,7 +402,7 @@ void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
     FString PromptToDefendant = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json"));
 
     FString JuryPrompt = FString::Printf(
-        TEXT("{ \"task\": \"배심원 정보 %d를 생성하세요.\", "
+        TEXT("{ \"task\": \"배심원%d 정보를 생성하세요.\", "
             "\"instructions\": ["
             "\"PromptToGod.json과 PromptToDefendant.json을 참고하여 배심원(NPC) 한 명의 정보를 생성하세요.\", "
             "\"npcid 값을 2001부터 순차적으로 증가하는 정수로 설정하세요.\"], "
@@ -422,9 +446,6 @@ void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
         }
 
         UE_LOG(LogTemp, Log, TEXT("Successfully saved JuryPrompt file: %s"), *JuryFileName);
-
-        UE_LOG(LogTemp, Log, TEXT("다음 Jury NPC 생성 - JuryIndex: %d"), JuryIndex + 1);
-        GenerateJuryNPC(World, JuryIndex + 1);
     });
 
     UE_LOG(LogTemp, Log, TEXT("GenerateJuryNPC 종료 - JuryIndex: %d"), JuryIndex);

@@ -24,4 +24,5 @@ public:
 	static int32 ConversationIDCount;		const int32 ConversationIDInit = 4000;
 
 	virtual void BeginPlay() override;
+	virtual void PreInitializeComponents() override;
 };

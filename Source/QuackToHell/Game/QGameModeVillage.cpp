@@ -39,6 +39,42 @@ AQGameModeVillage::AQGameModeVillage()
 	ConversationIDCount = ConversationIDInit;
 }
 
+void AQGameModeVillage::PreInitializeComponents()
+{
+	Super::PreInitializeComponents();
+
+	UE_LOG(LogTemp, Log, TEXT("QGameModeVillage::PreInitializeComponents() - 프롬프트 생성 시작"));
+
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ PreInitializeComponents - World is nullptr!"));
+		return;
+	}
+
+	// 기존 GodActor 찾기
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsWithTag(World, TEXT("GodActor"), FoundActors);
+
+	if (FoundActors.Num() == 0 || !FoundActors[0])
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ PreInitializeComponents - GodActor를 찾을 수 없음!"));
+		return;
+	}
+
+	AActor* GodActor = FoundActors[0];
+	UGodCall* GodCall = GodActor->FindComponentByClass<UGodCall>();
+
+	if (!GodCall)
+	{
+		UE_LOG(LogTemp, Error, TEXT("❌ PreInitializeComponents - GodCall을 찾을 수 없음!"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("✅ PreInitializeComponents - GodCall StartGodProcess 호출!"));
+	GodCall->StartGodProcess();
+}
+
 void AQGameModeVillage::BeginPlay()
 {
 	Super::BeginPlay();
@@ -71,6 +107,5 @@ void AQGameModeVillage::BeginPlay()
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("✅ BeginPlay - GodCall StartGodProcess 호출!"));
-	GodCall->StartGodProcess();
+	UE_LOG(LogTemp, Log, TEXT("✅ BeginPlay - 프롬프트 생성 완료 후 게임 진행"));
 }
