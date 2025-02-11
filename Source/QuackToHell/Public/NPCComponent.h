@@ -229,7 +229,7 @@ public:
 	 * @author 박시언
 	 * @brief NPC가 혼잣말을 실행하는 함수입니다.
 	 */
-	void PerformNPCMonologue();
+	void PerformNPCMonologue(int32 NPCID);
 
 	/**
 	 * @brief 특정 NPC의 대화 기록을 가져올 수 있습니다.

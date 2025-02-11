@@ -264,6 +264,7 @@ void UNPCComponent::StartNPCToNPCDialog(const FString& SpeakerNPCID, const FStri
 
 	RequestOpenAIResponse(AIRequest, [this, SpeakerNPCID, ListenerNPCID](FOpenAIResponse AIResponse)
 		{
+			SendNPCResponseToServer(AIResponse.ResponseText);
 			ContinueNPCToNPCDialog(ListenerNPCID, SpeakerNPCID, AIResponse.ResponseText, 4);
 		});
 
@@ -293,19 +294,21 @@ void UNPCComponent::ContinueNPCToNPCDialog(const FString& SpeakerNPCID, const FS
 	// OpenAI API 호출 후, 대화 이어나가기 (남은 턴 수가 감소함요)
 	RequestOpenAIResponse(AIRequest, [this, SpeakerNPCID, ListenerNPCID, RemainingTurns](FOpenAIResponse AIResponse)
 		{
+			SendNPCResponseToServer(AIResponse.ResponseText);
 			ContinueNPCToNPCDialog(ListenerNPCID, SpeakerNPCID, AIResponse.ResponseText, RemainingTurns - 1);
 		});
 }
 
 // N혼잣말 생성
-void UNPCComponent::PerformNPCMonologue()
+void UNPCComponent::PerformNPCMonologue(int32 NPCID)
 {
+	FString NPCIDString = FString::FromInt(NPCID);
 	FString Context;
 
 	// P2N 대화 기록이 존재하는 경우에만!! 해당 NPC의 대화 기록을 기반으로 혼잣말 생성
-	if (P2NDialogueHistory.Contains(NPCID) && P2NDialogueHistory[NPCID].DialogueLines.Num() > 0)
+	if (P2NDialogueHistory.Contains(NPCIDString) && P2NDialogueHistory[NPCIDString].DialogueLines.Num() > 0)
 	{
-		TArray<FString>& DialogueLines = P2NDialogueHistory[NPCID].DialogueLines;
+		TArray<FString>& DialogueLines = P2NDialogueHistory[NPCIDString].DialogueLines;
 		int32 NumLines = DialogueLines.Num();
 
 		FString RecentLines;
@@ -327,16 +330,18 @@ void UNPCComponent::PerformNPCMonologue()
 		"NPC '%s'가 혼잣말을 합니다. "
 		"최근 대화 기록: %s "
 		"이 대화를 바탕으로 자연스럽고 감정적인 독백을 생성하세요."),
-		*NPCID, *Context);
+		*NPCIDString, *Context);
 
 	AIRequest.MaxTokens = 100;
-	AIRequest.SpeakerID = FCString::Atoi(*NPCID);
+	AIRequest.SpeakerID = NPCID;
 	AIRequest.ListenerID = 0;
 	AIRequest.ConversationType = EConversationType::NMonologue;
 
-	RequestOpenAIResponse(AIRequest, [this](FOpenAIResponse AIResponse)
+	RequestOpenAIResponse(AIRequest, [this, NPCIDString](FOpenAIResponse AIResponse)
 		{
-			UE_LOG(LogTemp, Log, TEXT("Generated Monologue for NPC %s: %s"), *NPCID, *AIResponse.ResponseText);
+			UE_LOG(LogTemp, Log, TEXT("Generated Monologue for NPC %s: %s"), *NPCIDString, *AIResponse.ResponseText);
+
+			SendNPCResponseToServer(AIResponse.ResponseText);
 		});
 }
 
