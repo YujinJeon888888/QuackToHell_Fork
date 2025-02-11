@@ -14,16 +14,22 @@ UCLASS()
 class QUACKTOHELL_API AQPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-public:
-	/**
-	* @brief 대화끝날때의 처리를 구현합니다. 대화끝의 트리거를 외부에서 수집하므로, 외부에 public으로 해당 함수를 열었습니다. 1. 얼음땡 2. 상태전환
-	* @param 대화중인 NPC
-	*/
-	void ConverseEndProcess(TObjectPtr<class AQNPC> NPC);
+	/*AQPlayer에게 은닉정보공개 허용*/
+	friend class AQPlayer;
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+protected:
+
+	/** @breif ServerRPCCanFinishConversP2N를 통해 대화마무리가 가능한지 체크가 완료된 후 실행되는 클라이언트 RPC
+	 * 인자로 마무리할 수 있는지 없는지에 대한 bool값이 들어오게 된다. */
+	UFUNCTION(Client, Reliable)
+	void ClientRPCUpdateCanFinishConversP2N(bool bResult);
+	/** @breif ServerRPCCanStartConversP2N를 통해 대화시작이 가능한지 체크가 완료된 후 실행되는 클라이언트 RPC
+	 * 인자로 시작할 수 있는지 없는지에 대한 bool값이 들어오게 된다. */
+	UFUNCTION(Client, Reliable)
+	void ClientRPCUpdateCanStartConversP2N(bool bResult);
 protected:
 	/** @brief IMC입니다. */
 	UPROPERTY(EditAnyWhere, Category = "Input")
@@ -90,14 +96,7 @@ private:
 	 */
 	bool bEnableTurn = false;
 private:
-	/**
-	 * @brief 대화를 시작합니다.
-	 */
-	void StartDialog();
-	/**
-	 * @brief 대화를 중단합니다.
-	 */
-	void EndDialog();
+
 	
 	/**
 	 * @brief 몸을 멈춥니다.
@@ -109,9 +108,15 @@ private:
 	 */
 	void UnFreezePawn();
 	/**
-	 * @brief 대화중일때의 처리를 구현합니다. 1. 몸 멈추기 2. 대화상태로 전환하기
+	 * @brief 대화중일때의 처리를 구현합니다. 1. 몸 멈추기 
 	 */
 	void ConverseProcess();
+	/**
+	* @brief 대화끝날때의 처리를 구현합니다.  1. 얼음땡 
+	* 
+	*/
+	void ConverseEndProcess();
+
 private:
 	/** @brief VillageUIManager정보를 갖습니다. */
 	TObjectPtr<class AQVillageUIManager> VillageUIManager;

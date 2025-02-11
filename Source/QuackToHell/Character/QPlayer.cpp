@@ -7,12 +7,15 @@
 #include "Camera/CameraComponent.h"
 #include "QLogCategories.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "UI/QVillageUIManager.h"
+#include "UI/QP2NWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/PrimitiveComponent.h"
 #include "UI/QNameWidget.h"
 #include "Character/QNPC.h"
 #include "Components/WidgetComponent.h"
+#include "Player/QPlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/QPlayer2NSpeechBubbleWidget.h"
@@ -148,13 +151,12 @@ void AQPlayer::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLi
 void AQPlayer::ServerRPCCanStartConversP2N_Implementation(AQNPC* NPC)
 {
 	bool bResult = true;
-	
+	TObjectPtr<AQPlayerController> MyPlayerController = Cast<AQPlayerController>(GetController());
 	TObjectPtr<UNPCComponent> NPCComponent = NPC->FindComponentByClass<UNPCComponent>();
 
 	if (LocalPlayerState == nullptr || NPCComponent == nullptr)
 	{
 		bResult = false;
-		ClientRPCUpdateCanStartConversP2N_Implementation(bResult);
 	}
 	
 	// OpenAI에 Request를 보낼 수 있는지 확인
@@ -177,27 +179,15 @@ void AQPlayer::ServerRPCCanStartConversP2N_Implementation(AQNPC* NPC)
 	{
 		bResult = false;
 	}
-	ClientRPCUpdateCanStartConversP2N_Implementation(bResult);
+	MyPlayerController->ClientRPCUpdateCanStartConversP2N_Implementation(bResult);
 }
 
-void AQPlayer::ClientRPCUpdateCanStartConversP2N_Implementation(bool bCanStartConversP2N)
-{
-	if (bCanStartConversP2N)
-	{
-		/** @todo 유진 : 대화를 시작할 수 있을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
-		
-	}
-	else
-	{
-		/** @todo 유진 : 대화를 시작할 수 없을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
-		
-	}
-}
 
 void AQPlayer::ServerRPCCanFinishConversP2N_Implementation(AQNPC* NPC)
 {
 	bool bResult = true;
-	
+	TObjectPtr<UQP2NWidget> P2NWidget = Cast<UQP2NWidget>(AQVillageUIManager::GetInstance(GetWorld())->GetVillageWidgets()[EVillageUIType::P2N]);
+	TObjectPtr<AQPlayerController> MyPlayerController = Cast<AQPlayerController>(GetController());
 	TObjectPtr<UNPCComponent> NPCComponent = NPC->FindComponentByClass<UNPCComponent>();
 
 	// Player ConversationState가 None인지 확인
@@ -218,22 +208,10 @@ void AQPlayer::ServerRPCCanFinishConversP2N_Implementation(AQNPC* NPC)
 		bResult = false;
 	}
 	
-	ClientRPCUpdateCanFinishConversP2N_Implementation(bResult);
+	MyPlayerController->ClientRPCUpdateCanFinishConversP2N_Implementation(bResult);
+	P2NWidget->ClientRPCUpdateCanFinishConversP2N_Implementation(bResult);
 }
 
-void AQPlayer::ClientRPCUpdateCanFinishConversP2N_Implementation(bool bCanFinishConversP2N)
-{
-	if (bCanFinishConversP2N)
-	{
-		/** @todo 유진 : 대화를 끝낼 수 있을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
-		
-	}
-	else
-	{
-		/** @todo 유진 : 대화를 끝낼 수 없을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
-		
-	}
-}
 
 void AQPlayer::ServerRPCStartConversation_Implementation(AQNPC* NPC)
 {
