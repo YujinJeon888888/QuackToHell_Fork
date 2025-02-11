@@ -226,10 +226,10 @@ void UNPCComponent::StartConversation(const FOpenAIRequest& Request)
 			UE_LOG(LogTemp, Log, TEXT("OpenAI Response: %s"), *AIResponse.ResponseText);
 
 			// 응답 서버 전송 (전체 응답 전달)
-			SendNPCResponseToServer(AIResponse.ResponseText);
+			SendNPCResponseToServer(AIResponse);
 
 			// 대화 기록 저장
-			SaveP2NDialogue(Request.Prompt, AIResponse.ResponseText);
+			SaveP2NDialogue(Request, AIResponse);
 		});
 }
 
@@ -405,16 +405,6 @@ TMap<FString, FString> ResponseCache;
 // OpenAI API에 일반 대화 요청
 void UNPCComponent::RequestAIResponse(const FString& PlayerInput)
 {
-	// 캐싱된 응답이 있다면 API 호출 없이 반환
-	if (ResponseCache.Contains(PlayerInput))
-	{
-		FString CachedResponse = ResponseCache[PlayerInput];
-		UE_LOG(LogTemp, Log, TEXT("Using cached AI response: %s"), *CachedResponse);
-		SendNPCResponseToServer(CachedResponse);
-
-		OnNPCResponseReceived.Broadcast(CachedResponse);  // NPC 응답 브로드캐스트
-		return;
-	}
 
 	// OpenAI API 요청
 	FOpenAIRequest AIRequest;
@@ -426,29 +416,32 @@ void UNPCComponent::RequestAIResponse(const FString& PlayerInput)
 		{
 			ResponseCache.Add(PlayerInput, AIResponse.ResponseText);
 			UE_LOG(LogTemp, Log, TEXT("OpenAI Response: %s"), *AIResponse.ResponseText);
-			SendNPCResponseToServer(AIResponse.ResponseText);
+			SendNPCResponseToServer(AIResponse);
 			OnNPCResponseReceived.Broadcast(AIResponse.ResponseText);
 		});
 }
 
-void UNPCComponent::SaveP2NDialogue(const FString& PlayerInput, const FString& NPCResponse)
+void UNPCComponent::SaveP2NDialogue(const FOpenAIRequest& Request, const FOpenAIResponse& Response)
 {
-	if (!P2NDialogueHistory.Contains(NPCID))
+	FString NPCIDString = FString::FromInt(Request.ListenerID);
+
+	if (!P2NDialogueHistory.Contains(NPCIDString))
 	{
-		P2NDialogueHistory.Add(NPCID, FDialogueHistory());
+		P2NDialogueHistory.Add(NPCIDString, FDialogueHistory());
 	}
 
-	// 플레이어 입력이 있을 경우에만 저장해야 함(안 그러면 쓰레기 생김)
-	if (!PlayerInput.IsEmpty())
+	// 플레이어 입력이 있을 경우에만 저장해야 함 (안 그러면 쓰레기 데이터가 생김)
+	if (!Request.Prompt.IsEmpty())
 	{
-		P2NDialogueHistory[NPCID].DialogueLines.Add(FString::Printf(TEXT("Player: %s"), *PlayerInput));
+		P2NDialogueHistory[NPCIDString].DialogueLines.Add(FString::Printf(TEXT("Player: %s"), *Request.Prompt));
 	}
 
-	// NPC 응답은 그냥 바로바로 저장
-	P2NDialogueHistory[NPCID].DialogueLines.Add(FString::Printf(TEXT("%s: %s"), *NPCID, *NPCResponse));
+	// NPC 응답은 바로 저장
+	P2NDialogueHistory[NPCIDString].DialogueLines.Add(FString::Printf(TEXT("NPC(%d): %s"), Response.SpeakerID, *Response.ResponseText));
 
-	UE_LOG(LogTemp, Log, TEXT("P2N 대화 기록 저장 완료 - NPC: %s"), *NPCID);
+	UE_LOG(LogTemp, Log, TEXT("P2N 대화 기록 저장 완료 - NPC: %s"), *NPCIDString);
 }
+
 
 
 // GetP2NDialogueHistory("NPCID")를 호출하면 대화 기록을 가져올 수 있음
@@ -464,15 +457,17 @@ TArray<FString> UNPCComponent::GetP2NDialogueHistory() const
 }
 
 // 서버로 NPC의 응답을 보내는 RPC 함수
-void UNPCComponent::SendNPCResponseToServer_Implementation(const FString& NPCResponse)
+// 서버로 NPC의 응답을 보내는 RPC 함수 (FOpenAIResponse 전체 전달)
+void UNPCComponent::SendNPCResponseToServer_Implementation(const FOpenAIResponse& AIResponse)
 {
-	if (!NPCResponse.IsEmpty() && NPCResponse != TEXT("죄송합니다, 답변할 수 없습니다."))
+	if (!AIResponse.ResponseText.IsEmpty() && AIResponse.ResponseText != TEXT("죄송합니다, 답변할 수 없습니다."))
 	{
-		UE_LOG(LogTemp, Log, TEXT("Sending NPC response to server: %s"), *NPCResponse);
+		UE_LOG(LogTemp, Log, TEXT("Sending NPC response to server: %s"), *AIResponse.ResponseText);
+
 	}
 }
 
-bool UNPCComponent::SendNPCResponseToServer_Validate(const FString& NPCResponse)
+bool UNPCComponent::SendNPCResponseToServer_Validate(const FOpenAIResponse& AIResponse)
 {
 	return true; // 기본적으로 항상 유효한 메시지라고 가정
 }
