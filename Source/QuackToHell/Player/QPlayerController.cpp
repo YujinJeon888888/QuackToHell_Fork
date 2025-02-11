@@ -36,7 +36,8 @@ void AQPlayerController::BeginPlay()
 	//villagemanager를 가져온다
 	VillageUIManager = AQVillageUIManager::GetInstance(GetWorld());
 
-
+	//기본적으로 마우스커서 보이게
+	this->bShowMouseCursor = true;
 }
 
 void AQPlayerController::SetupInputComponent()
@@ -167,6 +168,8 @@ void AQPlayerController::ConverseEndProcess(TObjectPtr<class AQNPC> NPC)
 void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
 {
 	bEnableTurn = InputValue.Get<bool>() ? true : false;
+	//마우스 커서 감추기
+	this->bShowMouseCursor = InputValue.Get<bool>() ? false : true;
 }
 
 void AQPlayerController::InputInteraction(const FInputActionValue& InputValue)
