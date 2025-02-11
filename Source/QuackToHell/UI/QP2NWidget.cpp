@@ -62,13 +62,6 @@ void UQP2NWidget::HandleEnterKeyPress()
 
 
 
-bool UQP2NWidget::IsGerneratingResponse()
-{
-    if (NPCText->GetText().ToString() == WhenGenerateResponseText) {
-        return true;
-    }
-    return false;
-}
 
 void UQP2NWidget::HandleEnterEndButton()
 {

@@ -14,13 +14,7 @@ UCLASS()
 class QUACKTOHELL_API AQPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	/*AQPlayer에게 은닉정보공개 허용*/
-	friend class AQPlayer;
-
-protected:
-	virtual void BeginPlay() override;
-	virtual void SetupInputComponent() override;
-protected:
+public:
 
 	/** @breif ServerRPCCanFinishConversP2N를 통해 대화마무리가 가능한지 체크가 완료된 후 실행되는 클라이언트 RPC
 	 * 인자로 마무리할 수 있는지 없는지에 대한 bool값이 들어오게 된다. */
@@ -30,6 +24,11 @@ protected:
 	 * 인자로 시작할 수 있는지 없는지에 대한 bool값이 들어오게 된다. */
 	UFUNCTION(Client, Reliable)
 	void ClientRPCUpdateCanStartConversP2N(bool bResult);
+
+protected:
+	virtual void BeginPlay() override;
+	virtual void SetupInputComponent() override;
+
 protected:
 	/** @brief IMC입니다. */
 	UPROPERTY(EditAnyWhere, Category = "Input")

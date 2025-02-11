@@ -183,7 +183,6 @@ void AQDynamicNPCController::EndDialog()
 
 }
 
-
 void AQDynamicNPCController::OnNPCResponseReceived(const FString& Text)
 {
     Cast<UQP2NWidget>((VillageUIManager->GetVillageWidgets())[EVillageUIType::P2N])->UpdateNPCText(Text);
