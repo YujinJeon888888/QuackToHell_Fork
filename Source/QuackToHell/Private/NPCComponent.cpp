@@ -3,6 +3,7 @@
 
 #include "NPCComponent.h"
 #include "HttpModule.h"
+#include "QLogCategories.h"
 #include "Character/QPlayer.h"
 #include "FramePro/FramePro.h"
 #include "Game/QVillageGameState.h"
@@ -469,6 +470,7 @@ void UNPCComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 // -------------------------------------------------------------------------------------- //
 void UNPCComponent::GetNPCResponseServer(FOpenAIRequest Request)
 {
+	UE_LOG(LogLogic, Log, TEXT("GetNPCResponseServer Started"));
 	if (!GetOwner()->HasAuthority())
 	{
 		UE_LOG(LogTemp, Log, TEXT("GetNPCGreeting -> HasAuthority false."))
@@ -481,6 +483,7 @@ void UNPCComponent::GetNPCResponseServer(FOpenAIRequest Request)
 
 void UNPCComponent::ServerRPCGetNPCResponseP2N_Implementation(FOpenAIRequest Request)
 {
+	UE_LOG(LogLogic, Log, TEXT("ServerRPCGetNPCResponseP2N Started"));
 	RequestOpenAIResponse(Request, [this](FOpenAIResponse Response)
 	{
 		this->OnSuccessGetNPCResponse(Response);
@@ -489,6 +492,7 @@ void UNPCComponent::ServerRPCGetNPCResponseP2N_Implementation(FOpenAIRequest Req
 
 void UNPCComponent::OnSuccessGetNPCResponse(FOpenAIResponse Response)
 {
+	UE_LOG(LogLogic, Log, TEXT("OnSuccessGetNPCResponse Started"));
 	if (!GetOwner()->HasAuthority())
 	{
 		UE_LOG(LogTemp, Log, TEXT("GetNPCGreeting -> HasAuthority false."))
@@ -515,14 +519,14 @@ void UNPCComponent::OnSuccessGetNPCResponse(FOpenAIResponse Response)
 			TargetPlayerController = Cast<APlayerController>(GetOwner());
 			if (TargetPlayerController)
 			{
-				Cast<AQPlayerController>(TargetPlayerController)->ClientRPCStartConversation_Implementation(Response);
+				Cast<AQPlayerController>(TargetPlayerController)->ClientRPCStartConversation(Response);
 			}
 			break;
 		case EConversationType::P2N:
 			P2NWidget = Cast<UQP2NWidget>(AQVillageUIManager::GetInstance(GetWorld())->GetActivedVillageWidgets()[EVillageUIType::P2N]);			
 			if (P2NWidget)
 			{
-				P2NWidget->ClientRPCGetNPCResponse_Implementation(Response);
+				P2NWidget->ClientRPCGetNPCResponse(Response);
 			}
 			break;
 		case EConversationType::N2N:
@@ -537,13 +541,14 @@ void UNPCComponent::OnSuccessGetNPCResponse(FOpenAIResponse Response)
 
 void UNPCComponent::GetNPCResponse(FOpenAIRequest Request)
 {
+	UE_LOG(LogLogic, Log, TEXT("GetNPCResponse Started"));
 	switch (Request.ConversationType)
 	{
 		case EConversationType::None:
 			UE_LOG(LogTemp, Error, TEXT("GetNPCResponse -> Invaild ConversationType"));
 			break;
 		case EConversationType::P2N:
-			ServerRPCGetNPCResponseP2N_Implementation(Request);
+			ServerRPCGetNPCResponseP2N(Request);
 			break;
 		default:
 			GetNPCResponseServer(Request);
