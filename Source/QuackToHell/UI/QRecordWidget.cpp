@@ -179,7 +179,8 @@ void UQRecordWidget::TurnOnChatWidget(FText NPCID)
 			TObjectPtr<UWorld> World = GetWorld();
 			if (!World) return;
 			
-			TObjectPtr<UUserWidget> NewChatBox= CreateWidget<UUserWidget>(World, ClassOfChatBox);
+			//VillageManager는 이미 있으면 visible처리하므로 turnon하기에 적합x(turnon이 아니라 create가 필요): 따라서 직접 생성함
+			TObjectPtr<UUserWidget> NewChatBox = CreateWidget<UUserWidget>(World, ClassOfChatBox);
 			if (NewChatBox) {
 				NewChatBox->AddToViewport();
 				NewChatBox->SetVisibility(ESlateVisibility::Visible);
