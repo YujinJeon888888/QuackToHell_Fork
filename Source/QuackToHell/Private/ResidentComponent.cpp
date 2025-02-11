@@ -99,6 +99,6 @@ void UResidentComponent::StartConversation(const FOpenAIRequest& Request)
             SendNPCResponseToServer(AIResponse);
 
             // 대화 기록 저장
-            SaveP2NDialogue(Request.Prompt, AIResponse.ResponseText);
+            SaveP2NDialogue(Request, AIResponse);
         });
 }

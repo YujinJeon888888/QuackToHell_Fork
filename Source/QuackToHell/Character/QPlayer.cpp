@@ -240,10 +240,10 @@ void AQPlayer::ServerRPCStartConversation_Implementation(AQNPC* NPC)
 	FOpenAIRequest Request(
 		LocalPlayerState->GetPlayerId(),
 		NPC->FindComponentByClass<UNPCComponent>()->GetNPCID(),
-		EConversationType::PStart,
+		EConversationType::P2N,
 		Temp
 	);
-	NPC->FindComponentByClass<UNPCComponent>()->GetNPCResponse(Request);
+	NPC->FindComponentByClass<UNPCComponent>()->ServerRPCGetNPCResponse(Request);
 }
 
 

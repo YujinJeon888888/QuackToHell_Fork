@@ -82,7 +82,7 @@ private:
  * @author 박시언
  * @brief OpenAI API 응답을 위한 구조체
  */
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FOpenAIResponse
 {
 	GENERATED_BODY()
@@ -407,23 +407,23 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 protected:
+	
 	// Server RPC 함수
 	/** @brief 서버에게 NPC의 시작멘트를 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장 */
+	/*
 	UFUNCTION()
-	void GetNPCResponseServer(FOpenAIRequest Request);
+	void GetNPCResponseServer(FOpenAIRequest Request); */
 
 	/** @brief 서버에게 플레이어 입력에 대한 NPC의 응답을 요청한다. ServerRPC 내부에서 ClientRPC를 호출. 클라이언트는 ClientRPC 내부에서 응답 멘트를 저장*/
+/*
 	UFUNCTION(Server, Reliable)
-	void ServerRPCGetNPCResponseP2N(FOpenAIRequest Request);
+	void ServerRPCGetNPCResponseP2N(FOpenAIRequest Request); */
 	
-	/** @breif */
-	UFUNCTION()
-	void OnSuccessGetNPCResponse(FOpenAIResponse Response);
 
 public:
 	// 공용 인터페이스
 	/** @brief */
-	UFUNCTION()
-	void GetNPCResponse(FOpenAIRequest Request);
+	UFUNCTION(Server, Reliable)
+	void ServerRPCGetNPCResponse(FOpenAIRequest Request);
 
 };

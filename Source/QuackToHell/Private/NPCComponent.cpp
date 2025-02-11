@@ -269,11 +269,11 @@ void UNPCComponent::StartNPCToNPCDialog(const FOpenAIRequest& Request)
 	AIRequest.MaxTokens = 150;
 	AIRequest.SpeakerID = Request.SpeakerID;  // 그대로 유지
 	AIRequest.ListenerID = Request.ListenerID;  // 그대로 유지
-	AIRequest.ConversationType = EConversationType::N2N;
+	AIRequest.ConversationType = EConversationType::N2NStart;
 
 	RequestOpenAIResponse(AIRequest, [this, ListenerNPCID, SpeakerNPCID](FOpenAIResponse AIResponse)
 		{
-			ContinueNPCToNPCDialog(FOpenAIRequest(FCString::Atoi(*ListenerNPCID), FCString::Atoi(*SpeakerNPCID), EConversationType::N2N, AIResponse.ResponseText, 4));
+			ContinueNPCToNPCDialog(FOpenAIRequest(FCString::Atoi(*ListenerNPCID), FCString::Atoi(*SpeakerNPCID), EConversationType::N2NStart, AIResponse.ResponseText, 4));
 		});
 
 	UE_LOG(LogTemp, Log, TEXT("NPC-to-NPC 대화 요청 전송 완료"));
@@ -458,12 +458,64 @@ TArray<FString> UNPCComponent::GetP2NDialogueHistory() const
 
 // 서버로 NPC의 응답을 보내는 RPC 함수
 // 서버로 NPC의 응답을 보내는 RPC 함수 (FOpenAIResponse 전체 전달)
-void UNPCComponent::SendNPCResponseToServer_Implementation(const FOpenAIResponse& AIResponse)
+void UNPCComponent::SendNPCResponseToServer_Implementation(const FOpenAIResponse& Response)
 {
-	if (!AIResponse.ResponseText.IsEmpty() && AIResponse.ResponseText != TEXT("죄송합니다, 답변할 수 없습니다."))
+	UE_LOG(LogLogic, Log, TEXT("SendNPCResponseToServer_Implementation Started"));
+	if (!Response.ResponseText.IsEmpty() && Response.ResponseText != TEXT("죄송합니다, 답변할 수 없습니다."))
 	{
-		UE_LOG(LogTemp, Log, TEXT("Sending NPC response to server: %s"), *AIResponse.ResponseText);
+		UE_LOG(LogTemp, Log, TEXT("Sending NPC response to server: %s"), *Response.ResponseText);
+	}
 
+	if (Response.SpeakerID == 0 && Response.ListenerID == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("UNPCComponent::OnSuccessGetNPCResponse -> Invalid Response"))
+		return;
+	}
+	if (!GetOwner()->HasAuthority())
+	{
+		UE_LOG(LogTemp, Log, TEXT("OnSuccessGetNPCResponse -> HasAuthority false."))
+	}
+	// 대화기록 저장
+	TObjectPtr<AQVillageGameState> VillageGameState = Cast<AQVillageGameState>(GetWorld()->GetGameState());
+	if (VillageGameState == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("OnSuccessStartConversation - VillageGameState is null."));
+		return;
+	}
+	SetLastConversationTime(FDateTime::Now());
+	int32 RecordID = VillageGameState->AddConversationRecord(Response.ConversationType, Response.ListenerID, Response.SpeakerID, LastConversationTime, Response.ResponseText);
+	if (RecordID < 0)
+	{
+		return;
+	}
+	
+	APlayerController* TargetPlayerController;
+	TObjectPtr<UQP2NWidget> P2NWidget;
+	switch (Response.ConversationType)
+	{
+	case EConversationType::P2N: // 임시
+		TargetPlayerController = Cast<APlayerController>(GetOwner());
+		if (TargetPlayerController)
+		{
+			Cast<AQPlayerController>(TargetPlayerController)->ClientRPCStartConversation(Response);
+		}
+		break;
+	case EConversationType::None: // 임시
+		P2NWidget = Cast<UQP2NWidget>(AQVillageUIManager::GetInstance(GetWorld())->GetActivedVillageWidgets()[EVillageUIType::P2N]);			
+		if (P2NWidget)
+		{
+			P2NWidget->ClientRPCGetNPCResponse(Response);
+		}
+		break;
+	case EConversationType::N2N:
+		break;
+	case EConversationType::N2NStart:
+		break;
+	case EConversationType::NMonologue:
+		break;
+	default:
+		UE_LOG(LogTemp, Error, TEXT("GetNPCResponse -> Invaild ConversationType"));
+		break;
 	}
 }
 
@@ -481,6 +533,7 @@ void UNPCComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 }
 
 // -------------------------------------------------------------------------------------- //
+/*
 void UNPCComponent::GetNPCResponseServer(FOpenAIRequest Request)
 {
 	UE_LOG(LogLogic, Log, TEXT("GetNPCResponseServer Started"));
@@ -502,70 +555,37 @@ void UNPCComponent::ServerRPCGetNPCResponseP2N_Implementation(FOpenAIRequest Req
 		this->OnSuccessGetNPCResponse(Response);
 	});
 }
+*/
 
-void UNPCComponent::OnSuccessGetNPCResponse(FOpenAIResponse Response)
+void UNPCComponent::ServerRPCGetNPCResponse_Implementation(FOpenAIRequest Request)
 {
-	UE_LOG(LogLogic, Log, TEXT("OnSuccessGetNPCResponse Started"));
-	if (!GetOwner()->HasAuthority())
-	{
-		UE_LOG(LogTemp, Log, TEXT("GetNPCGreeting -> HasAuthority false."))
-	}
-	// 대화기록 저장
-	TObjectPtr<AQVillageGameState> VillageGameState = Cast<AQVillageGameState>(GetWorld()->GetGameState());
-	if (VillageGameState == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("OnSuccessStartConversation - VillageGameState is null."));
-		return;
-	}
-	SetLastConversationTime(FDateTime::Now());
-	int32 RecordID = VillageGameState->AddConversationRecord(Response.ConversationType, Response.ListenerID, Response.SpeakerID, LastConversationTime, Response.ResponseText);
-	if (RecordID < 0)
-	{
-		return;
-	}
+	/*
+	 *	P2N : StartConversation, SendNPCResponseToServer()
+	 *	N2N 대화 시작 : StartNPCToNPCDialog, SendNPCResponseToServer()
+	 *	N2N 대화 진행 : ContinueNPCToNPCDialog(), SendNPCResponseToServer()
+	 *	NMonologue : PerformNPCMonologue(), SendNPCResponseToServer()
+	 */
 	
-	APlayerController* TargetPlayerController;
-	TObjectPtr<UQP2NWidget> P2NWidget;
-	switch (Response.ConversationType)
-	{
-		case EConversationType::PStart:
-			TargetPlayerController = Cast<APlayerController>(GetOwner());
-			if (TargetPlayerController)
-			{
-				Cast<AQPlayerController>(TargetPlayerController)->ClientRPCStartConversation(Response);
-			}
-			break;
-		case EConversationType::P2N:
-			P2NWidget = Cast<UQP2NWidget>(AQVillageUIManager::GetInstance(GetWorld())->GetActivedVillageWidgets()[EVillageUIType::P2N]);			
-			if (P2NWidget)
-			{
-				P2NWidget->ClientRPCGetNPCResponse(Response);
-			}
-			break;
-		case EConversationType::N2N:
-			break;
-		case EConversationType::NMonologue:
-			break;
-		default:
-			UE_LOG(LogTemp, Error, TEXT("GetNPCResponse -> Invaild ConversationType"));
-			break;
-	}
-}
-
-void UNPCComponent::GetNPCResponse(FOpenAIRequest Request)
-{
 	UE_LOG(LogLogic, Log, TEXT("GetNPCResponse Started"));
 	switch (Request.ConversationType)
 	{
-		case EConversationType::None:
-			UE_LOG(LogTemp, Error, TEXT("GetNPCResponse -> Invaild ConversationType"));
-			break;
-		case EConversationType::P2N:
-			ServerRPCGetNPCResponseP2N(Request);
-			break;
-		default:
-			GetNPCResponseServer(Request);
-			break;
+	case EConversationType::None:
+		UE_LOG(LogTemp, Error, TEXT("GetNPCResponse -> Invaild ConversationType"));
+		break;
+	case EConversationType::P2N:
+		StartConversation(Request);
+		break;
+	case EConversationType::N2N:
+		ContinueNPCToNPCDialog(Request);
+		break;
+	case EConversationType::N2NStart:
+		StartNPCToNPCDialog(Request);
+		break;
+	case EConversationType::NMonologue:
+		PerformNPCMonologue(Request);
+		break;
+	default:
+		UE_LOG(LogTemp, Error, TEXT("GetNPCResponse -> Invaild ConversationType"));
+		break;
 	}
 }
-
