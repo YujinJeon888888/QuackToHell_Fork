@@ -66,7 +66,6 @@ void AQPlayerController::ClientRPCUpdateCanFinishConversP2N_Implementation(bool 
 {
 	if (bResult)
 	{
-		/** @todo 유진 : 대화를 끝낼 수 있을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
 		TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
 
 		//1. 상대방 NPC를 불러옴
@@ -74,13 +73,8 @@ void AQPlayerController::ClientRPCUpdateCanFinishConversP2N_Implementation(bool 
 		TObjectPtr<AQDynamicNPC> NPC = Cast<AQDynamicNPC>(_Player->GetClosestNPC());
 		TObjectPtr<AQDynamicNPCController> NPCController = Cast<AQDynamicNPCController>(NPC->GetController());
 
-		//3. 대화끝처리 : 클라
-		ConverseEndProcess();
-		//3. 상태를 전환 : 서버
-		Cast<AQPlayer>(this->GetPawn())->ServerRPCFinishConversation_Implementation(NPC);
-
-		//4. 대화 그만하라고 명령한다.
-		NPCController->EndDialog();
+		//서버 대화로직 실행
+		Cast<AQPlayer>(this->GetPawn())->ServerRPCFinishConversation(NPC);
 	}
 	else
 	{
@@ -94,10 +88,30 @@ void AQPlayerController::ClientRPCUpdateCanStartConversP2N_Implementation(bool b
 {
 	if (bResult)
 	{
-		/** @todo 유진 : 대화를 시작할 수 있을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
 		//0. 상대방 NPC를 불러옴
 		TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
 		TObjectPtr<AQDynamicNPC> NPC = Cast<AQDynamicNPC>(_Player->GetClosestNPC());
+		//플레이어를 대화처리한다. (서버)
+		Cast<AQPlayer>(this->GetPawn())->ServerRPCStartConversation(NPC);
+	}
+	else
+	{
+		/** @todo 유진 : 대화를 시작할 수 없을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
+		UE_LOG(LogLogic, Log, TEXT("대화시도실패!!"));
+	}
+
+}
+
+void AQPlayerController::ClientRPCStartConversation_Implementation(FOpenAIResponse NPCStartResponse)
+{
+	// UE_LOG(LogTemp, Log, TEXT("Player Conversation State Updated. -> %hhd"), LocalPlayerState->GetPlayerConversationState());
+	// UE_LOG(LogTemp, Log, TEXT("%s Conversation State Updated. -> %hhd"), *NPC->GetName(), NPC->GetNPCConversationState());
+
+		//0. 상대방 NPC를 불러옴
+		TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
+		TObjectPtr<AQDynamicNPC> NPC = Cast<AQDynamicNPC>(_Player->GetClosestNPC());
+
+		/** @todo 유진 : 서버측에서 대화 시작 로직이 성공적으로 마무리 되었을 떄 실행할 함수 여기서 호출 */
 		/** @todo 유진 - 이 부분을 Player.cpp에 표시해놓은 부분에서 호출하면 될듯. + nullcheck같은거 추가로 하면ㄷ 좋을 것 같아요*/
 		//1. UI를 킨다.
 		VillageUIManager->TurnOnUI(EVillageUIType::P2N);
@@ -108,25 +122,39 @@ void AQPlayerController::ClientRPCUpdateCanStartConversP2N_Implementation(bool b
 		//3. NPC에게 대화 시작하라고 명령한다.
 		NPCController->StartDialog(GetPawn(), ENPCConversationType::P2N);
 
-		//4. 플레이어를 대화처리한다. (클라이언트)
-		this->ConverseProcess();
-		//4.1 플레이어를 대화처리한다. (서버)
-		Cast<AQPlayer>(this->GetPawn())->ServerRPCStartConversation_Implementation(NPC);
+		//4. 플레이어 몸을 멈춘다.
+		this->FreezePawn(); 
 
 		//5. P2N Widget에게 자신의 정보를 넘긴다.
 		//내 정보 넘겨주기
-		Cast<UQP2NWidget>((VillageUIManager->GetVillageWidgets())[EVillageUIType::P2N])->SetConversingPlayer(this);
-		
-	}
-	else
-	{
-		/** @todo 유진 : 대화를 시작할 수 없을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
-		UE_LOG(LogLogic, Log, TEXT("대화시도실패!!"));
-	}
+		Cast<UQP2NWidget>((VillageUIManager->GetActivedVillageWidgets())[EVillageUIType::P2N])->SetConversingPlayer(this);
 
 }
 
+void AQPlayerController::ClientRPCFinishConversation_Implementation(AQNPC* NPC)
+{
+	//UE_LOG(LogTemp, Log, TEXT("Player Conversation State Updated. -> %hhd"), LocalPlayerState->GetPlayerConversationState());
+	UE_LOG(LogTemp, Log, TEXT("%s Conversation State Updated. -> %hhd"), *NPC->GetName(), NPC->GetNPCConversationState());
 
+		/** @todo 유진 : 서버측에서 대화 마무리 로직이 성공적으로 마무리 되었을 때 실행할 함수 여기서 호출 */
+		/** @todo 유진 : 대화를 끝낼 수 있을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
+		TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
+
+		//1. 상대방 NPC를 불러옴
+		//2. 상대방 NPC의 컨트롤러를 불러옴
+		TObjectPtr<AQDynamicNPC> MyNPC = Cast<AQDynamicNPC>(NPC);
+		TObjectPtr<AQDynamicNPCController> NPCController = Cast<AQDynamicNPCController>(MyNPC->GetController());
+
+		//3. 몸멈춘다.
+		UnFreezePawn();
+
+		//4. 대화 그만하라고 명령한다.
+		NPCController->EndDialog();
+
+		//5. UI끈다.
+		AQVillageUIManager::GetInstance(GetWorld())->TurnOffUI(EVillageUIType::P2N);
+	
+}
 
 
 void AQPlayerController::FreezePawn()
@@ -166,18 +194,8 @@ void AQPlayerController::UnFreezePawn()
 	UE_LOG(LogLogic, Log, TEXT("플레이어 이동 재개."));
 }
 
-void AQPlayerController::ConverseProcess()
-{
-	//1. 몸 멈추기
-	FreezePawn();
-}
 
-void AQPlayerController::ConverseEndProcess()
-{
-	//1. 얼음땡
-	UnFreezePawn();
 
-}
 
 void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
 {
@@ -206,8 +224,8 @@ void AQPlayerController::InputTurnOnOffMap(const FInputActionValue& InputValue)
 
 	//지도가 켜져있는지, 꺼져있는지에 따라 켤지끌지가 결정됨.
 	//지도가 있는지부터 확인
-	if (VillageUIManager->GetVillageWidgets().Contains(EVillageUIType::Map)) {
-		TObjectPtr<UQMapWidget> MapWidget = Cast<UQMapWidget>((VillageUIManager->GetVillageWidgets())[EVillageUIType::Map]);
+	if (VillageUIManager->GetActivedVillageWidgets().Contains(EVillageUIType::Map)) {
+		TObjectPtr<UQMapWidget> MapWidget = Cast<UQMapWidget>((VillageUIManager->GetActivedVillageWidgets())[EVillageUIType::Map]);
 
 		//보이는 상태가 아니면 켜기
 		if (MapWidget->GetVisibility() != ESlateVisibility::Visible) {
@@ -229,8 +247,8 @@ void AQPlayerController::InputTurnOnOffInventory(const FInputActionValue& InputV
 {
 	//인벤토리가 켜져있는지, 꺼져있는지에 따라 켤지끌지가 결정됨.
 	//인벤토리가 있는지부터 확인
-	if (VillageUIManager->GetVillageWidgets().Contains(EVillageUIType::Inventory)) {
-		TObjectPtr<UQInventoryWidget> InventoryWidget = Cast<UQInventoryWidget>((VillageUIManager->GetVillageWidgets())[EVillageUIType::Inventory]);
+	if (VillageUIManager->GetActivedVillageWidgets().Contains(EVillageUIType::Inventory)) {
+		TObjectPtr<UQInventoryWidget> InventoryWidget = Cast<UQInventoryWidget>((VillageUIManager->GetActivedVillageWidgets())[EVillageUIType::Inventory]);
 
 		//보이는 상태가 아니면 켜기
 		if (InventoryWidget->GetVisibility() != ESlateVisibility::Visible) {

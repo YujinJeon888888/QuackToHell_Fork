@@ -186,7 +186,6 @@ void AQPlayer::ServerRPCCanStartConversP2N_Implementation(AQNPC* NPC)
 void AQPlayer::ServerRPCCanFinishConversP2N_Implementation(AQNPC* NPC)
 {
 	bool bResult = true;
-	TObjectPtr<UQP2NWidget> P2NWidget = Cast<UQP2NWidget>(AQVillageUIManager::GetInstance(GetWorld())->GetVillageWidgets()[EVillageUIType::P2N]);
 	TObjectPtr<AQPlayerController> MyPlayerController = Cast<AQPlayerController>(GetController());
 	TObjectPtr<UNPCComponent> NPCComponent = NPC->FindComponentByClass<UNPCComponent>();
 
@@ -209,7 +208,6 @@ void AQPlayer::ServerRPCCanFinishConversP2N_Implementation(AQNPC* NPC)
 	}
 	
 	MyPlayerController->ClientRPCUpdateCanFinishConversP2N_Implementation(bResult);
-	P2NWidget->ClientRPCUpdateCanFinishConversP2N_Implementation(bResult);
 }
 
 
@@ -237,21 +235,7 @@ void AQPlayer::ServerRPCStartConversation_Implementation(AQNPC* NPC)
 	NPC->FindComponentByClass<UNPCComponent>()->GetNPCResponse(Request);
 }
 
-void AQPlayer::ClientRPCStartConversation_Implementation(FOpenAIResponse NPCStartResponse, bool bResult)
-{
-	// UE_LOG(LogTemp, Log, TEXT("Player Conversation State Updated. -> %hhd"), LocalPlayerState->GetPlayerConversationState());
-	// UE_LOG(LogTemp, Log, TEXT("%s Conversation State Updated. -> %hhd"), *NPC->GetName(), NPC->GetNPCConversationState());
-	if (bResult)
-	{
-		/** @todo 유진 : 서버측에서 대화 시작 로직이 성공적으로 마무리 되었을 떄 실행할 함수 여기서 호출 */
-		
-	}
-	else
-	{
-		/** @todo 유진 : 서버측에서 대화 시작 로직 실행에 실패했을 때 실행할 함수 여기서 호출*/
-		
-	}
-}
+
 
 void AQPlayer::MulticastRPCStartConversation_Implementation(AQPlayer* Player, AQNPC* NPC)
 {
@@ -270,7 +254,6 @@ void AQPlayer::ServerRPCFinishConversation_Implementation(AQNPC* NPC)
 	LocalPlayerState->SetPlayerConverstationState(EConversationType::None);
 	NPC->SetNPCConversationState(EConversationType::None);
 
-	ClientRPCFinishConversation_Implementation(NPC, bResult);
 
 	// 다른 플레이어들 시점 처리
 	AQPlayer* LocalPlayer = Cast<AQPlayer>(LocalPlayerState->GetPawn());
@@ -278,23 +261,12 @@ void AQPlayer::ServerRPCFinishConversation_Implementation(AQNPC* NPC)
 	{
 		MulticastRPCFinishConversation_Implementation(LocalPlayer, NPC);
 	}
+
+	//클라이언트에게 대화끝내기 처리 요청
+	Cast<AQPlayerController>(GetController())->ClientRPCFinishConversation_Implementation(NPC);
 }
 
-void AQPlayer::ClientRPCFinishConversation_Implementation(AQNPC* NPC, bool bResult)
-{
-	UE_LOG(LogTemp, Log, TEXT("Player Conversation State Updated. -> %hhd"), LocalPlayerState->GetPlayerConversationState());
-	UE_LOG(LogTemp, Log, TEXT("%s Conversation State Updated. -> %hhd"), *NPC->GetName(), NPC->GetNPCConversationState());
-	if (bResult)
-	{
-		/** @todo 유진 : 서버측에서 대화 마무리 로직이 성공적으로 마무리 되었을 때 실행할 함수 여기서 호출 */
-		
-	}
-	else
-	{
-		/** @todo 유진 : 서버측에서 대화 마무리 로직 실행에 실패했을 때 실행할 함수 여기서 호출*/
-		
-	}
-}
+
 
 void AQPlayer::MulticastRPCFinishConversation_Implementation(AQPlayer* Player, AQNPC* NPC)
 {
@@ -306,7 +278,4 @@ void AQPlayer::MulticastRPCFinishConversation_Implementation(AQPlayer* Player, A
 	
 }
 
-void AQPlayer::ClientRPCGetNPCResponse_Implementation(FOpenAIResponse NPCStartResponse)
-{
-	/** @todo 유진 : 서버측에서 NPC응답 왔을 때 실행할 함수 여기서 호출*/
-}
+

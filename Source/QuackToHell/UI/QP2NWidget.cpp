@@ -28,10 +28,7 @@ void UQP2NWidget::UpdateNPCText(const FString& Text)
 void UQP2NWidget::SetConversingNPC(const TObjectPtr<class AQDynamicNPCController> NPC)
 {
     ConversingNPC = NPC;
-    //브로드캐스트 등록
-    TObjectPtr<AQDynamicNPC> _NPC = Cast<AQDynamicNPC>(ConversingNPC->GetPawn());
-    TObjectPtr<UNPCComponent> NPCComponent = _NPC->GetComponentByClass<UNPCComponent>();
-    NPCComponent->OnNPCResponseReceived.AddDynamic(this, &UQP2NWidget::UpdateNPCText);
+
 }
 
 void UQP2NWidget::SetConversingPlayer(const TObjectPtr<class AQPlayerController> Player)
@@ -57,10 +54,8 @@ void UQP2NWidget::HandleEnterKeyPress()
     //3. NPC Text는 음.. 으로 바꾼다.
     UpdateNPCText(WhenGenerateResponseText);
     //4. NPC에게 응답을 요청한다.
-    ConversingNPC->Response(PlayerInput);
+    ConversingNPC->Response(PlayerInput,EConversationType::P2N);
 }
-
-
 
 
 void UQP2NWidget::HandleEnterEndButton()
@@ -72,16 +67,13 @@ void UQP2NWidget::HandleEnterEndButton()
     _Player->ServerRPCCanFinishConversP2N_Implementation(_NPC);    
 }
 
-void UQP2NWidget::ClientRPCUpdateCanFinishConversP2N_Implementation(bool bResult)
-{
-    if (bResult) {
-        //1. UI 끈다.
-        AQVillageUIManager::GetInstance(GetWorld())->TurnOffUI(EVillageUIType::P2N);
-    }
-    else {
-        UE_LOG(LogLogic, Log, TEXT("대화를 마칠 수 없습니다!"));
-    }
-}
 
+
+void UQP2NWidget::ClientRPCGetNPCResponse_Implementation(FOpenAIResponse NPCStartResponse)
+{
+    /** @todo 유진 : 서버측에서 NPC응답 왔을 때 실행할 함수 여기서 호출*/
+    FString Response = NPCStartResponse.ResponseText;
+    UpdateNPCText(Response);
+}
 
 

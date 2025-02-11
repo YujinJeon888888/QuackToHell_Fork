@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "NPC/QNPCController.h"
+#include "NPCComponent.h"
 #include "QDynamicNPCController.generated.h"
 
 /**
@@ -33,7 +34,7 @@ public:
      * @brief 입력에 대해 대답하라는 요구를 처리합니다.
      * @param query을 인자로 넣습니다.
      */
-    void Response(FString& Text);
+    void Response(FString& Text, EConversationType ConversationType);
     ///** @brief 응답완료의 처리를 위해 델리게이트를 public으로 열어놓습니다. 응답완료 시 호출될 함수를 추가하세요 */
     //UPROPERTY()
     //FResponseDelegate OnResponseFinished;
@@ -54,9 +55,6 @@ private:
 
     /** @brief VillageUIManager정보를 갖습니다. */
     TObjectPtr<class AQVillageUIManager> VillageUIManager;
-    /** @brief OnNPCResponseReceived의 콜백함수 */
-    UFUNCTION()
-    void OnNPCResponseReceived(const FString& Text);
 
     /**
      * @brief 상대방 정보.

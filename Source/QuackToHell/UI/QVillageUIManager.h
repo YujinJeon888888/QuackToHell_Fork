@@ -54,7 +54,7 @@ public:
 	 * 
 	 * @return 마을 위젯들의 map 
 	 */
-	TMap<EVillageUIType, TObjectPtr<UUserWidget>> GetVillageWidgets() const;
+	TMap<EVillageUIType, TObjectPtr<UUserWidget>> GetActivedVillageWidgets() const;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -77,7 +77,7 @@ private:
 	 */
 	TMap<EVillageUIType, TSubclassOf<UUserWidget>> UIWidgetClasses;
 	/** @brief 마을 위젯 관리 */
-	TMap<EVillageUIType, TObjectPtr<UUserWidget>> VillageWidgets;
+	TMap<EVillageUIType, TObjectPtr<UUserWidget>> ActivedVillageWidgets;
 	
 	/**
 	 * @brief

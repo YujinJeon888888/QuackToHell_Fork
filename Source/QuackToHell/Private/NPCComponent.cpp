@@ -6,7 +6,10 @@
 #include "Character/QPlayer.h"
 #include "FramePro/FramePro.h"
 #include "Game/QVillageGameState.h"
+#include "Player/QPlayerController.h"
 #include "Misc/FileHelper.h"
+#include "UI/QVillageUIManager.h"
+#include "UI/QP2NWidget.h"
 #include "Misc/Paths.h"
 #include "Templates/Function.h"
 #include "GameFramework/PlayerState.h"
@@ -505,20 +508,21 @@ void UNPCComponent::OnSuccessGetNPCResponse(FOpenAIResponse Response)
 	}
 	
 	APlayerController* TargetPlayerController;
+	TObjectPtr<UQP2NWidget> P2NWidget;
 	switch (Response.ConversationType)
 	{
 		case EConversationType::PStart:
 			TargetPlayerController = Cast<APlayerController>(GetOwner());
 			if (TargetPlayerController)
 			{
-				Cast<AQPlayer>(TargetPlayerController->GetPawn())->ClientRPCStartConversation_Implementation(Response, true);
+				Cast<AQPlayerController>(TargetPlayerController)->ClientRPCStartConversation_Implementation(Response);
 			}
 			break;
 		case EConversationType::P2N:
-			TargetPlayerController = Cast<APlayerController>(GetOwner());
-			if (TargetPlayerController)
+			P2NWidget = Cast<UQP2NWidget>(AQVillageUIManager::GetInstance(GetWorld())->GetActivedVillageWidgets()[EVillageUIType::P2N]);			
+			if (P2NWidget)
 			{
-				Cast<AQPlayer>(TargetPlayerController->GetPawn())->ClientRPCGetNPCResponse_Implementation(Response);
+				P2NWidget->ClientRPCGetNPCResponse_Implementation(Response);
 			}
 			break;
 		case EConversationType::N2N:
