@@ -114,36 +114,48 @@ FString UGodFunction::CleanUpJson(FString JsonString)
 // JSON 파일 저장 함수
 bool UGodFunction::SavePromptToFile(const FString& FileName, const FString& Content)
 {
-    FString FilePath = FPaths::ProjectSavedDir() + TEXT("Prompt/") + FileName;
+    FString PromptFolder = FPaths::ProjectSavedDir() + TEXT("Prompt/");
+    FString FilePath = PromptFolder + FileName;
 
-    // 기존 파일 확인
-    if (FPaths::FileExists(FilePath))
-    {
-        FString ExistingContent;
-        FFileHelper::LoadFileToString(ExistingContent, *FilePath);
+    IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+    PlatformFile.SetReadOnly(*FilePath, false);
 
-        if (!ExistingContent.IsEmpty() && !Content.IsEmpty())
-        {
-            UE_LOG(LogTemp, Warning, TEXT("%s 파일이 이미 존재하며, 덮어쓰지 않음."), *FileName);
-            return false;
-        }
-    }
+    // ✅ 절대 경로 변환
+    FilePath = FPaths::ConvertRelativePathToFull(FilePath);
+
+    // ✅ 파일 강제 삭제 (존재하지 않는 경우에도 체크)
+    DeleteOldPromptFiles();
+
+    // ✅ 기존 파일 삭제 시도
+    //if (FPaths::FileExists(FilePath))
+    //{
+    //    UE_LOG(LogTemp, Warning, TEXT("기존 파일 발견: %s → 삭제 후 저장 진행"), *FilePath);
+
+    //    IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+    //    PlatformFile.SetReadOnly(*FilePath, false);  // ✅ 읽기 전용 해제
+
+    //    if (!PlatformFile.DeleteFile(*FilePath))
+    //    {
+    //        UE_LOG(LogTemp, Error, TEXT("❌ 기존 파일 삭제 실패: %s"), *FilePath);
+    //        return false;
+    //    }
+    //}
 
     // 빈 JSON이면 저장하지 않음
     if (Content.IsEmpty())
     {
-        UE_LOG(LogTemp, Error, TEXT("Empty content detected. Skipping file save for %s"), *FileName);
+        UE_LOG(LogTemp, Error, TEXT("저장할 데이터가 비어 있음. Skipping file save for %s"), *FileName);
         return false;
     }
 
     bool bSuccess = FFileHelper::SaveStringToFile(Content, *FilePath);
     if (bSuccess)
     {
-        UE_LOG(LogTemp, Log, TEXT("Successfully saved prompt file: %s"), *FileName);
+        UE_LOG(LogTemp, Log, TEXT("프롬프트 저장 완료: %s"), *FileName);
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("Failed to save prompt file: %s"), *FileName);
+        UE_LOG(LogTemp, Error, TEXT("프롬프트 저장 실패: %s"), *FileName);
     }
 
     return bSuccess;
@@ -244,6 +256,8 @@ void UGodFunction::DeleteOldPromptFiles()
         }
 
         FString FilePath = PromptFolder + File;
+        FilePath = FPaths::ConvertRelativePathToFull(FilePath);
+
         if (FileManager.Delete(*FilePath))
         {
             UE_LOG(LogTemp, Log, TEXT("Deleted old Prompt file: %s"), *FilePath);
@@ -289,114 +303,118 @@ void UGodFunction::GeneratePromptWithDelay(UWorld* World, const FString& FileNam
 
 void UGodFunction::GenerateDefendantPrompt(UWorld* World, TFunction<void()> Callback)
 {
+    if (!World)
+    {
+        UE_LOG(LogTemp, Error, TEXT("GenerateDefendantPrompt - World is nullptr!"));
+        return;
+    }
+
     FString DefendantFilePath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json");
     FString PromptToGodPath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToGod.json");
 
-    if (FPaths::FileExists(DefendantFilePath))
+   // if (FPaths::FileExists(DefendantFilePath))
+   // {
+   //    UE_LOG(LogTemp, Warning, TEXT("PromptToDefendant.json 이미 존재하지만, 새로 생성하여 덮어쓰기 진행."));
+   // }
+
+    // 이미 존재하면 생성하지 않음
+    /*if (FPaths::FileExists(DefendantFilePath))
     {
         UE_LOG(LogTemp, Warning, TEXT("PromptToDefendant.json 이미 존재하므로 생성하지 않음."));
         if (Callback) Callback();
         return;
-    }
+    }*/
 
+    // PromptToGod.json이 없으면 재시도
     if (!FPaths::FileExists(PromptToGodPath))
     {
         UE_LOG(LogTemp, Warning, TEXT("PromptToGod.json이 존재하지 않음. 피고인 프롬프트 생성 대기!"));
-        World->GetTimerManager().SetTimerForNextTick([World, Callback]()
-            {
-                GenerateDefendantPrompt(World, Callback);
-            });
         return;
     }
 
-    UE_LOG(LogTemp, Log, TEXT("기존 Prompt 파일 삭제 시작."));
-    UGodFunction::DeleteOldPromptFiles();
+    // 프롬프트 생성 시작
+    UE_LOG(LogTemp, Log, TEXT("PromptToDefendant.json 생성 시작!"));
 
-    World->GetTimerManager().SetTimerForNextTick([World, Callback, DefendantFilePath, PromptToGodPath]()
+    FString PromptToGod = ReadFileContent(PromptToGodPath);
+    FString DefendantPrompt = FString::Printf(
+        TEXT("{ \"task\": \"피고인 정보를 생성하세요.\", "
+            "\"instructions\": ["
+            "\"PromptToGod.json을 바탕으로 피고인(NPC)의 정보를 생성하세요.\", "
+            "\"npcid 값을 '2000'으로 설정하세요.\"], "
+            "\"references\": { \"PromptToGod\": \"%s\" } }"),
+        *EscapeJSON(PromptToGod.Mid(0, 2000))
+    );
+
+    // OpenAI API 호출
+    CallOpenAIAsync(DefendantPrompt, [World, Callback, DefendantFilePath](FString DefendantJson)
         {
-            UE_LOG(LogTemp, Log, TEXT("기존 Prompt 파일 삭제 완료. PromptToDefendant.json 생성 시작!"));
-            FString PromptToGod = ReadFileContent(PromptToGodPath);
-            FString DefendantPrompt = FString::Printf(
-                TEXT("{ \"task\": \"피고인 정보를 생성하세요.\", "
-                    "\"instructions\": ["
-                    "\"PromptToGod.json을 바탕으로 피고인(NPC)의 정보를 생성하세요.\", "
-                    "\"npcid 값을 '2000'으로 설정하세요.\"], "
-                    "\"references\": { \"PromptToGod\": \"%s\" } }"),
-                *EscapeJSON(PromptToGod.Mid(0, 2000))
-            );
+            if (!World)
+            {
+                UE_LOG(LogTemp, Error, TEXT("GenerateDefendantPrompt - World is nullptr in Callback!"));
+                return;
+            }
 
-            CallOpenAIAsync(DefendantPrompt, [World, Callback, DefendantFilePath](FString DefendantJson)
-                {
-                    FString CleanedJson = UGodFunction::CleanUpJson(DefendantJson);
-                    if (UGodFunction::SavePromptToFile(DefendantFilePath, CleanedJson))
-                    {
-                        UE_LOG(LogTemp, Log, TEXT("PromptToDefendant.json 저장 완료!"));
-                        if (Callback) Callback();
-                        World->GetTimerManager().SetTimerForNextTick([World]()
-                            {
-                                GenerateNPCPrompts(World);
-                            });
-                    }
-                    else
-                    {
-                        UE_LOG(LogTemp, Error, TEXT("PromptToDefendant.json 저장 실패! 다시 시도."));
-                        World->GetTimerManager().SetTimerForNextTick([World]()
-                            {
-                                GenerateDefendantPrompt(World, nullptr);
-                            });
-                    }
-                });
+            FString CleanedJson = UGodFunction::CleanUpJson(DefendantJson);
+            if (UGodFunction::SavePromptToFile(DefendantFilePath, CleanedJson))
+            {
+                UE_LOG(LogTemp, Log, TEXT("PromptToDefendant.json 저장 완료!"));
+                if (Callback) Callback();
+                GenerateNPCPrompts(World);
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("PromptToDefendant.json 저장 실패! 다시 시도."));
+                GenerateDefendantPrompt(World, nullptr);
+            }
         });
 }
 
 void UGodFunction::GenerateNPCPrompts(UWorld* World)
 {
+    if (!World)
+    {
+        UE_LOG(LogTemp, Error, TEXT("GenerateNPCPrompts - World is nullptr!"));
+        return;
+    }
+
     FString PromptToDefendantPath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json");
     FString PromptToGodPath = FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToGod.json");
 
     if (!FPaths::FileExists(PromptToDefendantPath) || !FPaths::FileExists(PromptToGodPath))
     {
-        UE_LOG(LogTemp, Warning, TEXT("PromptToGod.json 또는 PromptToDefendant.json이 존재하지 않음. NPC 생성 대기!"));
-        World->GetTimerManager().SetTimerForNextTick([World]()
-            {
-                GenerateNPCPrompts(World);
-            });
+        UE_LOG(LogTemp, Warning, TEXT("PromptToGod.json 또는 PromptToDefendant.json이 존재하지 않음. NPC 생성 불가."));
         return;
     }
 
     UE_LOG(LogTemp, Log, TEXT("PromptToGod.json 및 PromptToDefendant.json 존재 확인됨. NPC 프롬프트 순차적 생성 시작."));
-
-    World->GetTimerManager().SetTimerForNextTick([World]()
-        {
-            GenerateJuryNPC(World, 1);
-        });
+    GenerateJuryNPC(World, 1);
 }
 
 // 배심원 NPC 생성 (순차적으로 진행)
+// Copyright_Team_AriAri
+
+#include "GodFunction.h"
+#include "Misc/FileHelper.h"
+#include "Misc/Paths.h"
+#include "HAL/PlatformFilemanager.h"
+#include "Json.h"
+
 void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
 {
-    if (JuryIndex > 3)
-    {
-        UE_LOG(LogTemp, Log, TEXT("모든 배심원 생성 완료!"));
-        GenerateResidentNPC(World, 1);
-        return;
-    }
-
-    UE_LOG(LogTemp, Log, TEXT("GenerateJuryNPC 실행됨 - JuryIndex: %d"), JuryIndex);
-
     if (!World)
     {
         UE_LOG(LogTemp, Error, TEXT("GenerateJuryNPC - World is nullptr! JuryIndex: %d"), JuryIndex);
         return;
     }
 
-    if (UGodCall::bShouldStopPromptGeneration)
+    if (JuryIndex > 3)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 배심원(NPC) %d 생성 취소!"), JuryIndex);
+        UE_LOG(LogTemp, Log, TEXT("모든 배심원 생성 완료! 주민 생성 시작."));
+        GenerateResidentNPC(World, 1);
         return;
     }
 
-    UE_LOG(LogTemp, Log, TEXT("GenerateJuryNPC - World 유효. NPC 생성 준비 중."));
+    UE_LOG(LogTemp, Log, TEXT("GenerateJuryNPC 실행됨 - JuryIndex: %d"), JuryIndex);
 
     FString PromptToGod = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToGod.json"));
     FString PromptToDefendant = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json"));
@@ -414,50 +432,45 @@ void UGodFunction::GenerateJuryNPC(UWorld* World, int JuryIndex)
     UE_LOG(LogTemp, Log, TEXT("Jury JSON 파일명: %s"), *JuryFileName);
 
     CallOpenAIAsync(JuryPrompt, [World, JuryIndex, JuryFileName](FString JuryJson)
-    {
-        UE_LOG(LogTemp, Log, TEXT("OpenAI 응답 도착 - JuryIndex: %d"), JuryIndex);
-
-        if (!World)
         {
-            UE_LOG(LogTemp, Error, TEXT("GenerateJuryNPC Callback - World is nullptr! JuryIndex: %d"), JuryIndex);
-            return;
-        }
+            UE_LOG(LogTemp, Log, TEXT("OpenAI 응답 도착 - JuryIndex: %d"), JuryIndex);
 
-        if (UGodCall::bShouldStopPromptGeneration)
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 배심원 데이터 저장 취소!"));
-            return;
-        }
+            if (!World)
+            {
+                UE_LOG(LogTemp, Error, TEXT("GenerateJuryNPC Callback - World is nullptr! JuryIndex: %d"), JuryIndex);
+                return;
+            }
 
-        FString CleanJuryJson = UGodFunction::CleanUpJson(JuryJson);
-        if (CleanJuryJson.IsEmpty())
-        {
-            UE_LOG(LogTemp, Error, TEXT("GenerateJuryNPC Callback - Received empty JSON response! JuryIndex: %d"), JuryIndex);
-            return;
-        }
+            FString CleanJuryJson = UGodFunction::CleanUpJson(JuryJson);
+            if (CleanJuryJson.IsEmpty())
+            {
+                UE_LOG(LogTemp, Error, TEXT("GenerateJuryNPC Callback - Received empty JSON response! JuryIndex: %d"), JuryIndex);
+                GenerateJuryNPC(World, JuryIndex + 1);
+                return;
+            }
 
-        UE_LOG(LogTemp, Log, TEXT("Jury JSON 데이터 저장 시도 - 파일명: %s"), *JuryFileName);
+            UE_LOG(LogTemp, Log, TEXT("Jury JSON 데이터 저장 시도 - 파일명: %s"), *JuryFileName);
 
-        bool bSaved = UGodFunction::SavePromptToFile(JuryFileName, CleanJuryJson);
-        if (!bSaved)
-        {
-            UE_LOG(LogTemp, Error, TEXT("Failed to save JuryPrompt file: %s"), *JuryFileName);
-            return;
-        }
-
-        UE_LOG(LogTemp, Log, TEXT("Successfully saved JuryPrompt file: %s"), *JuryFileName);
-    });
-
-    UE_LOG(LogTemp, Log, TEXT("GenerateJuryNPC 종료 - JuryIndex: %d"), JuryIndex);
+            if (UGodFunction::SavePromptToFile(JuryFileName, CleanJuryJson))
+            {
+                UE_LOG(LogTemp, Log, TEXT("Successfully saved JuryPrompt file: %s"), *JuryFileName);
+                GenerateJuryNPC(World, JuryIndex + 1);
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("Failed to save JuryPrompt file: %s"), *JuryFileName);
+                GenerateJuryNPC(World, JuryIndex + 1);
+            }
+        });
 }
 
 
 // 마을 주민 NPC 생성 (순차적으로 진행)
 void UGodFunction::GenerateResidentNPC(UWorld* World, int ResidentIndex)
 {
-    if (UGodCall::bShouldStopPromptGeneration)
+    if (!World)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 주민(NPC) %d 생성 취소!"), ResidentIndex);
+        UE_LOG(LogTemp, Error, TEXT("GenerateResidentNPC - World is nullptr! ResidentIndex: %d"), ResidentIndex);
         return;
     }
 
@@ -467,11 +480,13 @@ void UGodFunction::GenerateResidentNPC(UWorld* World, int ResidentIndex)
         return;
     }
 
+    UE_LOG(LogTemp, Log, TEXT("GenerateResidentNPC 실행됨 - ResidentIndex: %d"), ResidentIndex);
+
     FString PromptToGod = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToGod.json"));
     FString PromptToDefendant = ReadFileContent(FPaths::ProjectSavedDir() + TEXT("Prompt/PromptToDefendant.json"));
 
     FString ResidentPrompt = FString::Printf(
-        TEXT("{ \"task\": \"마을 주민 정보를 생성하세요.\", "
+        TEXT("{ \"task\": \"마을 주민%d 정보를 생성하세요.\", "
             "\"instructions\": ["
             "\"PromptToGod.json과 PromptToDefendant.json을 참고하여 한 명의 마을 주민(NPC) 정보를 생성하세요.\", "
             "\"npcid 값을 2004부터 순차적으로 증가하는 정수로 설정하세요.\"], "
@@ -484,14 +499,33 @@ void UGodFunction::GenerateResidentNPC(UWorld* World, int ResidentIndex)
 
     CallOpenAIAsync(ResidentPrompt, [World, ResidentIndex, ResidentFileName](FString ResidentJson)
         {
-            if (UGodCall::bShouldStopPromptGeneration)
+            UE_LOG(LogTemp, Log, TEXT("OpenAI 응답 도착 - ResidentIndex: %d"), ResidentIndex);
+
+            if (!World)
             {
-                UE_LOG(LogTemp, Warning, TEXT("Prompt 생성 중단됨. 주민 데이터 저장 취소!"));
+                UE_LOG(LogTemp, Error, TEXT("GenerateResidentNPC Callback - World is nullptr! ResidentIndex: %d"), ResidentIndex);
                 return;
             }
 
             FString CleanResidentJson = UGodFunction::CleanUpJson(ResidentJson);
-            UGodFunction::SavePromptToFile(ResidentFileName, CleanResidentJson);
-            GenerateResidentNPC(World, ResidentIndex + 1);
+            if (CleanResidentJson.IsEmpty())
+            {
+                UE_LOG(LogTemp, Error, TEXT("GenerateResidentNPC Callback - Received empty JSON response! ResidentIndex: %d"), ResidentIndex);
+                GenerateResidentNPC(World, ResidentIndex + 1);
+                return;
+            }
+
+            UE_LOG(LogTemp, Log, TEXT("Resident JSON 데이터 저장 시도 - 파일명: %s"), *ResidentFileName);
+
+            if (UGodFunction::SavePromptToFile(ResidentFileName, CleanResidentJson))
+            {
+                UE_LOG(LogTemp, Log, TEXT("Successfully saved ResidentPrompt file: %s"), *ResidentFileName);
+                GenerateResidentNPC(World, ResidentIndex + 1);
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("Failed to save ResidentPrompt file: %s"), *ResidentFileName);
+                GenerateResidentNPC(World, ResidentIndex + 1);
+            }
         });
 }

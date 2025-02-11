@@ -28,13 +28,4 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "God")
 	bool StartGodProcess();
 
-	// BeginPlay 시 Prompt 생성 중단
-	static bool bShouldStopPromptGeneration;
-
-	// 중복 실행 방지 플래그
-	static bool bIsPromptGenerating;
-
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-	
 };
