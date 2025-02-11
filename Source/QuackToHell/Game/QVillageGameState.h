@@ -20,14 +20,26 @@ class QUACKTOHELL_API AQVillageGameState : public AGameState
 public:
 	AQVillageGameState();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 private:
-	UPROPERTY(EditAnywhere)
+	float TimeUntilTrialMax = 60 * 7;
+	
+	/** @brief 재판까지 남은 시간 */
+	UPROPERTY(Replicated)
+	float ServerLeftTimeUntilTrial = 0.0f;
+	
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastRPCUpdateServerTime();
+
+private:
+	UPROPERTY(EditAnywhere, Replicated)
 	TArray<TObjectPtr<AQNPC>> NPCList;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 	FEvidenceList EvidenceList;
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 	FConversationList ConversationList;
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;

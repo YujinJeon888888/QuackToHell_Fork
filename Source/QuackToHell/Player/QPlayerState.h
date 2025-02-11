@@ -24,6 +24,8 @@ class QUACKTOHELL_API AQPlayerState : public APlayerState
 	GENERATED_BODY()
 public:
 	AQPlayerState();
+
+	virtual void BeginPlay() override;
 	/**
 	 * @brief 플레이어의 상태를 관리하는 GameplayTags.
 	 */

@@ -21,8 +21,8 @@ public:
 	 * @param AccumulatedTime: 0부터 시작해 얼마나 시간이 누적되었는지 전달
 	 * @param MaxTime: 타이머가 울려야되는 max값을 전달 (ex. 840초면 타이머 종료)
 	 */
-	UFUNCTION(Client, Unreliable)
-	void ClinetRPCConverServerTimeToUITime(float AccumulatedTime, float MaxTime);
+	UFUNCTION(BlueprintCallable)
+	void UpdateServerTimeToUITime(float AccumulatedTime, const float MaxTime);
 protected:
 	/**
 	 * @brief 정규화된 시간 값을 리턴한다.

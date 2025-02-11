@@ -16,6 +16,17 @@ AQPlayerState::AQPlayerState()
 	bReplicates = true;
 }
 
+void AQPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	GameState = Cast<AQVillageGameState>(GetWorld()->GetGameState());
+	if (GameState == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AQPlayerState::BeginPlay Can't find GameState."));
+	}
+}
+
 void AQPlayerState::AddStateTag(FGameplayTag NewStateTag)
 {
 	PlayerStateTags.AddTag(NewStateTag);

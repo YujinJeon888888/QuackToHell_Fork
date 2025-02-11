@@ -267,6 +267,10 @@ void AQPlayer::ServerRPCFinishConversation_Implementation(AQNPC* NPC)
 {
 	bool bResult = false;
 	// 상태 업데이트
+	if (LocalPlayerState == nullptr || NPC == nullptr)
+	{
+		return;
+	}
 	LocalPlayerState->SetPlayerConverstationState(EConversationType::None);
 	NPC->SetNPCConversationState(EConversationType::None);
 

@@ -3,12 +3,17 @@
 
 #include "Game/QVillageGameState.h"
 
+#include <string>
+
 #include "QGameModeVillage.h"
+#include "QLogCategories.h"
 #include "Blueprint/UserWidget.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerState.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/QPlayerState.h"
+#include "UI/QVillageTimerWidget.h"
+#include "UI/QVillageUIManager.h"
 #include "UObject/ConstructorHelpers.h"
 
 
@@ -23,18 +28,69 @@ AQVillageGameState::AQVillageGameState()
 	}
 
 	// 초기화
+	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bStartWithTickEnabled = true;
+	
 	NPCList = {};
 	ConversationList = FConversationList(); // 명시적 초기화
 	EvidenceList = FEvidenceList();
 }
 
+void AQVillageGameState::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (HasAuthority()) // 서버에서만 실행
+	{
+		UE_LOG(LogTemp, Display, TEXT("AQVillageGameState::Tick"));
+		
+		ServerLeftTimeUntilTrial += DeltaSeconds;
+		ForceNetUpdate();
+
+		MulticastRPCUpdateServerTime();
+		if (GetNetMode() == NM_ListenServer) // ✅ Listen 서버의 "호스트 클라이언트"에서는 직접 실행
+		{
+			MulticastRPCUpdateServerTime_Implementation();
+		}
+	}
+}
+
+void AQVillageGameState::MulticastRPCUpdateServerTime_Implementation()
+{
+	if (!HasAuthority()) // ✅ 클라이언트에서만 로그 출력
+	{
+		UE_LOG(LogLogic, Log, TEXT("[CLIENT] OnRep_UpdateServerTime called! ServerLeftTimeUntilTrial: %f"), ServerLeftTimeUntilTrial);
+	}
+	else
+	{
+		UE_LOG(LogLogic, Log, TEXT("[SERVER] OnRep_UpdateServerTime called!"));
+	}
+	
+	TObjectPtr<UQVillageTimerWidget> VillageTimerUI = Cast<UQVillageTimerWidget>(AQVillageUIManager::GetInstance(GetWorld())->GetVillageWidgets()[EVillageUIType::VillageTimer]);
+	if (VillageTimerUI)
+	{
+		UE_LOG(LogLogic, Log, TEXT("Get VillageTime Successed"));
+		UE_LOG(LogLogic, Log, TEXT("ServerLeftTimeUntilTrial: %f, TimeUntilTrailMax: %f."), ServerLeftTimeUntilTrial, TimeUntilTrialMax);
+		VillageTimerUI->UpdateServerTimeToUITime(ServerLeftTimeUntilTrial, TimeUntilTrialMax);
+	}
+	else
+	{
+		UE_LOG(LogLogic, Log, TEXT("Get VillageTimerUI failed"));
+	}
+}
+
 void AQVillageGameState::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(AQVillageGameState, ServerLeftTimeUntilTrial);
+	
 	DOREPLIFETIME(AQVillageGameState, NPCList);
 	DOREPLIFETIME(AQVillageGameState, ConversationList);
 	DOREPLIFETIME(AQVillageGameState, EvidenceList);
 }
 
+// 대화와 관련한 함수들 -------------------------------------------------------------------------------------- //
 const int32 AQVillageGameState::AddConversationRecord(EConversationType ConversationType, int32 ListenerID, int32 SpeakerID, FDateTime Timestamp, const FString& Message)
 {
 	// 클라이언트에서 이 함수에 접근하려고 하면 -1 return
