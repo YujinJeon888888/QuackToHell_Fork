@@ -80,9 +80,9 @@ AQVillageUIManager::AQVillageUIManager()
 
 void AQVillageUIManager::TurnOffUI(EVillageUIType UIType)
 {
-	if (VillageWidgets.Contains(UIType)) {
+	if (ActivedVillageWidgets.Contains(UIType)) {
 		//안 보이게 바꾼다.
-		VillageWidgets[UIType]->SetVisibility(ESlateVisibility::Hidden);
+		ActivedVillageWidgets[UIType]->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -95,9 +95,9 @@ TObjectPtr<AQVillageUIManager> AQVillageUIManager::GetInstance(TObjectPtr<UWorld
 	return Instance;
 }
 
-TMap<EVillageUIType, TObjectPtr<UUserWidget>> AQVillageUIManager::GetVillageWidgets() const
+TMap<EVillageUIType, TObjectPtr<UUserWidget>> AQVillageUIManager::GetActivedVillageWidgets() const
 {
-	return VillageWidgets;
+	return ActivedVillageWidgets;
 }
 
 // Called when the game starts or when spawned
@@ -134,7 +134,7 @@ void AQVillageUIManager::OnMapLoad()
 	* 
 	*/
 	TurnOnUI(EVillageUIType::DefaultVillageUI);
-	UE_LOG(LogLogic, Log, TEXT("UIManager - 디폴트위젯: %s"), *VillageWidgets[EVillageUIType::DefaultVillageUI].GetName());
+	UE_LOG(LogLogic, Log, TEXT("UIManager - 디폴트위젯: %s"), *ActivedVillageWidgets[EVillageUIType::DefaultVillageUI].GetName());
 }
 
 bool AQVillageUIManager::IsVillageMap()
@@ -170,8 +170,8 @@ void AQVillageUIManager::TurnOnUI(EVillageUIType UIType)
 
 	/*UI켜기*/
 	//위젯 이미 만들어져있으면 visible 전환
-	if (VillageWidgets.Contains(UIType)) {
-		VillageWidgets[UIType]->SetVisibility(ESlateVisibility::Visible);
+	if (ActivedVillageWidgets.Contains(UIType)) {
+		ActivedVillageWidgets[UIType]->SetVisibility(ESlateVisibility::Visible);
 		return;
 	}
 
@@ -183,7 +183,7 @@ void AQVillageUIManager::TurnOnUI(EVillageUIType UIType)
 	if (NewWidget) {
 		NewWidget->AddToViewport();
 		NewWidget->SetVisibility(ESlateVisibility::Visible);  
-		VillageWidgets.Add(UIType, NewWidget);
+		ActivedVillageWidgets.Add(UIType, NewWidget);
 	}
 }
 

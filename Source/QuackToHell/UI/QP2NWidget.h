@@ -16,10 +16,13 @@ class QUACKTOHELL_API UQP2NWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	/** @breif ServerRPCCanFinishConversP2N를 통해 대화마무리가 가능한지 체크가 완료된 후 실행되는 클라이언트 RPC
-	 * 인자로 마무리할 수 있는지 없는지에 대한 bool값이 들어오게 된다. */
+
+
+	/**
+	 * @brief. NPC에게 답장올 시 처리해야되는 로직이 실행된다.
+	 */
 	UFUNCTION(Client, Reliable)
-	void ClientRPCUpdateCanFinishConversP2N(bool bResult);
+	void ClientRPCGetNPCResponse(FOpenAIResponse NPCStartResponse);
 public:
 	/**
 	 * @brief 대화상자의 글씨를 업데이트합니다.

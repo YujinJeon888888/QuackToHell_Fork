@@ -15,7 +15,14 @@ class QUACKTOHELL_API AQPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
-
+	/** @breif ServerRPCStartConversation을 성공적으로 마치게 되면 실행되는 함수. 이 내부에 클라쪽 StartConversation 구현
+	* @param NPC 대화대상 npc
+	* @param NPCStartResponse NPC 시작 메세지
+	*/
+	UFUNCTION(Client, Reliable)
+	void ClientRPCStartConversation(FOpenAIResponse NPCStartResponse);
+	UFUNCTION(Client, Reliable)
+	void ClientRPCFinishConversation(AQNPC* NPC);
 	/** @breif ServerRPCCanFinishConversP2N를 통해 대화마무리가 가능한지 체크가 완료된 후 실행되는 클라이언트 RPC
 	 * 인자로 마무리할 수 있는지 없는지에 대한 bool값이 들어오게 된다. */
 	UFUNCTION(Client, Reliable)
@@ -106,15 +113,7 @@ private:
 	 * @brief 몸을 얼음땡 합니다.
 	 */
 	void UnFreezePawn();
-	/**
-	 * @brief 대화중일때의 처리를 구현합니다. 1. 몸 멈추기 
-	 */
-	void ConverseProcess();
-	/**
-	* @brief 대화끝날때의 처리를 구현합니다.  1. 얼음땡 
-	* 
-	*/
-	void ConverseEndProcess();
+
 
 private:
 	/** @brief VillageUIManager정보를 갖습니다. */

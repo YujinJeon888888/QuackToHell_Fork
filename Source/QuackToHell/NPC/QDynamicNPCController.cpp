@@ -7,6 +7,7 @@
 #include "BehaviorTree/BlackboardComponent.h"         // Blackboard 컴포넌트
 #include "BehaviorTree/BehaviorTreeComponent.h"       // Behavior Tree 컴포넌트
 #include "QLogCategories.h"
+#include "Engine/World.h"
 #include "NPCComponent.h"
 #include "UI/QSpeechBubbleWidget.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -17,6 +18,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/QVillageUIManager.h"
 #include "Character/QNPC.h"
+#include "Kismet/GameplayStatics.h"
+#include "Player/QPlayerController.h"
+#include "Player/QPlayerState.h"
 void AQDynamicNPCController::BeginPlay()
 {
     Super::BeginPlay();
@@ -147,12 +151,8 @@ void AQDynamicNPCController::StartDialog(TObjectPtr<APawn> _OpponentPawn, ENPCCo
         //몸멈추기 & 상대방을 향해 회전하기
         FreezePawn();
         RotateToOpponent(_OpponentPawn);
-        //첫멘트 줘 (응답은 브로드캐스트로 옴)
-        NPCComponent->StartConversation("");
-        //첫멘트 응답완료 시 출력 콜백
-        NPCComponent->OnNPCResponseReceived.AddDynamic(this, &AQDynamicNPCController::OnNPCResponseReceived);
         //P2N Widget에게 자신의 정보를 넘긴다: 내 정보 넘겨주기
-        TMap<EVillageUIType, TObjectPtr<UUserWidget>> VillageWidgets = VillageUIManager->GetVillageWidgets();
+        TMap<EVillageUIType, TObjectPtr<UUserWidget>> VillageWidgets = VillageUIManager->GetActivedVillageWidgets();
         TObjectPtr<UQP2NWidget> P2NWidget = Cast<UQP2NWidget>(VillageWidgets[EVillageUIType::P2N]);
         P2NWidget->SetConversingNPC(this);
     }
@@ -183,15 +183,18 @@ void AQDynamicNPCController::EndDialog()
 
 }
 
-void AQDynamicNPCController::OnNPCResponseReceived(const FString& Text)
-{
-    Cast<UQP2NWidget>((VillageUIManager->GetVillageWidgets())[EVillageUIType::P2N])->UpdateNPCText(Text);
-}
 
-void AQDynamicNPCController::Response(FString& Text)
+
+void AQDynamicNPCController::Response(FString& Text, EConversationType InputConversationType)
 {
-    //1. 응답 요청
-    NPCComponent->StartConversation(Text);
-    //2. 콜백함수등록(응답시처리)
-    UE_LOG(LogLogic, Log, TEXT("응답요청함수 들어옴: NPCController"));
+    /*정보가져오기*/
+    FOpenAIRequest OpenAIRequest;
+    OpenAIRequest.ConversationType = InputConversationType;
+    AQPlayerController* PlayerController = Cast<AQPlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+    OpenAIRequest.ListenerID = Cast<AQPlayerState> (PlayerController->PlayerState)->GetPlayerId();
+    OpenAIRequest.Prompt = Text;
+    OpenAIRequest.SpeakerID = NPCComponent->GetNPCID();
+
+
+    NPCComponent->GetNPCResponse(OpenAIRequest);
 }
