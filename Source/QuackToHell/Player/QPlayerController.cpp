@@ -12,6 +12,7 @@
 #include "UI/QInventoryWidget.h"
 #include "Character/QPlayer.h"
 #include "Character/QDynamicNPC.h"
+#include "NPC/QDynamicNPCController.h"
 #include "Character/QNPC.h"
 #include "NPC/QDynamicNPCController.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -61,26 +62,48 @@ void AQPlayerController::SetupInputComponent()
 	}
 }
 
-
-
-
-
-void AQPlayerController::StartDialog()
+void AQPlayerController::ClientRPCUpdateCanFinishConversP2N_Implementation(bool bResult)
 {
-
-	//0. 상대방 NPC를 불러옴
-	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
-	TObjectPtr<AQNPC> NPC = Cast<AQNPC>(_Player->GetClosestNPC());
-	//1. 대화 가능한지 check (서버에게 질문)
-	/** @todo 유진 - 이 부분을 Player.cpp에 표시해놓은 부분에서 호출하면 될듯. + nullcheck같은거 추가로 하면ㄷ 좋을 것 같아요*/
-	/*
-	if (Cast<AQPlayer>(this->GetPawn())->GetCanStartConversP2N(NPC))
+	if (bResult)
 	{
+		/** @todo 유진 : 대화를 끝낼 수 있을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
+		TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
+
+		//1. 상대방 NPC를 불러옴
+		//2. 상대방 NPC의 컨트롤러를 불러옴
+		TObjectPtr<AQDynamicNPC> NPC = Cast<AQDynamicNPC>(_Player->GetClosestNPC());
+		TObjectPtr<AQDynamicNPCController> NPCController = Cast<AQDynamicNPCController>(NPC->GetController());
+
+		//3. 대화끝처리 : 클라
+		ConverseEndProcess();
+		//3. 상태를 전환 : 서버
+		Cast<AQPlayer>(this->GetPawn())->ServerRPCFinishConversation_Implementation(NPC);
+
+		//4. 대화 그만하라고 명령한다.
+		NPCController->EndDialog();
+	}
+	else
+	{
+		/** @todo 유진 : 대화를 시작할 수 없을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
+		UE_LOG(LogLogic, Log, TEXT("대화끝내기실패!!"));
+
+	}
+}
+
+void AQPlayerController::ClientRPCUpdateCanStartConversP2N_Implementation(bool bResult)
+{
+	if (bResult)
+	{
+		/** @todo 유진 : 대화를 시작할 수 있을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
+		//0. 상대방 NPC를 불러옴
+		TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
+		TObjectPtr<AQDynamicNPC> NPC = Cast<AQDynamicNPC>(_Player->GetClosestNPC());
+		/** @todo 유진 - 이 부분을 Player.cpp에 표시해놓은 부분에서 호출하면 될듯. + nullcheck같은거 추가로 하면ㄷ 좋을 것 같아요*/
 		//1. UI를 킨다.
 		VillageUIManager->TurnOnUI(EVillageUIType::P2N);
 
 		//2. 상대방 NPC의 컨트롤러를 불러옴
-		TObjectPtr<AQNPCController> NPCController = Cast<AQNPCController>(NPC->GetController());
+		TObjectPtr<AQDynamicNPCController> NPCController = Cast<AQDynamicNPCController>(NPC->GetController());
 
 		//3. NPC에게 대화 시작하라고 명령한다.
 		NPCController->StartDialog(GetPawn(), ENPCConversationType::P2N);
@@ -88,28 +111,23 @@ void AQPlayerController::StartDialog()
 		//4. 플레이어를 대화처리한다. (클라이언트)
 		this->ConverseProcess();
 		//4.1 플레이어를 대화처리한다. (서버)
-		Cast<AQPlayer>(this->GetPawn())->StartConversation(NPC);
+		Cast<AQPlayer>(this->GetPawn())->ServerRPCStartConversation_Implementation(NPC);
 
 		//5. P2N Widget에게 자신의 정보를 넘긴다.
 		//내 정보 넘겨주기
 		Cast<UQP2NWidget>((VillageUIManager->GetVillageWidgets())[EVillageUIType::P2N])->SetConversingPlayer(this);
+		
 	}
-	**/
+	else
+	{
+		/** @todo 유진 : 대화를 시작할 수 없을때 클라이언트에서 실행시켜야하는 함수 여기서 호출 */
+		UE_LOG(LogLogic, Log, TEXT("대화시도실패!!"));
+	}
+
 }
 
-void AQPlayerController::EndDialog()
-{
-	//0. 대화중의 상태를 remove
 
-	//1. 상대방 NPC를 불러옴
-	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
-	//2. 상대방 NPC의 컨트롤러를 불러옴
-	TObjectPtr<AQDynamicNPC> NPC = Cast<AQDynamicNPC>(_Player->GetClosestNPC());
-	TObjectPtr<AQDynamicNPCController> NPCController = Cast<AQDynamicNPCController>(NPC->GetController());
 
-	//3. 대화 그만하라고 명령한다.
-	NPCController->EndDialog();
-}
 
 void AQPlayerController::FreezePawn()
 {
@@ -154,15 +172,11 @@ void AQPlayerController::ConverseProcess()
 	FreezePawn();
 }
 
-void AQPlayerController::ConverseEndProcess(TObjectPtr<class AQNPC> NPC)
+void AQPlayerController::ConverseEndProcess()
 {
 	//1. 얼음땡
 	UnFreezePawn();
-	//2. 상태전환
-	/** @todo 유진 - 이 부분을 Player.cpp에 표시해놓은 부분에서 호출하면 될듯. + nullcheck같은거 추가로 하면ㄷ 좋을 것 같아요*/
-	/*
-	Cast<AQPlayer>(GetPawn())->FinishConversation(NPC);
-	*/
+
 }
 
 void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
@@ -175,8 +189,12 @@ void AQPlayerController::InputEnableTurn(const FInputActionValue& InputValue)
 void AQPlayerController::InputInteraction(const FInputActionValue& InputValue)
 {
 	
-	//대화시작해라
-	StartDialog();
+	//대화시작해도돼? 
+	//0. 상대방 NPC를 불러옴
+	TObjectPtr<AQPlayer> _Player = Cast<AQPlayer>(this->GetPawn());
+	TObjectPtr<AQDynamicNPC> NPC = Cast<AQDynamicNPC>(_Player->GetClosestNPC());
+	//1. 물어봄
+	Cast<AQPlayer>(GetPawn())->ServerRPCCanStartConversP2N(NPC);
 	UE_LOG(LogLogic, Log, TEXT("E버튼 누름!"));
 	
 }

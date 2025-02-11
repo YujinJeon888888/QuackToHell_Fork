@@ -46,7 +46,11 @@ public:
 	/** @brief 종료버튼 눌렸을때의 처리; */
 	UFUNCTION(BlueprintCallable)
 	void HandleEnterEndButton();
-
+protected:
+	/** @breif ServerRPCCanFinishConversP2N를 통해 대화마무리가 가능한지 체크가 완료된 후 실행되는 클라이언트 RPC
+	 * 인자로 마무리할 수 있는지 없는지에 대한 bool값이 들어오게 된다. */
+	UFUNCTION(Client, Reliable)
+	void ClientRPCUpdateCanFinishConversP2N(bool bResult);
 
 private:
 	/**
