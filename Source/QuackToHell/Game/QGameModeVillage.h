@@ -23,6 +23,10 @@ public:
 	static int32 EvidenceIDCount;			const int32 EvidenceIDInit = 3000;
 	static int32 ConversationIDCount;		const int32 ConversationIDInit = 4000;
 
+	virtual void PostInitializeComponents() override;
 	virtual void BeginPlay() override;
-	virtual void PreInitializeComponents() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+private:
+	void GeneratePromptsBeforeNextGame();
 };

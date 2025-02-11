@@ -39,40 +39,14 @@ AQGameModeVillage::AQGameModeVillage()
 	ConversationIDCount = ConversationIDInit;
 }
 
-void AQGameModeVillage::PreInitializeComponents()
+void AQGameModeVillage::PostInitializeComponents()
 {
-	Super::PreInitializeComponents();
+	Super::PostInitializeComponents();
 
-	UE_LOG(LogTemp, Log, TEXT("QGameModeVillage::PreInitializeComponents() - 프롬프트 생성 시작"));
+	UE_LOG(LogTemp, Log, TEXT("📌 PostInitializeComponents() 실행됨!"));
+	/*UE_LOG(LogTemp, Log, TEXT("QGameModeVillage::PostInitializeComponents() - 프롬프트 미리 준비 시작"));
 
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		UE_LOG(LogTemp, Error, TEXT("❌ PreInitializeComponents - World is nullptr!"));
-		return;
-	}
-
-	// 기존 GodActor 찾기
-	TArray<AActor*> FoundActors;
-	UGameplayStatics::GetAllActorsWithTag(World, TEXT("GodActor"), FoundActors);
-
-	if (FoundActors.Num() == 0 || !FoundActors[0])
-	{
-		UE_LOG(LogTemp, Error, TEXT("❌ PreInitializeComponents - GodActor를 찾을 수 없음!"));
-		return;
-	}
-
-	AActor* GodActor = FoundActors[0];
-	UGodCall* GodCall = GodActor->FindComponentByClass<UGodCall>();
-
-	if (!GodCall)
-	{
-		UE_LOG(LogTemp, Error, TEXT("❌ PreInitializeComponents - GodCall을 찾을 수 없음!"));
-		return;
-	}
-
-	UE_LOG(LogTemp, Log, TEXT("✅ PreInitializeComponents - GodCall StartGodProcess 호출!"));
-	GodCall->StartGodProcess();
+	GeneratePromptsBeforeNextGame();*/
 }
 
 void AQGameModeVillage::BeginPlay()
@@ -108,4 +82,36 @@ void AQGameModeVillage::BeginPlay()
 	}
 
 	UE_LOG(LogTemp, Log, TEXT("✅ BeginPlay - 프롬프트 생성 완료 후 게임 진행"));
+}
+
+void AQGameModeVillage::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	UE_LOG(LogTemp, Log, TEXT("QGameModeVillage::EndPlay() - 프롬프트 삭제 및 재생성 예약"));
+
+	// 게임 종료 시 프롬프트 삭제 후 다시 생성
+	if (EndPlayReason == EEndPlayReason::EndPlayInEditor)
+    {
+        UE_LOG(LogTemp, Log, TEXT("🔄 프롬프트 삭제 후 다시 생성 시작"));
+        GeneratePromptsBeforeNextGame();
+    }
+}
+
+void AQGameModeVillage::GeneratePromptsBeforeNextGame()
+{
+	UWorld* World = GetWorld();
+	if (!World)
+	{
+		UE_LOG(LogTemp, Error, TEXT("GeneratePromptsBeforeNextGame() - World가 NULL! 프롬프트 생성 불가"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Log, TEXT("GeneratePromptsBeforeNextGame() - 기존 프롬프트 삭제 후 재생성 시작"));
+
+	UE_LOG(LogTemp, Log, TEXT("GeneratePromptsBeforeNextGame() - PromptToDefendant.json 생성 시작"));
+	UGodFunction::GenerateDefendantPrompt(World, [World]()
+		{
+			UE_LOG(LogTemp, Log, TEXT("✅ PromptToDefendant.json 생성 완료! 배심원 생성 시작"));
+			UGodFunction::GenerateJuryNPC(World, 1);
+		});
 }
