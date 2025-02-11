@@ -4,7 +4,10 @@
 #include "UI/QVillageUIManager.h"
 #include "UI/QP2NWidget.h"
 #include "UI/QDefaultVillageWidget.h"
+#include "UI/QRecordWidget.h"
+#include "UI/QVillageTimerWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/QChatBoxWidget.h"
 #include "UI/QMapWidget.h"
 #include "UI/QPlayer2NSpeechBubbleWidget.h"
 #include "UI/QSpeechBubbleWidget.h"
@@ -35,6 +38,8 @@ AQVillageUIManager::AQVillageUIManager()
 	static ConstructorHelpers::FClassFinder<UQPlayer2NSpeechBubbleWidget> Player2NSpeechBubbleWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_QPlayer2NSpeechBubble.WBP_QPlayer2NSpeechBubble_C'"));
 	static ConstructorHelpers::FClassFinder<UQSpeechBubbleWidget> SpeechBubbleWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_QSpeechBubble.WBP_QSpeechBubble_C'"));
 	static ConstructorHelpers::FClassFinder<UQInventoryWidget> InventoryWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_QInventory.WBP_QInventory_C'"));
+	static ConstructorHelpers::FClassFinder<UQRecordWidget> RecordWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_Record.WBP_Record_C'"));
+	static ConstructorHelpers::FClassFinder<UQVillageTimerWidget> VillageTimerWidgetAsset(TEXT("WidgetBlueprint'/Game/Blueprints/UI/WBP_VillageTimer.WBP_VillageTimer_C'"));
 
 
 	// TSubclassOf 템플릿 클래스 객체에 블루프린트 클래스를 넣어준다
@@ -62,7 +67,14 @@ AQVillageUIManager::AQVillageUIManager()
 	{
 		UIWidgetClasses.Add(EVillageUIType::Inventory, InventoryWidgetAsset.Class);
 	}
-
+	if (RecordWidgetAsset.Succeeded())
+	{
+		UIWidgetClasses.Add(EVillageUIType::Record, RecordWidgetAsset.Class);
+	}
+	if (VillageTimerWidgetAsset.Succeeded())
+	{
+		UIWidgetClasses.Add(EVillageUIType::VillageTimer, VillageTimerWidgetAsset.Class);
+	}
 
 }
 

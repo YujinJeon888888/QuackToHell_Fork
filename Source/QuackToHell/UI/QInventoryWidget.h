@@ -17,10 +17,12 @@ class QUACKTOHELL_API UQInventoryWidget : public UUserWidget
 protected:
 	/*바인드*/
 	/**
-	 * @brie 녹음위젯 컴포넌트 바인드
+	 * @brief 정보란 sizebox를 바인드
+	 * @details sizebox안에는 녹음정보가 띄워지거나 증거물정보가 띄워진다. 
 	 */
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<class UQRecordWidget> RecordWidget;
+	TObjectPtr<class USizeBox> InformationBox;
+
 
 protected:
 	
