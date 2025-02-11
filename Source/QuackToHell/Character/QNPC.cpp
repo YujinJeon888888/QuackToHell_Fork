@@ -116,11 +116,5 @@ void AQNPC::BeginPlay()
 		}
 	}
 
-	/*말풍선 위젯 기본적으로 끈 채로 시작*/
-	//SpeechBubbleWidget->TurnOffSpeechBubble();
-	
-
-	/*Player2N말풍선 위젯 기본적으로 끈 채로 시작*/
-	//Player2NSpeechBubbleWidget->TurnOffSpeechBubble();
 }
 

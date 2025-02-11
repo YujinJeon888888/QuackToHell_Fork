@@ -66,7 +66,7 @@ void AQVillageGameState::MulticastRPCUpdateServerTime_Implementation()
 		UE_LOG(LogLogic, Log, TEXT("[SERVER] OnRep_UpdateServerTime called!"));
 	}
 	
-	TObjectPtr<UQVillageTimerWidget> VillageTimerUI = Cast<UQVillageTimerWidget>(AQVillageUIManager::GetInstance(GetWorld())->GetVillageWidgets()[EVillageUIType::VillageTimer]);
+	TObjectPtr<UQVillageTimerWidget> VillageTimerUI = Cast<UQVillageTimerWidget>(AQVillageUIManager::GetInstance(GetWorld())->GetActivedVillageWidgets()[EVillageUIType::VillageTimer]);
 	if (VillageTimerUI)
 	{
 		UE_LOG(LogLogic, Log, TEXT("Get VillageTime Successed"));
