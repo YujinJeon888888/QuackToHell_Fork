@@ -44,7 +44,9 @@ AQPlayer::AQPlayer(const FObjectInitializer& ObjectInitializer)
 	//스프링암
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
 	SpringArmComponent->SetupAttachment(RootComponent);
-	SpringArmComponent->TargetArmLength = 460.f;
+	SpringArmComponent->TargetArmLength = 660.f;
+	FRotator SpringArmRotation = FRotator(0.f, 45.f, 0.f);
+	SpringArmComponent->SetWorldRotation(SpringArmRotation);
 	
 
 	/*스프링암 산하 컴포넌트*/
@@ -60,7 +62,7 @@ AQPlayer::AQPlayer(const FObjectInitializer& ObjectInitializer)
 	this->GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -18.f));
 	this->GetMesh()->SetRelativeRotation(FRotator(0.f, 0.f, -90.f));
 	/*캡슐 콜라이더 세팅*/
-	this->GetCapsuleComponent()->InitCapsuleSize(21.0f, 21.0f);
+	this->GetCapsuleComponent()->InitCapsuleSize(42.0f, 42.0f);
 
 	/*허공말풍선 UI 컴포넌트*/
 	this->Player2NSpeechBubbleWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Player2NSpeechBubbleWidget"));
