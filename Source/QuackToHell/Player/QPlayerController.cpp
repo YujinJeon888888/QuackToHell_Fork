@@ -129,6 +129,7 @@ void AQPlayerController::ClientRPCStartConversation_Implementation(FOpenAIRespon
 		//내 정보 넘겨주기
 		Cast<UQP2NWidget>((VillageUIManager->GetActivedVillageWidgets())[EVillageUIType::P2N])->SetConversingPlayer(this);
 
+
 }
 
 void AQPlayerController::ClientRPCFinishConversation_Implementation(AQNPC* NPC)

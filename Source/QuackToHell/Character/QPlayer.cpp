@@ -7,6 +7,7 @@
 #include "Camera/CameraComponent.h"
 #include "QLogCategories.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Character/QDynamicNPC.h"
 #include "UI/QVillageUIManager.h"
 #include "UI/QP2NWidget.h"
 #include "Components/CapsuleComponent.h"
@@ -244,7 +245,8 @@ void AQPlayer::MulticastRPCStartConversation_Implementation(AQPlayer* Player, AQ
 		return;
 	}
 	/** @todo 유진 Player2 시점에서 Player1과 NPC 머리위에 공백 말풍선 띄우기 */
-	
+	Player->GetPlayer2NSpeechBubbleWidget()->TurnOnSpeechBubble();
+	Cast<AQDynamicNPC>(NPC)->GetPlayer2NSpeechBubbleWidget()->TurnOnSpeechBubble();
 }
 
 void AQPlayer::ServerRPCFinishConversation_Implementation(AQNPC* NPC)
@@ -279,7 +281,8 @@ void AQPlayer::MulticastRPCFinishConversation_Implementation(AQPlayer* Player, A
 		return;
 	}
 	/** @todo 유진 Player2 시점에서 Player1과 NPC 머리위에 공백 말풍선 제거*/
-	
+	Player->GetPlayer2NSpeechBubbleWidget()->TurnOffSpeechBubble();
+	Cast<AQDynamicNPC>(NPC)->GetPlayer2NSpeechBubbleWidget()->TurnOffSpeechBubble();
 }
 
 
